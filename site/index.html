@@ -205,19 +205,19 @@ main {
 }
 .preview-frame {
     position: relative;
-    width: clamp(220px, 38vw, 300px);
+    width: clamp(180px, 26vw, 240px);
     aspect-ratio: 9/16;
-    border-radius: 26px;
-    padding: 10px;
+    border-radius: 22px;
+    padding: 8px;
     background: linear-gradient(135deg, rgba(168,85,247,0.35), rgba(236,72,153,0.25), rgba(255,255,255,0.05));
-    box-shadow: 0 30px 70px rgba(168,85,247,0.25), 0 0 0 1px rgba(255,255,255,0.06);
+    box-shadow: 0 22px 55px rgba(168,85,247,0.22), 0 0 0 1px rgba(255,255,255,0.06);
 }
 .preview-sound-btn {
     position: absolute;
-    top: 18px;
-    right: 18px;
-    width: 36px;
-    height: 36px;
+    top: 14px;
+    right: 14px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: rgba(0,0,0,0.55);
     backdrop-filter: blur(10px);
@@ -235,7 +235,7 @@ main {
     transform: scale(1.06);
     box-shadow: 0 0 18px rgba(168,85,247,0.6);
 }
-.preview-sound-btn svg { width: 18px; height: 18px; }
+.preview-sound-btn svg { width: 15px; height: 15px; }
 .preview-sound-btn.on { background: linear-gradient(135deg, #a855f7, #ec4899); border-color: transparent; }
 .preview-sound-btn .icon-on { display: none; }
 .preview-sound-btn.on .icon-on { display: block; }
@@ -281,7 +281,7 @@ main {
 }
 .preview-cta b { color: var(--text); }
 @media (max-width: 640px) {
-    .preview-frame { width: clamp(200px, 70vw, 280px); }
+    .preview-frame { width: clamp(160px, 56vw, 220px); }
 }
 @media (prefers-reduced-motion: reduce) {
     .preview-frame::after { animation: none; }
@@ -767,7 +767,7 @@ applyLanguage(detectLanguage());
           titleGradient: ['#ffd54f', '#fbbf24', '#d97706'] },
         { slug: 'tvshow',
           display: 'Prime Time',
-          subtitle: 'Studio télé, spots lumière et grand spectacle.',
+          subtitle: 'The show must go on',
           bg: '#1a0a2e', accent1: '#a855f7', accent2: '#ec4899',
           text: '#faf5ff', accent_text: '#fde047',
           font: '"Bebas Neue", sans-serif',
@@ -775,7 +775,7 @@ applyLanguage(detectLanguage());
           titleGradient: ['#fde047', '#ec4899', '#a855f7'] },
         { slug: 'redline',
           display: 'Redline Roulette',
-          subtitle: 'Burn de drift, garage japonais et moteur V8.',
+          subtitle: 'À vos marques... Prêt... Partez !',
           bg: '#0a0e1a', accent1: '#ff2e63', accent2: '#00f0ff',
           text: '#ffffff', accent_text: '#ffe600',
           font: '"Audiowide", sans-serif',

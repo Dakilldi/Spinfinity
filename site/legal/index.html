@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title data-i18n="meta.title">Spinfinity — Mentions légales & Confidentialité</title>
+<meta name="description" content="Mentions légales, politique de confidentialité, gestion des cookies et conformité RGPD pour spinfinity.app." data-i18n-attr="content" data-i18n="meta.description">
+<meta name="theme-color" content="#0a0a14">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://spinfinity.app/legal/">
+<link rel="alternate" hreflang="fr" href="https://spinfinity.app/legal/">
+<link rel="alternate" hreflang="en" href="https://spinfinity.app/legal/?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://spinfinity.app/legal/">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+:root {
+    --bg-1: #0a0a14;
+    --text: #ffffff;
+    --text-dim: #d4cce0;
+    --text-faded: #8a809f;
+    --purple: #a855f7;
+    --pink: #ec4899;
+    --gold: #fde047;
+    --cyan: #00f0ff;
+    --green: #22c55e;
+    --border-glass: rgba(255,255,255,0.08);
+    --bg-glass: rgba(255,255,255,0.04);
+}
+body {
+    font-family: 'Manrope', system-ui, sans-serif;
+    color: var(--text);
+    background: var(--bg-1);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+}
+body::before {
+    content: ''; position: fixed; inset: 0;
+    background:
+        radial-gradient(circle at 12% 8%, rgba(168,85,247,0.20) 0%, transparent 45%),
+        radial-gradient(circle at 88% 25%, rgba(236,72,153,0.16) 0%, transparent 50%),
+        radial-gradient(circle at 50% 90%, rgba(0,240,255,0.12) 0%, transparent 55%),
+        var(--bg-1);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ---------- HEADER ---------- */
+.top-bar {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 24px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    background: rgba(10,10,20,0.65);
+    border-bottom: 1px solid var(--border-glass);
+}
+.back-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 14px; font-weight: 600;
+    transition: background .2s, color .2s, transform .15s;
+}
+.back-link:hover { background: rgba(168,85,247,0.18); color: var(--text); transform: translateX(-2px); }
+.back-link svg { width: 16px; height: 16px; }
+.brand {
+    font-size: 20px; font-weight: 800;
+    background: linear-gradient(135deg, #fff, var(--purple), var(--pink));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    letter-spacing: -0.01em;
+}
+.lang-switch { display: flex; gap: 4px; }
+.lang-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: transparent;
+    border: 1px solid var(--border-glass);
+    color: var(--text-faded);
+    font-size: 12px; font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    transition: background .2s, color .2s;
+}
+.lang-btn.active { background: var(--text); color: var(--bg-1); border-color: var(--text); }
+
+/* ---------- HERO ---------- */
+.hero {
+    text-align: center;
+    padding: 70px 24px 30px;
+    max-width: 800px; margin: 0 auto;
+    animation: fadeInUp 0.6s ease-out both;
+}
+.hero-eyebrow {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(34,197,94,0.12);
+    border: 1px solid rgba(34,197,94,0.35);
+    color: var(--green);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    margin-bottom: 18px;
+}
+.hero h1 {
+    font-size: clamp(30px, 4.6vw, 46px);
+    font-weight: 800;
+    margin: 0 0 16px;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+}
+.hero h1 .accent {
+    background: linear-gradient(135deg, var(--green), var(--cyan), var(--purple));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero p {
+    color: var(--text-dim);
+    font-size: clamp(14px, 1.8vw, 16px);
+    max-width: 620px; margin: 0 auto;
+}
+.hero .updated {
+    margin-top: 14px;
+    color: var(--text-faded);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+}
+
+/* ---------- TOC ---------- */
+.toc {
+    max-width: 900px;
+    margin: 30px auto 0;
+    padding: 0 24px;
+}
+.toc-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px;
+    border-radius: 14px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+}
+.toc a {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: rgba(168,85,247,0.10);
+    border: 1px solid rgba(168,85,247,0.25);
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 12.5px; font-weight: 600;
+    transition: background .2s, color .2s, border-color .2s;
+}
+.toc a:hover { background: rgba(168,85,247,0.22); color: var(--text); border-color: var(--purple); }
+.toc-num { font-size: 10px; opacity: 0.6; }
+
+/* ---------- SECTIONS ---------- */
+.legal-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px;
+}
+.legal-section h2 {
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 800;
+    margin: 0 0 6px;
+    letter-spacing: -0.015em;
+    display: flex; align-items: center; gap: 14px;
+}
+.section-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    color: #fff;
+    font-size: 15px; font-weight: 800;
+    letter-spacing: 0;
+}
+.legal-section .lead {
+    color: var(--text-faded);
+    font-size: 14px;
+    margin: 0 0 24px 50px;
+    letter-spacing: 0.01em;
+}
+.legal-section h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 26px 0 8px;
+    color: var(--text);
+}
+.legal-section p,
+.legal-section ul,
+.legal-section ol {
+    color: var(--text-dim);
+    font-size: 14.5px;
+    margin: 8px 0;
+}
+.legal-section ul, .legal-section ol { padding-left: 22px; }
+.legal-section li { margin-bottom: 4px; }
+.legal-section strong { color: var(--text); font-weight: 700; }
+.legal-section a { color: var(--cyan); text-decoration: none; border-bottom: 1px dashed rgba(0,240,255,0.4); transition: color .2s, border-color .2s; }
+.legal-section a:hover { color: var(--text); border-color: var(--text); }
+.legal-section code {
+    background: rgba(0,240,255,0.08);
+    border: 1px solid rgba(0,240,255,0.18);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: ui-monospace, SF Mono, monospace;
+    font-size: 13px;
+    color: var(--cyan);
+}
+
+/* ---------- INFO CARD (key facts) ---------- */
+.info-card {
+    border-radius: 14px;
+    padding: 18px 20px;
+    background: linear-gradient(135deg, rgba(34,197,94,0.10), rgba(168,85,247,0.05));
+    border: 1px solid rgba(34,197,94,0.30);
+    margin: 18px 0 8px 50px;
+}
+.info-card .row {
+    display: flex; gap: 12px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 13.5px;
+}
+.info-card .row:last-child { border-bottom: none; }
+.info-card .label { flex: 0 0 130px; color: var(--text-faded); font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; font-size: 11px; padding-top: 2px; }
+.info-card .value { flex: 1; color: var(--text); font-weight: 500; word-break: break-word; }
+.info-card .value.placeholder { color: var(--gold); font-style: italic; }
+
+/* ---------- FOOTER ---------- */
+.cta-footer {
+    text-align: center;
+    padding: 50px 24px 80px;
+    max-width: 800px; margin: 0 auto;
+}
+.cta-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 28px;
+    border-radius: 999px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    color: var(--text-dim);
+    text-decoration: none;
+    font-weight: 600; font-size: 14px;
+    transition: background .2s, color .2s, transform .15s;
+}
+.cta-btn:hover { background: rgba(168,85,247,0.18); color: var(--text); transform: translateY(-2px); }
+.cta-btn svg { width: 16px; height: 16px; }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .hero { animation: none; }
+    .cta-btn:hover { transform: none; }
+}
+
+@media (max-width: 600px) {
+    .legal-section h2 { font-size: 22px; }
+    .legal-section .lead { margin-left: 0; }
+    .info-card { margin-left: 0; }
+    .info-card .row { flex-direction: column; gap: 2px; }
+    .info-card .label { flex: none; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="ic-back" viewBox="0 0 24 24">
+      <path d="M14 6 L8 12 L14 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="ic-arrow" viewBox="0 0 24 24">
+      <path d="M5 12 L19 12 M13 6 L19 12 L13 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </defs>
+</svg>
+</head>
+<body>
+
+<header class="top-bar">
+    <a href="../" class="back-link" data-testid="back-home">
+        <svg><use href="#ic-back"/></svg>
+        <span data-i18n="nav.home">Accueil</span>
+    </a>
+    <div class="brand">Spinfinity</div>
+    <div class="lang-switch">
+        <button class="lang-btn" data-lang="fr" data-testid="lang-fr">FR</button>
+        <button class="lang-btn" data-lang="en" data-testid="lang-en">EN</button>
+    </div>
+</header>
+
+<section class="hero">
+    <span class="hero-eyebrow" data-i18n="hero.eyebrow">Transparent par défaut</span>
+    <h1>
+        <span data-i18n="hero.title.start">Mentions légales et</span>
+        <span class="accent" data-i18n="hero.title.accent">confidentialité</span>
+    </h1>
+    <p data-i18n="hero.lead">Spinfinity ne collecte pas tes listes, ne te traque pas et fonctionne 100% dans ton navigateur. Voici tout ce que tu dois savoir, sans bla-bla juridique inutile.</p>
+    <div class="updated"><span data-i18n="hero.updated">Dernière mise à jour : février 2026</span></div>
+</section>
+
+<nav class="toc" aria-label="Table des matières">
+    <div class="toc-inner">
+        <a href="#publisher"><span class="toc-num">01</span> <span data-i18n="toc.publisher">Éditeur</span></a>
+        <a href="#hosting"><span class="toc-num">02</span> <span data-i18n="toc.hosting">Hébergement</span></a>
+        <a href="#privacy"><span class="toc-num">03</span> <span data-i18n="toc.privacy">Données personnelles</span></a>
+        <a href="#cookies"><span class="toc-num">04</span> <span data-i18n="toc.cookies">Cookies</span></a>
+        <a href="#adsense"><span class="toc-num">05</span> <span data-i18n="toc.adsense">Publicité Google</span></a>
+        <a href="#rights"><span class="toc-num">06</span> <span data-i18n="toc.rights">Tes droits RGPD</span></a>
+        <a href="#ip"><span class="toc-num">07</span> <span data-i18n="toc.ip">Propriété intellectuelle</span></a>
+        <a href="#contact"><span class="toc-num">08</span> <span data-i18n="toc.contact">Contact</span></a>
+    </div>
+</nav>
+
+<!-- 1. Publisher -->
+<section class="legal-section" id="publisher">
+    <h2><span class="section-num">1</span> <span data-i18n="s1.title">Éditeur du site</span></h2>
+    <p class="lead" data-i18n="s1.lead">Qui est responsable de spinfinity.app.</p>
+    <div class="info-card">
+        <div class="row"><div class="label" data-i18n="s1.k.publisher">Éditeur</div><div class="value placeholder">[À compléter — nom / raison sociale]</div></div>
+        <div class="row"><div class="label" data-i18n="s1.k.status">Statut</div><div class="value placeholder">[Particulier / Auto-entrepreneur / SAS / SARL...]</div></div>
+        <div class="row"><div class="label" data-i18n="s1.k.address">Adresse</div><div class="value placeholder">[Adresse postale ou pays de résidence]</div></div>
+        <div class="row"><div class="label" data-i18n="s1.k.contact">Contact</div><div class="value placeholder">[email@spinfinity.app]</div></div>
+        <div class="row"><div class="label" data-i18n="s1.k.director">Directeur de publication</div><div class="value placeholder">[Prénom Nom]</div></div>
+    </div>
+    <p data-i18n="s1.note"><strong>Note :</strong> remplace les valeurs en italique doré ci-dessus par tes informations réelles avant la mise en ligne définitive.</p>
+</section>
+
+<!-- 2. Hosting -->
+<section class="legal-section" id="hosting">
+    <h2><span class="section-num">2</span> <span data-i18n="s2.title">Hébergement</span></h2>
+    <p class="lead" data-i18n="s2.lead">Où vivent les fichiers HTML/CSS/JS de spinfinity.app.</p>
+    <div class="info-card">
+        <div class="row"><div class="label" data-i18n="s2.k.host">Hébergeur</div><div class="value">Vercel Inc.</div></div>
+        <div class="row"><div class="label" data-i18n="s2.k.address">Adresse</div><div class="value">340 S Lemon Ave #4133, Walnut, CA 91789, USA</div></div>
+        <div class="row"><div class="label" data-i18n="s2.k.web">Site web</div><div class="value"><a href="https://vercel.com" target="_blank" rel="noopener">vercel.com</a></div></div>
+        <div class="row"><div class="label" data-i18n="s2.k.privacy">Politique</div><div class="value"><a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener" data-i18n="s2.k.privacy.link">Politique de confidentialité Vercel</a></div></div>
+    </div>
+    <p data-i18n="s2.note">Si tu changes d'hébergeur (Netlify, GitHub Pages, Cloudflare Pages, etc.), pense à mettre à jour cette section.</p>
+</section>
+
+<!-- 3. Privacy -->
+<section class="legal-section" id="privacy">
+    <h2><span class="section-num">3</span> <span data-i18n="s3.title">Données personnelles</span></h2>
+    <p class="lead" data-i18n="s3.lead">Ce que Spinfinity collecte (spoiler : rien sur nos serveurs).</p>
+
+    <h3 data-i18n="s3.collected.title">Ce que nous ne collectons pas</h3>
+    <p data-i18n="s3.collected.desc">Spinfinity est un site <strong>100% statique</strong>. Toutes les fonctionnalités — saisie de noms, tirage au sort, animation, génération de la vidéo replay, partage — s'exécutent <strong>localement dans ton navigateur</strong>. Aucune liste de participants, aucun nom de gagnant, aucune vidéo n'est jamais envoyé sur un serveur Spinfinity.</p>
+    <ul>
+        <li data-i18n="s3.collected.li1"><strong>Listes de participants</strong> : restent dans la mémoire de l'onglet, supprimées dès la fermeture.</li>
+        <li data-i18n="s3.collected.li2"><strong>Lots saisis</strong> : idem, jamais transmis.</li>
+        <li data-i18n="s3.collected.li3"><strong>Vidéo replay</strong> : générée à la volée par ton navigateur (<code>MediaRecorder API</code>). Téléchargée ou partagée uniquement à ta demande.</li>
+        <li data-i18n="s3.collected.li4"><strong>Aucun compte utilisateur</strong>, aucun email demandé, aucune authentification.</li>
+    </ul>
+
+    <h3 data-i18n="s3.local.title">Données stockées localement (localStorage)</h3>
+    <p data-i18n="s3.local.desc">Pour améliorer ton expérience, nous utilisons le <strong>localStorage</strong> de ton navigateur (équivalent à des préférences locales). Ces données ne quittent jamais ton appareil :</p>
+    <ul>
+        <li data-i18n="s3.local.li1"><code>spinfinity-lang</code> — ta langue préférée (FR ou EN)</li>
+        <li data-i18n="s3.local.li2"><code>spinfinity-corporate-title</code> — titre personnalisé du thème Corporate, si tu l'édites</li>
+        <li data-i18n="s3.local.li3"><code>spinfinity-{theme}-keep-pool</code> — état de la case « Garder les gagnants » par thème</li>
+    </ul>
+    <p data-i18n="s3.local.delete">Pour les supprimer : vide le localStorage de spinfinity.app dans les paramètres de ton navigateur (Outils de développement → Application → Storage), ou désinstalle simplement l'onglet.</p>
+
+    <h3 data-i18n="s3.logs.title">Logs serveur de l'hébergeur</h3>
+    <p data-i18n="s3.logs.desc">Notre hébergeur (Vercel) peut conserver pendant une courte durée des logs techniques anonymisés (adresse IP, user-agent, page visitée) pour des raisons de sécurité et de performance. Ces données sont gérées par Vercel selon sa propre politique de confidentialité.</p>
+</section>
+
+<!-- 4. Cookies -->
+<section class="legal-section" id="cookies">
+    <h2><span class="section-num">4</span> <span data-i18n="s4.title">Cookies</span></h2>
+    <p class="lead" data-i18n="s4.lead">Quels cookies sont posés et pourquoi.</p>
+
+    <h3 data-i18n="s4.necessary.title">Cookies strictement nécessaires</h3>
+    <p data-i18n="s4.necessary.desc"><strong>Aucun</strong>. Spinfinity n'utilise pas de cookies HTTP pour son fonctionnement de base. Les préférences (langue, titre Corporate, options de tirage) sont stockées via <code>localStorage</code>, qui n'est pas un cookie au sens technique et ne suit pas l'utilisateur entre sites.</p>
+
+    <h3 data-i18n="s4.advertising.title">Cookies publicitaires (Google AdSense)</h3>
+    <p data-i18n="s4.advertising.desc">Spinfinity affiche des publicités via <strong>Google AdSense</strong>. Google peut déposer des cookies tiers sur ton appareil pour personnaliser les annonces, mesurer leur efficacité et limiter leur fréquence. Ces cookies sont gérés par Google selon ses propres règles.</p>
+    <ul>
+        <li data-i18n="s4.advertising.li1">Tu peux gérer tes préférences publicitaires Google ici : <a href="https://adssettings.google.com" target="_blank" rel="noopener">adssettings.google.com</a></li>
+        <li data-i18n="s4.advertising.li2">Pour te désabonner des cookies tiers : <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener">aboutads.info/choices</a> (US) ou <a href="https://www.youronlinechoices.com/" target="_blank" rel="noopener">youronlinechoices.com</a> (EU)</li>
+    </ul>
+</section>
+
+<!-- 5. AdSense / Advertising -->
+<section class="legal-section" id="adsense">
+    <h2><span class="section-num">5</span> <span data-i18n="s5.title">Publicité Google AdSense</span></h2>
+    <p class="lead" data-i18n="s5.lead">Comment Spinfinity finance son hébergement gratuit.</p>
+    <p data-i18n="s5.p1">Spinfinity est un service gratuit financé par la publicité affichée via <strong>Google AdSense</strong>, un service tiers fourni par Google LLC.</p>
+    <p data-i18n="s5.p2">Google, en tant que fournisseur tiers, utilise des cookies pour diffuser des annonces sur Spinfinity. L'utilisation par Google des cookies <strong>DoubleClick DART</strong> permet à Google et à ses partenaires de diffuser des annonces basées sur tes visites sur ce site et/ou d'autres sites Internet.</p>
+    <p data-i18n="s5.p3">Tu peux choisir de désactiver l'utilisation du cookie DART en consultant la <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener" data-i18n="s5.policy.link">politique de confidentialité Google relative aux annonces</a>.</p>
+    <p data-i18n="s5.p4"><strong>Spinfinity ne partage avec Google AdSense aucune liste de noms, aucun lot saisi, aucune vidéo générée.</strong> Seuls les paramètres techniques standards (page visitée, contexte, langue) sont transmis pour la diffusion des annonces.</p>
+</section>
+
+<!-- 6. Rights -->
+<section class="legal-section" id="rights">
+    <h2><span class="section-num">6</span> <span data-i18n="s6.title">Tes droits (RGPD)</span></h2>
+    <p class="lead" data-i18n="s6.lead">Conformément au Règlement Général sur la Protection des Données (UE 2016/679).</p>
+    <p data-i18n="s6.intro">Étant donné que Spinfinity ne collecte aucune donnée personnelle sur ses serveurs, la plupart de ces droits sont déjà respectés par défaut. Tu disposes néanmoins des droits suivants :</p>
+    <ul>
+        <li data-i18n="s6.li1"><strong>Droit d'accès</strong> : aucune donnée à fournir, puisqu'aucune n'est stockée côté serveur.</li>
+        <li data-i18n="s6.li2"><strong>Droit de rectification</strong> : sans objet.</li>
+        <li data-i18n="s6.li3"><strong>Droit à l'effacement</strong> : vide le localStorage de ton navigateur pour supprimer les préférences locales.</li>
+        <li data-i18n="s6.li4"><strong>Droit d'opposition</strong> : tu peux désactiver les cookies tiers (Google AdSense) via les liens fournis section 4.</li>
+        <li data-i18n="s6.li5"><strong>Droit à la portabilité</strong> : tes listes restent dans ton navigateur, donc déjà entre tes mains.</li>
+        <li data-i18n="s6.li6"><strong>Droit de plainte</strong> : tu peux contacter la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>) ou l'autorité de protection des données de ton pays.</li>
+    </ul>
+</section>
+
+<!-- 7. IP -->
+<section class="legal-section" id="ip">
+    <h2><span class="section-num">7</span> <span data-i18n="s7.title">Propriété intellectuelle</span></h2>
+    <p class="lead" data-i18n="s7.lead">Qui possède quoi.</p>
+    <p data-i18n="s7.p1">L'ensemble du contenu de spinfinity.app (design, code, illustrations, animations, textes, identité visuelle Spinfinity) est protégé par le droit d'auteur et reste la propriété exclusive de l'éditeur. Toute reproduction, diffusion ou exploitation non autorisée est interdite.</p>
+    <p data-i18n="s7.p2">Les marques tierces mentionnées (TikTok, Instagram, Facebook, Google, Vercel, etc.) appartiennent à leurs propriétaires respectifs et ne sont citées qu'à titre informatif.</p>
+    <p data-i18n="s7.p3">Les listes de participants et lots que tu saisis dans Spinfinity restent <strong>ta propriété exclusive</strong> ; aucun droit n'est cédé à Spinfinity sur ces données.</p>
+</section>
+
+<!-- 8. Contact -->
+<section class="legal-section" id="contact">
+    <h2><span class="section-num">8</span> <span data-i18n="s8.title">Contact</span></h2>
+    <p class="lead" data-i18n="s8.lead">Pour toute question juridique, RGPD ou bug critique.</p>
+    <div class="info-card">
+        <div class="row"><div class="label" data-i18n="s8.k.email">Email</div><div class="value placeholder">[email@spinfinity.app]</div></div>
+        <div class="row"><div class="label" data-i18n="s8.k.delay">Délai de réponse</div><div class="value" data-i18n="s8.k.delay.value">Sous 30 jours pour les demandes RGPD.</div></div>
+    </div>
+</section>
+
+<section class="cta-footer">
+    <a href="../" class="cta-btn" data-testid="cta-back-home">
+        <span data-i18n="cta.back">Retour à l'accueil</span>
+        <svg><use href="#ic-arrow"/></svg>
+    </a>
+</section>
+
+<script>
+const I18N = {
+    fr: {
+        'meta.title':       'Spinfinity — Mentions légales & Confidentialité',
+        'meta.description': 'Mentions légales, politique de confidentialité, gestion des cookies et conformité RGPD pour spinfinity.app.',
+        'nav.home':         'Accueil',
+        'hero.eyebrow':     'Transparent par défaut',
+        'hero.title.start': 'Mentions légales et',
+        'hero.title.accent':'confidentialité',
+        'hero.lead':        "Spinfinity ne collecte pas tes listes, ne te traque pas et fonctionne 100% dans ton navigateur. Voici tout ce que tu dois savoir, sans bla-bla juridique inutile.",
+        'hero.updated':     'Dernière mise à jour : février 2026',
+        'toc.publisher':    'Éditeur',
+        'toc.hosting':      'Hébergement',
+        'toc.privacy':      'Données personnelles',
+        'toc.cookies':      'Cookies',
+        'toc.adsense':      'Publicité Google',
+        'toc.rights':       'Tes droits RGPD',
+        'toc.ip':           'Propriété intellectuelle',
+        'toc.contact':      'Contact',
+        's1.title':         'Éditeur du site',
+        's1.lead':          'Qui est responsable de spinfinity.app.',
+        's1.k.publisher':   'Éditeur',
+        's1.k.status':      'Statut',
+        's1.k.address':     'Adresse',
+        's1.k.contact':     'Contact',
+        's1.k.director':    'Directeur de publication',
+        's1.note':          "Note : remplace les valeurs en italique doré ci-dessus par tes informations réelles avant la mise en ligne définitive.",
+        's2.title':         'Hébergement',
+        's2.lead':          'Où vivent les fichiers HTML/CSS/JS de spinfinity.app.',
+        's2.k.host':        'Hébergeur',
+        's2.k.address':     'Adresse',
+        's2.k.web':         'Site web',
+        's2.k.privacy':     'Politique',
+        's2.k.privacy.link':'Politique de confidentialité Vercel',
+        's2.note':          "Si tu changes d'hébergeur (Netlify, GitHub Pages, Cloudflare Pages, etc.), pense à mettre à jour cette section.",
+        's3.title':         'Données personnelles',
+        's3.lead':          'Ce que Spinfinity collecte (spoiler : rien sur nos serveurs).',
+        's3.collected.title':'Ce que nous ne collectons pas',
+        's3.collected.desc':"Spinfinity est un site <strong>100% statique</strong>. Toutes les fonctionnalités — saisie de noms, tirage au sort, animation, génération de la vidéo replay, partage — s'exécutent <strong>localement dans ton navigateur</strong>. Aucune liste de participants, aucun nom de gagnant, aucune vidéo n'est jamais envoyé sur un serveur Spinfinity.",
+        's3.collected.li1': "<strong>Listes de participants</strong> : restent dans la mémoire de l'onglet, supprimées dès la fermeture.",
+        's3.collected.li2': "<strong>Lots saisis</strong> : idem, jamais transmis.",
+        's3.collected.li3': "<strong>Vidéo replay</strong> : générée à la volée par ton navigateur (<code>MediaRecorder API</code>). Téléchargée ou partagée uniquement à ta demande.",
+        's3.collected.li4': "<strong>Aucun compte utilisateur</strong>, aucun email demandé, aucune authentification.",
+        's3.local.title':   'Données stockées localement (localStorage)',
+        's3.local.desc':    "Pour améliorer ton expérience, nous utilisons le <strong>localStorage</strong> de ton navigateur (équivalent à des préférences locales). Ces données ne quittent jamais ton appareil :",
+        's3.local.li1':     "<code>spinfinity-lang</code> — ta langue préférée (FR ou EN)",
+        's3.local.li2':     "<code>spinfinity-corporate-title</code> — titre personnalisé du thème Corporate, si tu l'édites",
+        's3.local.li3':     "<code>spinfinity-{theme}-keep-pool</code> — état de la case « Garder les gagnants » par thème",
+        's3.local.delete':  "Pour les supprimer : vide le localStorage de spinfinity.app dans les paramètres de ton navigateur (Outils de développement → Application → Storage), ou désinstalle simplement l'onglet.",
+        's3.logs.title':    "Logs serveur de l'hébergeur",
+        's3.logs.desc':     "Notre hébergeur (Vercel) peut conserver pendant une courte durée des logs techniques anonymisés (adresse IP, user-agent, page visitée) pour des raisons de sécurité et de performance. Ces données sont gérées par Vercel selon sa propre politique de confidentialité.",
+        's4.title':         'Cookies',
+        's4.lead':          'Quels cookies sont posés et pourquoi.',
+        's4.necessary.title':'Cookies strictement nécessaires',
+        's4.necessary.desc':"<strong>Aucun</strong>. Spinfinity n'utilise pas de cookies HTTP pour son fonctionnement de base. Les préférences (langue, titre Corporate, options de tirage) sont stockées via <code>localStorage</code>, qui n'est pas un cookie au sens technique et ne suit pas l'utilisateur entre sites.",
+        's4.advertising.title':'Cookies publicitaires (Google AdSense)',
+        's4.advertising.desc':"Spinfinity affiche des publicités via <strong>Google AdSense</strong>. Google peut déposer des cookies tiers sur ton appareil pour personnaliser les annonces, mesurer leur efficacité et limiter leur fréquence. Ces cookies sont gérés par Google selon ses propres règles.",
+        's4.advertising.li1':'Tu peux gérer tes préférences publicitaires Google ici : <a href="https://adssettings.google.com" target="_blank" rel="noopener">adssettings.google.com</a>',
+        's4.advertising.li2':'Pour te désabonner des cookies tiers : <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener">aboutads.info/choices</a> (US) ou <a href="https://www.youronlinechoices.com/" target="_blank" rel="noopener">youronlinechoices.com</a> (EU)',
+        's5.title':         'Publicité Google AdSense',
+        's5.lead':          'Comment Spinfinity finance son hébergement gratuit.',
+        's5.p1':            "Spinfinity est un service gratuit financé par la publicité affichée via <strong>Google AdSense</strong>, un service tiers fourni par Google LLC.",
+        's5.p2':            "Google, en tant que fournisseur tiers, utilise des cookies pour diffuser des annonces sur Spinfinity. L'utilisation par Google des cookies <strong>DoubleClick DART</strong> permet à Google et à ses partenaires de diffuser des annonces basées sur tes visites sur ce site et/ou d'autres sites Internet.",
+        's5.p3':            'Tu peux choisir de désactiver l\'utilisation du cookie DART en consultant la <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">politique de confidentialité Google relative aux annonces</a>.',
+        's5.policy.link':   'politique de confidentialité Google relative aux annonces',
+        's5.p4':            "<strong>Spinfinity ne partage avec Google AdSense aucune liste de noms, aucun lot saisi, aucune vidéo générée.</strong> Seuls les paramètres techniques standards (page visitée, contexte, langue) sont transmis pour la diffusion des annonces.",
+        's6.title':         'Tes droits (RGPD)',
+        's6.lead':          'Conformément au Règlement Général sur la Protection des Données (UE 2016/679).',
+        's6.intro':         "Étant donné que Spinfinity ne collecte aucune donnée personnelle sur ses serveurs, la plupart de ces droits sont déjà respectés par défaut. Tu disposes néanmoins des droits suivants :",
+        's6.li1':           "<strong>Droit d'accès</strong> : aucune donnée à fournir, puisqu'aucune n'est stockée côté serveur.",
+        's6.li2':           "<strong>Droit de rectification</strong> : sans objet.",
+        's6.li3':           "<strong>Droit à l'effacement</strong> : vide le localStorage de ton navigateur pour supprimer les préférences locales.",
+        's6.li4':           "<strong>Droit d'opposition</strong> : tu peux désactiver les cookies tiers (Google AdSense) via les liens fournis section 4.",
+        's6.li5':           "<strong>Droit à la portabilité</strong> : tes listes restent dans ton navigateur, donc déjà entre tes mains.",
+        's6.li6':           '<strong>Droit de plainte</strong> : tu peux contacter la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>) ou l\'autorité de protection des données de ton pays.',
+        's7.title':         'Propriété intellectuelle',
+        's7.lead':          'Qui possède quoi.',
+        's7.p1':            "L'ensemble du contenu de spinfinity.app (design, code, illustrations, animations, textes, identité visuelle Spinfinity) est protégé par le droit d'auteur et reste la propriété exclusive de l'éditeur. Toute reproduction, diffusion ou exploitation non autorisée est interdite.",
+        's7.p2':            "Les marques tierces mentionnées (TikTok, Instagram, Facebook, Google, Vercel, etc.) appartiennent à leurs propriétaires respectifs et ne sont citées qu'à titre informatif.",
+        's7.p3':            "Les listes de participants et lots que tu saisis dans Spinfinity restent <strong>ta propriété exclusive</strong> ; aucun droit n'est cédé à Spinfinity sur ces données.",
+        's8.title':         'Contact',
+        's8.lead':          'Pour toute question juridique, RGPD ou bug critique.',
+        's8.k.email':       'Email',
+        's8.k.delay':       'Délai de réponse',
+        's8.k.delay.value': 'Sous 30 jours pour les demandes RGPD.',
+        'cta.back':         "Retour à l'accueil"
+    },
+    en: {
+        'meta.title':       'Spinfinity — Legal notice & Privacy',
+        'meta.description': 'Legal notice, privacy policy, cookie management and GDPR compliance for spinfinity.app.',
+        'nav.home':         'Home',
+        'hero.eyebrow':     'Transparent by default',
+        'hero.title.start': 'Legal notice and',
+        'hero.title.accent':'privacy policy',
+        'hero.lead':        "Spinfinity does not collect your lists, does not track you, and runs 100% in your browser. Here is everything you need to know — without unnecessary legal jargon.",
+        'hero.updated':     'Last updated: February 2026',
+        'toc.publisher':    'Publisher',
+        'toc.hosting':      'Hosting',
+        'toc.privacy':      'Personal data',
+        'toc.cookies':      'Cookies',
+        'toc.adsense':      'Google ads',
+        'toc.rights':       'Your GDPR rights',
+        'toc.ip':           'Intellectual property',
+        'toc.contact':      'Contact',
+        's1.title':         'Site publisher',
+        's1.lead':          'Who is responsible for spinfinity.app.',
+        's1.k.publisher':   'Publisher',
+        's1.k.status':      'Status',
+        's1.k.address':     'Address',
+        's1.k.contact':     'Contact',
+        's1.k.director':    'Publication director',
+        's1.note':          "Note: replace the gold-italic placeholders above with your actual information before going live.",
+        's2.title':         'Hosting',
+        's2.lead':          "Where spinfinity.app's HTML/CSS/JS files live.",
+        's2.k.host':        'Host',
+        's2.k.address':     'Address',
+        's2.k.web':         'Website',
+        's2.k.privacy':     'Policy',
+        's2.k.privacy.link':'Vercel privacy policy',
+        's2.note':          "If you change host (Netlify, GitHub Pages, Cloudflare Pages, etc.), remember to update this section.",
+        's3.title':         'Personal data',
+        's3.lead':          'What Spinfinity collects (spoiler: nothing on our servers).',
+        's3.collected.title':'What we do not collect',
+        's3.collected.desc':"Spinfinity is a <strong>100% static site</strong>. All features — name input, draw, animation, replay video generation, sharing — run <strong>locally in your browser</strong>. No participant list, no winner name, no video is ever sent to a Spinfinity server.",
+        's3.collected.li1': "<strong>Participant lists</strong>: stay in the tab's memory, deleted as soon as you close it.",
+        's3.collected.li2': "<strong>Prizes</strong>: same — never transmitted.",
+        's3.collected.li3': "<strong>Replay video</strong>: generated on-the-fly by your browser (<code>MediaRecorder API</code>). Downloaded or shared only at your request.",
+        's3.collected.li4': "<strong>No user account</strong>, no email required, no authentication.",
+        's3.local.title':   'Data stored locally (localStorage)',
+        's3.local.desc':    "To improve your experience, we use your browser's <strong>localStorage</strong> (the equivalent of local preferences). This data never leaves your device:",
+        's3.local.li1':     "<code>spinfinity-lang</code> — your preferred language (FR or EN)",
+        's3.local.li2':     "<code>spinfinity-corporate-title</code> — custom Corporate theme title, if you edit it",
+        's3.local.li3':     "<code>spinfinity-{theme}-keep-pool</code> — state of the 'Keep winners' checkbox per theme",
+        's3.local.delete':  "To clear them: empty the localStorage of spinfinity.app in your browser's developer tools (Application → Storage), or just close the tab.",
+        's3.logs.title':    "Host server logs",
+        's3.logs.desc':     "Our host (Vercel) may briefly retain anonymized technical logs (IP address, user-agent, visited page) for security and performance reasons. This data is managed by Vercel under its own privacy policy.",
+        's4.title':         'Cookies',
+        's4.lead':          'Which cookies are set and why.',
+        's4.necessary.title':'Strictly necessary cookies',
+        's4.necessary.desc':"<strong>None</strong>. Spinfinity does not use HTTP cookies for its core functionality. Preferences (language, Corporate title, draw options) are stored in <code>localStorage</code>, which is not a cookie in the technical sense and does not track users across sites.",
+        's4.advertising.title':'Advertising cookies (Google AdSense)',
+        's4.advertising.desc':"Spinfinity displays ads via <strong>Google AdSense</strong>. Google may set third-party cookies on your device to personalize ads, measure their effectiveness and limit their frequency. These cookies are managed by Google under its own rules.",
+        's4.advertising.li1':'You can manage your Google ad preferences here: <a href="https://adssettings.google.com" target="_blank" rel="noopener">adssettings.google.com</a>',
+        's4.advertising.li2':'To opt out of third-party cookies: <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener">aboutads.info/choices</a> (US) or <a href="https://www.youronlinechoices.com/" target="_blank" rel="noopener">youronlinechoices.com</a> (EU)',
+        's5.title':         'Google AdSense advertising',
+        's5.lead':          'How Spinfinity funds its free hosting.',
+        's5.p1':            "Spinfinity is a free service funded by ads served via <strong>Google AdSense</strong>, a third-party service from Google LLC.",
+        's5.p2':            "Google, as a third-party vendor, uses cookies to serve ads on Spinfinity. Google's use of the <strong>DoubleClick DART</strong> cookie enables it and its partners to serve ads to users based on their visits to this site and/or other sites on the Internet.",
+        's5.p3':            'You may opt out of the use of the DART cookie by visiting the <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">Google ad and content network privacy policy</a>.',
+        's5.policy.link':   'Google ad and content network privacy policy',
+        's5.p4':            "<strong>Spinfinity does not share any name list, any prize, or any generated video with Google AdSense.</strong> Only standard technical parameters (page visited, context, language) are transmitted for ad serving.",
+        's6.title':         'Your rights (GDPR)',
+        's6.lead':          'In accordance with the General Data Protection Regulation (EU 2016/679).',
+        's6.intro':         "Since Spinfinity does not collect any personal data on its servers, most of these rights are already respected by default. You nonetheless have the following rights:",
+        's6.li1':           "<strong>Right of access</strong>: no data to provide, since none is stored server-side.",
+        's6.li2':           "<strong>Right of rectification</strong>: not applicable.",
+        's6.li3':           "<strong>Right to erasure</strong>: clear your browser's localStorage to remove local preferences.",
+        's6.li4':           "<strong>Right to object</strong>: you can disable third-party cookies (Google AdSense) via the links provided in section 4.",
+        's6.li5':           "<strong>Right to portability</strong>: your lists stay in your browser, so they are already in your hands.",
+        's6.li6':           '<strong>Right to lodge a complaint</strong>: you may contact the CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>) or the data protection authority of your country.',
+        's7.title':         'Intellectual property',
+        's7.lead':          'Who owns what.',
+        's7.p1':            "All content on spinfinity.app (design, code, illustrations, animations, copy, Spinfinity visual identity) is protected by copyright and remains the exclusive property of the publisher. Any unauthorized reproduction, distribution or exploitation is forbidden.",
+        's7.p2':            "Third-party trademarks mentioned (TikTok, Instagram, Facebook, Google, Vercel, etc.) belong to their respective owners and are cited for informational purposes only.",
+        's7.p3':            "The participant lists and prizes you input in Spinfinity remain <strong>your exclusive property</strong>; no rights are transferred to Spinfinity over this data.",
+        's8.title':         'Contact',
+        's8.lead':          'For any legal, GDPR or critical-bug question.',
+        's8.k.email':       'Email',
+        's8.k.delay':       'Response time',
+        's8.k.delay.value': 'Within 30 days for GDPR requests.',
+        'cta.back':         'Back to home'
+    }
+};
+
+function detectLanguage() {
+    const url = new URLSearchParams(location.search).get('lang');
+    if (url === 'fr' || url === 'en') return url;
+    const stored = localStorage.getItem('spinfinity-lang');
+    if (stored === 'fr' || stored === 'en') return stored;
+    return (navigator.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
+}
+
+function applyLanguage(lang) {
+    const dict = I18N[lang] || I18N.fr;
+    document.documentElement.lang = lang;
+    localStorage.setItem('spinfinity-lang', lang);
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        const attr = el.dataset.i18nAttr;
+        if (dict[key] !== undefined) {
+            if (attr) el.setAttribute(attr, dict[key]);
+            else el.innerHTML = dict[key];
+        }
+    });
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
+});
+
+applyLanguage(detectLanguage());
+</script>
+</body>
+</html>

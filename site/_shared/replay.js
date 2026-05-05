@@ -157,239 +157,92 @@ function getLang() {
     return I18N[nav] ? nav : 'fr';
 }
 
-/* ---------- Audio (synthesized soundtrack) ---------- */
+/* ---------- Audio (ticks only — synchronized with the wheel deceleration) ----------
+   The tick functions below are byte-for-byte copies of each theme's playTick(),
+   re-routed to a custom AudioNode destination so they can be captured by MediaRecorder
+   AND played live in the landing preview. */
 const ReplayAudio = {
-    /* ===== Helpers ===== */
-    _envOsc(ctx, dest, type, freq, when, dur, peakGain, freqEnd) {
-        const osc = ctx.createOscillator();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, when);
-        if (typeof freqEnd === 'number') {
-            osc.frequency.exponentialRampToValueAtTime(Math.max(20, freqEnd), when + dur);
-        }
-        const g = ctx.createGain();
-        g.gain.setValueAtTime(0.0001, when);
-        g.gain.exponentialRampToValueAtTime(peakGain, when + Math.min(0.02, dur * 0.15));
-        g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
-        osc.connect(g).connect(dest);
-        osc.start(when);
-        osc.stop(when + dur + 0.02);
-        return { osc, gain: g };
-    },
-    _noiseBuffer(ctx, dur, shape) {
-        const len = Math.max(1, Math.floor(ctx.sampleRate * dur));
-        const buf = ctx.createBuffer(1, len, ctx.sampleRate);
-        const data = buf.getChannelData(0);
-        for (let i = 0; i < len; i++) {
-            const t = i / len;
-            const env = shape ? shape(t) : (1 - t);
-            data[i] = (Math.random() * 2 - 1) * env;
-        }
-        return buf;
-    },
-
-    /* ===== Profiles: per-theme sound design ===== */
     profiles: {
-        /* --- Corporate: clean digital chime (kept as the original feel) --- */
-        corporate: {
-            tick(ctx, dest, when, idx, total) {
-                const ratio = total ? idx / total : 0;
-                const f = 1750 - ratio * 350;
-                ReplayAudio._envOsc(ctx, dest, 'square', f, when, 0.06, 0.07, f * 0.55);
-            },
-            lock(ctx, dest, when) {
-                ReplayAudio._envOsc(ctx, dest, 'sawtooth', 220, when, 0.32, 0.32, 80);
-            },
-            reveal(ctx, dest, when) {
-                const arp = [523.25, 659.25, 783.99, 1046.50];
-                arp.forEach((f, i) => ReplayAudio._envOsc(ctx, dest, 'triangle', f, when + i*0.075, 0.45, 0.18));
-                const chord = when + 0.30;
-                [523.25, 659.25, 783.99].forEach(f => ReplayAudio._envOsc(ctx, dest, 'sine', f, chord, 1.4, 0.13));
-            }
+        /* --- Redline: noise burst + triangle pluck (matches /redline/playTick) --- */
+        redline(ctx, dest, when) {
+            const dur = 0.05;
+            const len = Math.floor(ctx.sampleRate * dur);
+            const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+            const data = buf.getChannelData(0);
+            for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i/len, 0.7);
+            const noise = ctx.createBufferSource(); noise.buffer = buf;
+            const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2200; bp.Q.value = 5;
+            const nGain = ctx.createGain();
+            nGain.gain.setValueAtTime(0.0001, when);
+            nGain.gain.linearRampToValueAtTime(0.18, when + 0.001);
+            nGain.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+            const o = ctx.createOscillator(); o.type = 'triangle';
+            o.frequency.setValueAtTime(1600, when);
+            o.frequency.exponentialRampToValueAtTime(900, when + 0.025);
+            const oGain = ctx.createGain();
+            oGain.gain.setValueAtTime(0.0001, when);
+            oGain.gain.linearRampToValueAtTime(0.06, when + 0.001);
+            oGain.gain.exponentialRampToValueAtTime(0.0001, when + 0.03);
+            noise.connect(bp); bp.connect(nGain); nGain.connect(dest);
+            o.connect(oGain); oGain.connect(dest);
+            noise.start(when); noise.stop(when + dur);
+            o.start(when); o.stop(when + 0.035);
         },
-
-        /* --- Casino: coin tings + ka-ching jackpot --- */
-        casino: {
-            tick(ctx, dest, when, idx, total) {
-                // Bright metallic "ting" — coin clink
-                const ratio = total ? idx / total : 0;
-                const f = 2200 - ratio * 600;
-                ReplayAudio._envOsc(ctx, dest, 'sine', f, when, 0.08, 0.10);
-                // Subtle harmonic shimmer
-                ReplayAudio._envOsc(ctx, dest, 'triangle', f * 1.5, when, 0.05, 0.04);
-            },
-            lock(ctx, dest, when) {
-                // Heavy slot-reel lock + low thump
-                ReplayAudio._envOsc(ctx, dest, 'square', 180, when, 0.18, 0.30, 60);
-                ReplayAudio._envOsc(ctx, dest, 'sine', 90, when, 0.30, 0.25);
-            },
-            reveal(ctx, dest, when) {
-                // Ka-ching: A major chord cascade with metallic harmonics
-                const notes = [880, 1108.73, 1318.51, 1760];
-                notes.forEach((f, i) => {
-                    const t = when + i * 0.05;
-                    ReplayAudio._envOsc(ctx, dest, 'sine', f, t, 0.85, 0.18);
-                    ReplayAudio._envOsc(ctx, dest, 'triangle', f * 2.7, t, 0.45, 0.06);
-                });
-                // Coin shower noise tail
-                const noise = ctx.createBufferSource();
-                noise.buffer = ReplayAudio._noiseBuffer(ctx, 0.7, t => Math.pow(1 - t, 2.2));
-                const filt = ctx.createBiquadFilter();
-                filt.type = 'highpass'; filt.frequency.value = 3500;
-                const ng = ctx.createGain();
-                ng.gain.setValueAtTime(0.0001, when + 0.18);
-                ng.gain.exponentialRampToValueAtTime(0.12, when + 0.24);
-                ng.gain.exponentialRampToValueAtTime(0.0001, when + 0.85);
-                noise.connect(filt).connect(ng).connect(dest);
-                noise.start(when + 0.18); noise.stop(when + 0.95);
-                // Sustained low brass-ish chord under the cascade
-                [220, 277.18, 329.63].forEach(f => ReplayAudio._envOsc(ctx, dest, 'sawtooth', f, when + 0.25, 1.4, 0.05));
-            }
+        /* --- Casino: bright square tick (matches /casino/playTick) --- */
+        casino(ctx, dest, when) {
+            const dur = 0.04;
+            const o = ctx.createOscillator(); o.type = 'square';
+            o.frequency.setValueAtTime(1800, when);
+            o.frequency.exponentialRampToValueAtTime(900, when + dur);
+            const g = ctx.createGain();
+            g.gain.setValueAtTime(0.0001, when);
+            g.gain.linearRampToValueAtTime(0.05, when + 0.001);
+            g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+            o.connect(g); g.connect(dest);
+            o.start(when); o.stop(when + dur + 0.01);
         },
-
-        /* --- TV Show: snare ticks + applause + cheer --- */
-        tvshow: {
-            tick(ctx, dest, when, idx, total) {
-                // Short snare-like noise pop with a tonal core
-                const buf = ReplayAudio._noiseBuffer(ctx, 0.04, t => Math.pow(1 - t, 4));
-                const noise = ctx.createBufferSource();
-                noise.buffer = buf;
-                const filt = ctx.createBiquadFilter();
-                filt.type = 'highpass'; filt.frequency.value = 2200;
-                const g = ctx.createGain();
-                g.gain.setValueAtTime(0.0001, when);
-                g.gain.exponentialRampToValueAtTime(0.10, when + 0.003);
-                g.gain.exponentialRampToValueAtTime(0.0001, when + 0.04);
-                noise.connect(filt).connect(g).connect(dest);
-                noise.start(when); noise.stop(when + 0.05);
-                ReplayAudio._envOsc(ctx, dest, 'triangle', 1400, when, 0.03, 0.04);
-            },
-            lock(ctx, dest, when) {
-                // Drum hit + cymbal sizzle
-                ReplayAudio._envOsc(ctx, dest, 'sine', 110, when, 0.25, 0.32, 50);
-                const buf = ReplayAudio._noiseBuffer(ctx, 0.5, t => Math.pow(1 - t, 1.8));
-                const noise = ctx.createBufferSource();
-                noise.buffer = buf;
-                const filt = ctx.createBiquadFilter();
-                filt.type = 'highpass'; filt.frequency.value = 6000;
-                const g = ctx.createGain();
-                g.gain.setValueAtTime(0.0001, when);
-                g.gain.exponentialRampToValueAtTime(0.12, when + 0.005);
-                g.gain.exponentialRampToValueAtTime(0.0001, when + 0.5);
-                noise.connect(filt).connect(g).connect(dest);
-                noise.start(when); noise.stop(when + 0.55);
-            },
-            reveal(ctx, dest, when) {
-                // Modulated applause noise (~clap rate) + cheering whoops
-                const buf = ctx.createBuffer(1, ctx.sampleRate * 1.6, ctx.sampleRate);
-                const data = buf.getChannelData(0);
-                for (let i = 0; i < data.length; i++) {
-                    const t = i / ctx.sampleRate;
-                    const claps = Math.abs(Math.sin(t * 38 + Math.random() * 6)) * 0.7 + 0.3;
-                    data[i] = (Math.random() * 2 - 1) * claps;
-                }
-                const noise = ctx.createBufferSource();
-                noise.buffer = buf;
-                const filt = ctx.createBiquadFilter();
-                filt.type = 'bandpass'; filt.frequency.value = 2400; filt.Q.value = 0.6;
-                const g = ctx.createGain();
-                g.gain.setValueAtTime(0.0001, when);
-                g.gain.exponentialRampToValueAtTime(0.22, when + 0.18);
-                g.gain.linearRampToValueAtTime(0.20, when + 1.05);
-                g.gain.exponentialRampToValueAtTime(0.0001, when + 1.55);
-                noise.connect(filt).connect(g).connect(dest);
-                noise.start(when); noise.stop(when + 1.6);
-                // Cheer whoops
-                [800, 1050, 950].forEach((f, i) => {
-                    const t = when + 0.1 + i * 0.18;
-                    const osc = ctx.createOscillator();
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(f, t);
-                    osc.frequency.exponentialRampToValueAtTime(f * 1.4, t + 0.1);
-                    const og = ctx.createGain();
-                    og.gain.setValueAtTime(0.0001, t);
-                    og.gain.exponentialRampToValueAtTime(0.07, t + 0.03);
-                    og.gain.exponentialRampToValueAtTime(0.0001, t + 0.27);
-                    osc.connect(og).connect(dest);
-                    osc.start(t); osc.stop(t + 0.32);
-                });
-            }
+        /* --- TV Show: drum-like low triangle (matches /tvshow/playTick) --- */
+        tvshow(ctx, dest, when) {
+            const dur = 0.06;
+            const o = ctx.createOscillator(); o.type = 'triangle';
+            o.frequency.setValueAtTime(200, when);
+            o.frequency.exponentialRampToValueAtTime(80, when + dur);
+            const g = ctx.createGain();
+            g.gain.setValueAtTime(0.0001, when);
+            g.gain.linearRampToValueAtTime(0.09, when + 0.001);
+            g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+            o.connect(g); g.connect(dest);
+            o.start(when); o.stop(when + dur + 0.01);
         },
-
-        /* --- Redline: engine ticks + V8 rev --- */
-        redline: {
-            tick(ctx, dest, when, idx, total) {
-                // Short engine "blat" — low sawtooth pluck
-                const ratio = total ? idx / total : 0;
-                const f = 130 - ratio * 30;
-                ReplayAudio._envOsc(ctx, dest, 'sawtooth', f, when, 0.07, 0.16, f * 0.6);
-                // High harmonic click for engine bite
-                ReplayAudio._envOsc(ctx, dest, 'square', f * 6, when, 0.025, 0.04);
-            },
-            lock(ctx, dest, when) {
-                // Tire screech + engine cut
-                const noise = ctx.createBufferSource();
-                noise.buffer = ReplayAudio._noiseBuffer(ctx, 0.4, t => Math.sin(t * Math.PI) * (1 - t));
-                const filt = ctx.createBiquadFilter();
-                filt.type = 'bandpass'; filt.frequency.value = 3500; filt.Q.value = 4;
-                const g = ctx.createGain();
-                g.gain.setValueAtTime(0.0001, when);
-                g.gain.exponentialRampToValueAtTime(0.18, when + 0.05);
-                g.gain.exponentialRampToValueAtTime(0.0001, when + 0.4);
-                noise.connect(filt).connect(g).connect(dest);
-                noise.start(when); noise.stop(when + 0.45);
-                ReplayAudio._envOsc(ctx, dest, 'sawtooth', 90, when, 0.3, 0.28, 60);
-            },
-            reveal(ctx, dest, when) {
-                // V8 rev: bass thump + revving sawtooth + sustained idle
-                const bass = ctx.createOscillator();
-                bass.type = 'sawtooth';
-                bass.frequency.setValueAtTime(80, when);
-                bass.frequency.linearRampToValueAtTime(125, when + 0.25);
-                bass.frequency.linearRampToValueAtTime(85, when + 0.7);
-                bass.frequency.linearRampToValueAtTime(95, when + 1.6);
-                const bf = ctx.createBiquadFilter();
-                bf.type = 'lowpass'; bf.frequency.value = 280; bf.Q.value = 4;
-                const bg = ctx.createGain();
-                bg.gain.setValueAtTime(0.0001, when);
-                bg.gain.exponentialRampToValueAtTime(0.40, when + 0.05);
-                bg.gain.linearRampToValueAtTime(0.30, when + 1.0);
-                bg.gain.exponentialRampToValueAtTime(0.0001, when + 1.7);
-                bass.connect(bf).connect(bg).connect(dest);
-                bass.start(when); bass.stop(when + 1.75);
-                // Mid rev layer
-                const rev = ctx.createOscillator();
-                rev.type = 'sawtooth';
-                rev.frequency.setValueAtTime(180, when + 0.05);
-                rev.frequency.exponentialRampToValueAtTime(420, when + 0.4);
-                rev.frequency.exponentialRampToValueAtTime(220, when + 1.2);
-                const rf = ctx.createBiquadFilter();
-                rf.type = 'lowpass'; rf.frequency.value = 900; rf.Q.value = 2;
-                const rg = ctx.createGain();
-                rg.gain.setValueAtTime(0.0001, when);
-                rg.gain.exponentialRampToValueAtTime(0.18, when + 0.12);
-                rg.gain.exponentialRampToValueAtTime(0.0001, when + 1.5);
-                rev.connect(rf).connect(rg).connect(dest);
-                rev.start(when); rev.stop(when + 1.55);
-            }
+        /* --- Corporate: soft sine wooden tick (matches /corporate/playTick) --- */
+        corporate(ctx, dest, when) {
+            const dur = 0.04;
+            const o = ctx.createOscillator(); o.type = 'sine';
+            o.frequency.setValueAtTime(1800, when);
+            o.frequency.exponentialRampToValueAtTime(1100, when + dur);
+            const g = ctx.createGain();
+            g.gain.setValueAtTime(0.0001, when);
+            g.gain.linearRampToValueAtTime(0.035, when + 0.001);
+            g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+            o.connect(g); g.connect(dest);
+            o.start(when); o.stop(when + dur + 0.01);
         }
     },
 
     /**
-     * Schedule the full soundtrack relative to `audioStart` (audioCtx clock).
-     * profileSlug picks a theme-specific sound design. Falls back to corporate.
+     * Schedule the spin tick soundtrack. No lock-clunk, no reveal sound.
+     * The ticks fire on every integer step boundary of the wheel, using the
+     * same easeOut profile as the visual deceleration.
      */
     scheduleSoundtrack(ctx, dest, T_INTRO, T_SPIN, totalSpinSteps, audioStart, profileSlug) {
-        const profile = this.profiles[profileSlug] || this.profiles.corporate;
+        const tick = this.profiles[profileSlug] || this.profiles.corporate;
         const total = Math.max(1, totalSpinSteps);
         for (let k = 1; k <= total; k++) {
             const targetEased = k / total;
             const pt = 1 - Math.pow(1 - targetEased, 1/5);
             const tMs = T_INTRO + pt * T_SPIN;
-            profile.tick(ctx, dest, audioStart + tMs / 1000, k, total);
+            tick(ctx, dest, audioStart + tMs / 1000);
         }
-        profile.lock(ctx, dest, audioStart + (T_INTRO + T_SPIN) / 1000);
-        profile.reveal(ctx, dest, audioStart + (T_INTRO + T_SPIN + 80) / 1000);
     }
 };
 

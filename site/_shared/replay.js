@@ -594,7 +594,9 @@ class ReplayRecorder {
         const labelY = hasPrize ? 945 : 990;
         const nameY = hasPrize ? 1015 : 1080;
         const dict = I18N[this.lang];
-        const labelText = dict.revealLabel;
+        const themeLabels = theme.labels && theme.labels[this.lang];
+        const labelText = (themeLabels && themeLabels.revealLabel) || dict.revealLabel;
+        const prizeLabelText = (themeLabels && themeLabels.prizeLabel) || dict.prizeLabel;
 
         ctx.save();
         ctx.globalAlpha = Math.min(1, rt * 1.8);
@@ -628,11 +630,11 @@ class ReplayRecorder {
                 ctx.save();
                 ctx.globalAlpha = prizeAlpha;
 
-                // "WINS" label
+                // "WINS" label (or theme override, e.g. TV Show: "Félicitations, tu as gagné")
                 ctx.font = '700 18px "Manrope", system-ui, sans-serif';
                 ctx.textAlign = 'center';
                 ctx.fillStyle = theme.text;
-                ctx.fillText(dict.prizeLabel, W/2, 1075);
+                ctx.fillText(prizeLabelText, W/2, 1075);
 
                 // Prize pill
                 ctx.font = '700 28px ' + theme.font;

@@ -495,6 +495,38 @@ footer {
 .foot-links a:hover {
     color: var(--text);
 }
+.help-cta {
+    display: flex;
+    justify-content: center;
+    margin: 50px auto 0;
+    animation: fadeInUp 0.9s ease-out 0.4s both;
+}
+.help-cta a {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 26px;
+    border-radius: 999px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 14.5px; font-weight: 600;
+    transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s, box-shadow 0.25s;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+.help-cta a:hover {
+    background: rgba(168,85,247,0.15);
+    border-color: rgba(168,85,247,0.55);
+    color: var(--text);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(168,85,247,0.18);
+}
+.help-cta svg {
+    width: 18px; height: 18px;
+    color: var(--purple);
+    transition: transform 0.2s;
+}
+.help-cta a:hover svg { transform: translateX(3px); }
 
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 900px) {
@@ -643,6 +675,17 @@ footer {
 
     </section>
 
+    <div class="help-cta">
+        <a href="./help/" data-testid="help-link" data-i18n-attr="aria-label" data-i18n="help.aria">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <span data-i18n="help.cta">Comment ça marche ?</span>
+        </a>
+    </div>
+
 </main>
 
 <!-- FOOTER -->
@@ -673,6 +716,8 @@ const I18N = {
         'preview.title.start': 'Une vidéo verticale prête pour',
         'preview.title.accent':'TikTok, Reels & Stories',
         'preview.cta':         'Choisis un thème, tire au sort, partage en 1 clic.',
+        'help.cta':            'Comment ça marche ?',
+        'help.aria':           "Voir la page d'explication",
         'theme.casino.desc':   'Ambiance Las Vegas, néons dorés et jackpots.',
         'theme.tvshow.desc':   'Studio télé, spots lumière et grand spectacle.',
         'theme.redline.desc':  'Burn de drift, garage japonais et moteur V8.',
@@ -691,6 +736,8 @@ const I18N = {
         'preview.title.start': 'A vertical video ready for',
         'preview.title.accent':'TikTok, Reels & Stories',
         'preview.cta':         'Pick a theme, draw a winner, share in 1 click.',
+        'help.cta':            'How does it work?',
+        'help.aria':           'See the explanation page',
         'theme.casino.desc':   'Las Vegas vibes, golden neon and jackpots.',
         'theme.tvshow.desc':   'TV studio, spotlights and big show energy.',
         'theme.redline.desc':  'Drift burnouts, Japanese garage and V8 engine.',
@@ -772,7 +819,11 @@ applyLanguage(detectLanguage());
           text: '#faf5ff', accent_text: '#fde047',
           font: '"Bebas Neue", sans-serif',
           titleShadow: '#a855f7',
-          titleGradient: ['#fde047', '#ec4899', '#a855f7'] },
+          titleGradient: ['#fde047', '#ec4899', '#a855f7'],
+          labels: {
+              fr: { prizeLabel: 'Félicitations, tu as gagné' },
+              en: { prizeLabel: 'Congratulations, you won' }
+          } },
         { slug: 'redline',
           display: 'Redline Roulette',
           subtitle: 'À vos marques... Prêt... Partez !',

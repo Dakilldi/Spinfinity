@@ -912,7 +912,11 @@ const THEME_CONFIG = {
     accent_text: '#fde047',
     font: '"Bebas Neue", sans-serif',
     titleShadow: '#a855f7',
-    titleGradient: ['#fde047', '#ec4899', '#a855f7']
+    titleGradient: ['#fde047', '#ec4899', '#a855f7'],
+    labels: {
+        fr: { prizeLabel: 'Félicitations, tu as gagné' },
+        en: { prizeLabel: 'Congratulations, you won' }
+    }
 };
 function showReplayButton() { document.getElementById('replayBtn')?.classList.add('visible'); }
 function hideReplayButton() { document.getElementById('replayBtn')?.classList.remove('visible'); }

@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title data-i18n="meta.title">Spinfinity — Comment ça marche</title>
+<meta name="description" content="Apprends comment Spinfinity fonctionne : import des participants, lots, tirage au sort, replay vidéo et partage social." data-i18n-attr="content" data-i18n="meta.description">
+<meta name="theme-color" content="#0a0a14">
+<link rel="canonical" href="https://spinfinity.app/help/">
+<link rel="alternate" hreflang="fr" href="https://spinfinity.app/help/">
+<link rel="alternate" hreflang="en" href="https://spinfinity.app/help/?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://spinfinity.app/help/">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+:root {
+    --bg-1: #0a0a14;
+    --bg-2: #14091e;
+    --bg-3: #1a0c28;
+    --text: #ffffff;
+    --text-dim: #d4cce0;
+    --text-faded: #8a809f;
+    --purple: #a855f7;
+    --pink: #ec4899;
+    --gold: #fde047;
+    --cyan: #00f0ff;
+    --red: #ff2e63;
+    --blue: #3b82f6;
+    --green: #22c55e;
+    --border-glass: rgba(255,255,255,0.08);
+    --bg-glass: rgba(255,255,255,0.04);
+}
+body {
+    font-family: 'Manrope', system-ui, sans-serif;
+    color: var(--text);
+    background: var(--bg-1);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+}
+body::before {
+    content: ''; position: fixed; inset: 0;
+    background:
+        radial-gradient(circle at 12% 8%, rgba(168,85,247,0.20) 0%, transparent 45%),
+        radial-gradient(circle at 88% 25%, rgba(236,72,153,0.16) 0%, transparent 50%),
+        radial-gradient(circle at 50% 90%, rgba(0,240,255,0.12) 0%, transparent 55%),
+        var(--bg-1);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ---------- HEADER ---------- */
+.top-bar {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 24px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    background: rgba(10,10,20,0.65);
+    border-bottom: 1px solid var(--border-glass);
+}
+.back-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 14px; font-weight: 600;
+    transition: background .2s, color .2s, transform .15s;
+}
+.back-link:hover { background: rgba(168,85,247,0.18); color: var(--text); transform: translateX(-2px); }
+.back-link svg { width: 16px; height: 16px; }
+.brand {
+    font-size: 20px; font-weight: 800;
+    background: linear-gradient(135deg, #fff, var(--purple), var(--pink));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    letter-spacing: -0.01em;
+}
+.lang-switch { display: flex; gap: 4px; }
+.lang-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: transparent;
+    border: 1px solid var(--border-glass);
+    color: var(--text-faded);
+    font-size: 12px; font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    transition: background .2s, color .2s;
+}
+.lang-btn.active { background: var(--text); color: var(--bg-1); border-color: var(--text); }
+
+/* ---------- HERO ---------- */
+.hero {
+    text-align: center;
+    padding: 70px 24px 40px;
+    max-width: 800px; margin: 0 auto;
+    animation: fadeInUp 0.7s ease-out both;
+}
+.hero-eyebrow {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(168,85,247,0.15);
+    border: 1px solid rgba(168,85,247,0.35);
+    color: var(--purple);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    margin-bottom: 18px;
+}
+.hero h1 {
+    font-size: clamp(34px, 5.2vw, 54px);
+    font-weight: 800;
+    margin: 0 0 16px;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+}
+.hero h1 .accent {
+    background: linear-gradient(135deg, var(--gold), var(--pink), var(--purple));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero p {
+    color: var(--text-dim);
+    font-size: clamp(15px, 2vw, 18px);
+    max-width: 600px; margin: 0 auto;
+}
+
+/* ---------- SECTIONS ---------- */
+.section {
+    max-width: 1100px; margin: 0 auto;
+    padding: 50px 24px;
+}
+.section h2 {
+    font-size: clamp(24px, 3.2vw, 34px);
+    font-weight: 800;
+    margin: 0 0 8px;
+    letter-spacing: -0.015em;
+}
+.section .lead {
+    color: var(--text-faded);
+    margin: 0 0 36px;
+    font-size: 15px;
+}
+
+/* ---------- STEPS ---------- */
+.steps {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: 1fr;
+}
+@media (min-width: 720px) { .steps { grid-template-columns: 1fr 1fr; } }
+.step {
+    background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    border: 1px solid var(--border-glass);
+    border-radius: 18px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .25s, border-color .25s, box-shadow .25s;
+}
+.step::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--step-glow, radial-gradient(circle at 20% 0%, rgba(168,85,247,0.10), transparent 60%));
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .3s;
+}
+.step:hover {
+    transform: translateY(-3px);
+    border-color: var(--step-accent, rgba(168,85,247,0.4));
+    box-shadow: 0 14px 40px rgba(168,85,247,0.18);
+}
+.step:hover::before { opacity: 1; }
+.step-num {
+    display: inline-block;
+    font-size: 12px; font-weight: 700;
+    color: var(--step-accent, var(--purple));
+    letter-spacing: 0.18em; text-transform: uppercase;
+    margin-bottom: 8px;
+}
+.step h3 { margin: 0 0 8px; font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
+.step p { margin: 0; color: var(--text-dim); font-size: 14.5px; line-height: 1.6; }
+.step-illustration {
+    width: 100%;
+    height: 110px;
+    margin-bottom: 14px;
+    display: flex; align-items: center; justify-content: center;
+}
+.step-illustration svg { width: 100%; height: 100%; }
+.step.s1 { --step-accent: var(--cyan); --step-glow: radial-gradient(circle at 20% 0%, rgba(0,240,255,0.10), transparent 60%); }
+.step.s2 { --step-accent: var(--gold); --step-glow: radial-gradient(circle at 20% 0%, rgba(253,224,71,0.10), transparent 60%); }
+.step.s3 { --step-accent: var(--pink); --step-glow: radial-gradient(circle at 20% 0%, rgba(236,72,153,0.10), transparent 60%); }
+.step.s4 { --step-accent: var(--green); --step-glow: radial-gradient(circle at 20% 0%, rgba(34,197,94,0.10), transparent 60%); }
+.step.s5 { --step-accent: var(--purple); --step-glow: radial-gradient(circle at 20% 0%, rgba(168,85,247,0.10), transparent 60%); }
+.step.s6 { --step-accent: var(--blue); --step-glow: radial-gradient(circle at 20% 0%, rgba(59,130,246,0.10), transparent 60%); }
+
+/* ---------- THEMES ---------- */
+.themes {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr;
+}
+@media (min-width: 720px) { .themes { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1000px) { .themes { grid-template-columns: 1fr 1fr 1fr 1fr; } }
+.theme-card {
+    border-radius: 16px;
+    padding: 22px 20px;
+    border: 1px solid var(--border-glass);
+    background: linear-gradient(160deg, var(--theme-bg-1, rgba(255,255,255,0.04)), var(--theme-bg-2, rgba(255,255,255,0.01)));
+    overflow: hidden;
+    position: relative;
+    transition: transform .25s, border-color .25s;
+}
+.theme-card:hover { transform: translateY(-4px); border-color: var(--theme-accent, var(--purple)); }
+.theme-card .vibe { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--theme-accent); margin-bottom: 6px; }
+.theme-card h3 { margin: 0 0 8px; font-size: 22px; font-weight: 800; letter-spacing: -0.015em; }
+.theme-card p { margin: 0; color: var(--text-dim); font-size: 13.5px; line-height: 1.55; }
+.theme-illustration {
+    height: 90px;
+    margin-bottom: 14px;
+    display: flex; align-items: center; justify-content: flex-start;
+}
+.theme-illustration svg { height: 100%; width: auto; }
+.theme-card.t-redline   { --theme-accent: #ff2e63; --theme-bg-1: rgba(255,46,99,0.10); --theme-bg-2: rgba(255,230,0,0.04); }
+.theme-card.t-corporate { --theme-accent: #3b82f6; --theme-bg-1: rgba(59,130,246,0.10); --theme-bg-2: rgba(96,165,250,0.04); }
+.theme-card.t-casino    { --theme-accent: #fbbf24; --theme-bg-1: rgba(251,191,36,0.10); --theme-bg-2: rgba(220,38,38,0.04); }
+.theme-card.t-tvshow    { --theme-accent: #a855f7; --theme-bg-1: rgba(168,85,247,0.10); --theme-bg-2: rgba(236,72,153,0.04); }
+
+/* ---------- TIPS ---------- */
+.tips {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: 1fr;
+}
+@media (min-width: 720px) { .tips { grid-template-columns: 1fr 1fr; } }
+.tip {
+    display: flex;
+    gap: 14px;
+    padding: 18px;
+    border-radius: 14px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+}
+.tip-icon {
+    flex-shrink: 0;
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(168,85,247,0.15);
+    color: var(--purple);
+}
+.tip-icon svg { width: 22px; height: 22px; }
+.tip h4 { margin: 0 0 4px; font-size: 15px; font-weight: 700; }
+.tip p { margin: 0; color: var(--text-dim); font-size: 13.5px; line-height: 1.55; }
+
+/* ---------- CTA FOOTER ---------- */
+.cta-footer {
+    text-align: center;
+    padding: 60px 24px 80px;
+    max-width: 800px; margin: 0 auto;
+}
+.cta-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 16px 32px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700; font-size: 16px;
+    letter-spacing: 0.01em;
+    box-shadow: 0 10px 30px rgba(168,85,247,0.4);
+    transition: transform .15s, box-shadow .25s;
+}
+.cta-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(168,85,247,0.55); }
+.cta-btn svg { width: 18px; height: 18px; }
+.footer-note {
+    margin-top: 30px;
+    color: var(--text-faded);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+}
+.footer-note a { color: var(--text-dim); text-decoration: none; border-bottom: 1px dashed var(--text-faded); }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .hero { animation: none; }
+    .step:hover, .theme-card:hover, .cta-btn:hover { transform: none; }
+}
+</style>
+
+<!-- =========================================================
+     SVG ICON SYMBOLS — defined once, referenced via <use>
+========================================================= -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Step 1: Clipboard with names -->
+    <symbol id="i-import" viewBox="0 0 200 110">
+      <rect x="60" y="14" width="100" height="86" rx="10" fill="rgba(0,240,255,0.10)" stroke="#00f0ff" stroke-width="2"/>
+      <rect x="80" y="6" width="60" height="20" rx="6" fill="#00f0ff"/>
+      <text x="110" y="20" text-anchor="middle" font-family="Manrope" font-weight="700" font-size="11" fill="#0a0a14">PASTE</text>
+      <line x1="74" y1="44" x2="146" y2="44" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
+      <line x1="74" y1="58" x2="130" y2="58" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.65"/>
+      <line x1="74" y1="72" x2="138" y2="72" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+      <line x1="74" y1="86" x2="120" y2="86" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.35"/>
+      <circle cx="36" cy="52" r="14" fill="rgba(0,240,255,0.20)" stroke="#00f0ff" stroke-width="2"/>
+      <path d="M30,52 l4,4 l8,-8" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </symbol>
+
+    <!-- Step 2: Gift box (prizes) -->
+    <symbol id="i-prize" viewBox="0 0 200 110">
+      <rect x="62" y="44" width="76" height="58" rx="6" fill="rgba(253,224,71,0.15)" stroke="#fde047" stroke-width="2"/>
+      <rect x="56" y="34" width="88" height="16" rx="4" fill="#fde047"/>
+      <line x1="100" y1="34" x2="100" y2="102" stroke="#0a0a14" stroke-width="3"/>
+      <line x1="56" y1="50" x2="144" y2="50" stroke="#0a0a14" stroke-width="2" opacity="0.6"/>
+      <path d="M100,34 C 80,16 60,16 70,32 C 78,42 96,38 100,34 Z" fill="#fde047"/>
+      <path d="M100,34 C 120,16 140,16 130,32 C 122,42 104,38 100,34 Z" fill="#fde047"/>
+      <circle cx="36" cy="76" r="5" fill="#ff2e63" opacity="0.85"/>
+      <circle cx="170" cy="58" r="4" fill="#a855f7" opacity="0.85"/>
+      <circle cx="22" cy="40" r="3" fill="#00f0ff" opacity="0.7"/>
+      <circle cx="180" cy="92" r="3" fill="#fde047" opacity="0.85"/>
+    </symbol>
+
+    <!-- Step 3: Slot machine -->
+    <symbol id="i-slot" viewBox="0 0 200 110">
+      <rect x="34" y="14" width="132" height="84" rx="10" fill="rgba(236,72,153,0.10)" stroke="#ec4899" stroke-width="2"/>
+      <rect x="46" y="32" width="32" height="48" rx="4" fill="#0a0a14" stroke="#ec4899" stroke-width="1.5"/>
+      <rect x="84" y="32" width="32" height="48" rx="4" fill="#0a0a14" stroke="#ec4899" stroke-width="1.5"/>
+      <rect x="122" y="32" width="32" height="48" rx="4" fill="#0a0a14" stroke="#ec4899" stroke-width="1.5"/>
+      <text x="62" y="62" text-anchor="middle" font-family="Manrope" font-weight="800" font-size="14" fill="#fde047">A</text>
+      <text x="100" y="62" text-anchor="middle" font-family="Manrope" font-weight="800" font-size="14" fill="#ec4899">B</text>
+      <text x="138" y="62" text-anchor="middle" font-family="Manrope" font-weight="800" font-size="14" fill="#a855f7">C</text>
+      <line x1="40" y1="56" x2="160" y2="56" stroke="#ec4899" stroke-width="1" opacity="0.4" stroke-dasharray="2 2"/>
+      <line x1="40" y1="58" x2="160" y2="58" stroke="#ec4899" stroke-width="1" opacity="0.4" stroke-dasharray="2 2"/>
+      <circle cx="170" cy="62" r="14" fill="#ec4899"/>
+      <path d="M165,56 l8,6 l-8,6 z" fill="#fff"/>
+    </symbol>
+
+    <!-- Step 4: Winner reveal (spotlight + confetti) -->
+    <symbol id="i-winner" viewBox="0 0 200 110">
+      <path d="M100,18 L78,38 L122,38 Z" fill="rgba(34,197,94,0.20)" stroke="#22c55e" stroke-width="1.5"/>
+      <ellipse cx="100" cy="68" rx="36" ry="16" fill="rgba(34,197,94,0.10)" stroke="#22c55e" stroke-width="1.5"/>
+      <text x="100" y="74" text-anchor="middle" font-family="Manrope" font-weight="800" font-size="16" fill="#22c55e">WINNER</text>
+      <!-- confetti -->
+      <rect x="20" y="20" width="6" height="3" fill="#fde047" transform="rotate(20 23 21)"/>
+      <rect x="32" y="42" width="6" height="3" fill="#ec4899" transform="rotate(-30 35 43)"/>
+      <rect x="166" y="14" width="6" height="3" fill="#00f0ff" transform="rotate(40 169 15)"/>
+      <rect x="178" y="36" width="6" height="3" fill="#a855f7" transform="rotate(-15 181 37)"/>
+      <rect x="14" y="68" width="6" height="3" fill="#22c55e" transform="rotate(60 17 69)"/>
+      <rect x="184" y="82" width="6" height="3" fill="#ff2e63" transform="rotate(-50 187 83)"/>
+      <circle cx="48" cy="14" r="2" fill="#fde047"/>
+      <circle cx="156" cy="92" r="2" fill="#ec4899"/>
+      <circle cx="14" cy="42" r="2" fill="#a855f7"/>
+      <circle cx="184" cy="60" r="2" fill="#00f0ff"/>
+    </symbol>
+
+    <!-- Step 5: Video replay phone -->
+    <symbol id="i-replay" viewBox="0 0 200 110">
+      <rect x="74" y="6" width="52" height="98" rx="10" fill="#0a0a14" stroke="#a855f7" stroke-width="2"/>
+      <rect x="80" y="14" width="40" height="70" rx="3" fill="rgba(168,85,247,0.20)"/>
+      <circle cx="100" cy="49" r="14" fill="#a855f7"/>
+      <path d="M95,42 l10,7 l-10,7 z" fill="#fff"/>
+      <rect x="92" y="92" width="16" height="3" rx="1.5" fill="#a855f7" opacity="0.6"/>
+      <!-- share lines -->
+      <path d="M134,32 q24,0 28,28" stroke="#ec4899" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M158,52 l4,8 l-8,4" stroke="#ec4899" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="160" y="80" text-anchor="middle" font-family="Manrope" font-weight="700" font-size="9" fill="#ec4899">SHARE</text>
+      <!-- emoji-ish ticks for socials -->
+      <circle cx="42" cy="40" r="11" fill="rgba(168,85,247,0.18)" stroke="#a855f7" stroke-width="1.5"/>
+      <text x="42" y="44" text-anchor="middle" font-family="Manrope" font-weight="800" font-size="10" fill="#fde047">▶</text>
+      <circle cx="32" cy="68" r="9" fill="rgba(236,72,153,0.18)" stroke="#ec4899" stroke-width="1.5"/>
+      <text x="32" y="71" text-anchor="middle" font-family="Manrope" font-weight="800" font-size="9" fill="#fff">♥</text>
+      <circle cx="50" cy="84" r="7" fill="rgba(0,240,255,0.18)" stroke="#00f0ff" stroke-width="1.5"/>
+      <text x="50" y="87" text-anchor="middle" font-family="Manrope" font-weight="800" font-size="7" fill="#fff">↗</text>
+    </symbol>
+
+    <!-- Step 6: Settings/keep pool toggle -->
+    <symbol id="i-toggle" viewBox="0 0 200 110">
+      <rect x="42" y="40" width="116" height="32" rx="16" fill="rgba(168,85,247,0.15)" stroke="#a855f7" stroke-width="2"/>
+      <circle cx="138" cy="56" r="12" fill="#a855f7"/>
+      <text x="62" y="60" text-anchor="middle" font-family="Manrope" font-weight="700" font-size="9" fill="#fff" letter-spacing="1">ON</text>
+      <!-- Checkmark above -->
+      <circle cx="100" cy="22" r="8" fill="rgba(34,197,94,0.25)" stroke="#22c55e" stroke-width="1.5"/>
+      <path d="M96,22 l3,3 l6,-6" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <!-- People icons -->
+      <circle cx="64" cy="92" r="4" fill="#fde047"/>
+      <path d="M58,102 q6,-6 12,0" stroke="#fde047" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <circle cx="100" cy="92" r="4" fill="#ec4899"/>
+      <path d="M94,102 q6,-6 12,0" stroke="#ec4899" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <circle cx="136" cy="92" r="4" fill="#00f0ff"/>
+      <path d="M130,102 q6,-6 12,0" stroke="#00f0ff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    </symbol>
+
+    <!-- Theme illustration: Redline (car + flag) -->
+    <symbol id="t-redline" viewBox="0 0 100 90">
+      <rect x="6" y="46" width="60" height="22" rx="5" fill="#ff2e63"/>
+      <path d="M16,46 L24,30 L52,30 L60,46 Z" fill="#ff2e63" opacity="0.85"/>
+      <rect x="26" y="34" width="22" height="10" rx="1" fill="#0a0a14"/>
+      <circle cx="22" cy="68" r="6" fill="#0a0a14" stroke="#fde047" stroke-width="1.5"/>
+      <circle cx="50" cy="68" r="6" fill="#0a0a14" stroke="#fde047" stroke-width="1.5"/>
+      <line x1="62" y1="62" x2="88" y2="62" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+      <line x1="58" y1="56" x2="84" y2="56" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+      <!-- finish flag -->
+      <rect x="74" y="10" width="2" height="38" fill="#fff"/>
+      <g transform="translate(76 10)">
+        <rect width="6" height="6" fill="#0a0a14"/>
+        <rect x="6" width="6" height="6" fill="#fff"/>
+        <rect x="12" width="6" height="6" fill="#0a0a14"/>
+        <rect y="6" width="6" height="6" fill="#fff"/>
+        <rect x="6" y="6" width="6" height="6" fill="#0a0a14"/>
+        <rect x="12" y="6" width="6" height="6" fill="#fff"/>
+        <rect y="12" width="6" height="6" fill="#0a0a14"/>
+        <rect x="6" y="12" width="6" height="6" fill="#fff"/>
+        <rect x="12" y="12" width="6" height="6" fill="#0a0a14"/>
+      </g>
+    </symbol>
+
+    <!-- Theme: Corporate (laptop + chart) -->
+    <symbol id="t-corporate" viewBox="0 0 100 90">
+      <rect x="14" y="22" width="60" height="42" rx="3" fill="#0a0a14" stroke="#3b82f6" stroke-width="1.5"/>
+      <rect x="18" y="26" width="52" height="34" rx="1.5" fill="rgba(59,130,246,0.18)"/>
+      <!-- bars -->
+      <rect x="24" y="48" width="6" height="10" fill="#3b82f6"/>
+      <rect x="34" y="42" width="6" height="16" fill="#60a5fa"/>
+      <rect x="44" y="36" width="6" height="22" fill="#fbbf24"/>
+      <rect x="54" y="44" width="6" height="14" fill="#3b82f6"/>
+      <!-- trendline -->
+      <polyline points="22,52 30,46 40,38 50,30 62,28" stroke="#fbbf24" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <!-- base -->
+      <rect x="6" y="64" width="76" height="4" rx="2" fill="#3b82f6" opacity="0.6"/>
+      <!-- coffee -->
+      <rect x="80" y="50" width="14" height="14" rx="2" fill="rgba(96,165,250,0.18)" stroke="#60a5fa" stroke-width="1.2"/>
+      <path d="M94,52 q6,2 0,8" stroke="#60a5fa" stroke-width="1.2" fill="none"/>
+      <line x1="84" y1="44" x2="84" y2="48" stroke="#60a5fa" stroke-width="1.2" opacity="0.6" stroke-linecap="round"/>
+      <line x1="88" y1="42" x2="88" y2="48" stroke="#60a5fa" stroke-width="1.2" opacity="0.6" stroke-linecap="round"/>
+    </symbol>
+
+    <!-- Theme: Casino (chips + dice) -->
+    <symbol id="t-casino" viewBox="0 0 100 90">
+      <!-- chip 1 -->
+      <circle cx="32" cy="48" r="22" fill="#dc2626"/>
+      <circle cx="32" cy="48" r="22" fill="none" stroke="#fde047" stroke-width="2" stroke-dasharray="3 3"/>
+      <circle cx="32" cy="48" r="12" fill="#fef3c7" stroke="#dc2626" stroke-width="2"/>
+      <text x="32" y="52" text-anchor="middle" font-family="Manrope" font-weight="800" font-size="11" fill="#dc2626">100</text>
+      <!-- chip 2 (behind, top right) -->
+      <circle cx="68" cy="30" r="14" fill="#fbbf24"/>
+      <circle cx="68" cy="30" r="14" fill="none" stroke="#fef3c7" stroke-width="1.5" stroke-dasharray="2 2"/>
+      <circle cx="68" cy="30" r="7" fill="#fef3c7"/>
+      <!-- dice -->
+      <rect x="60" y="50" width="28" height="28" rx="4" fill="#fef3c7" stroke="#0a0a14" stroke-width="1.5"/>
+      <circle cx="68" cy="58" r="2" fill="#0a0a14"/>
+      <circle cx="80" cy="58" r="2" fill="#0a0a14"/>
+      <circle cx="74" cy="64" r="2" fill="#0a0a14"/>
+      <circle cx="68" cy="70" r="2" fill="#0a0a14"/>
+      <circle cx="80" cy="70" r="2" fill="#0a0a14"/>
+      <!-- sparkles -->
+      <path d="M14,12 l2,5 l5,2 l-5,2 l-2,5 l-2,-5 l-5,-2 l5,-2 z" fill="#fde047"/>
+      <path d="M88,82 l1.5,3.5 l3.5,1.5 l-3.5,1.5 l-1.5,3.5 l-1.5,-3.5 l-3.5,-1.5 l3.5,-1.5 z" fill="#fde047"/>
+    </symbol>
+
+    <!-- Theme: TV Show (microphone + spotlight) -->
+    <symbol id="t-tvshow" viewBox="0 0 100 90">
+      <!-- spotlight beams -->
+      <path d="M50,12 L20,72 L40,72 Z" fill="rgba(253,224,71,0.20)"/>
+      <path d="M50,12 L80,72 L60,72 Z" fill="rgba(168,85,247,0.20)"/>
+      <!-- mic -->
+      <rect x="42" y="14" width="16" height="28" rx="8" fill="#a855f7"/>
+      <line x1="42" y1="22" x2="58" y2="22" stroke="#fde047" stroke-width="1" opacity="0.6"/>
+      <line x1="42" y1="28" x2="58" y2="28" stroke="#fde047" stroke-width="1" opacity="0.6"/>
+      <line x1="42" y1="34" x2="58" y2="34" stroke="#fde047" stroke-width="1" opacity="0.6"/>
+      <path d="M36,38 q14,18 28,0" stroke="#a855f7" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <line x1="50" y1="56" x2="50" y2="68" stroke="#a855f7" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="38" y1="68" x2="62" y2="68" stroke="#a855f7" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- stars -->
+      <path d="M14,18 l1.5,3 l3,1.5 l-3,1.5 l-1.5,3 l-1.5,-3 l-3,-1.5 l3,-1.5 z" fill="#fde047"/>
+      <path d="M86,28 l1,2 l2,1 l-2,1 l-1,2 l-1,-2 l-2,-1 l2,-1 z" fill="#ec4899"/>
+      <path d="M82,76 l1,2 l2,1 l-2,1 l-1,2 l-1,-2 l-2,-1 l2,-1 z" fill="#fde047"/>
+    </symbol>
+
+    <!-- Tip icons -->
+    <symbol id="ic-tip-share" viewBox="0 0 24 24">
+      <circle cx="6" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+      <circle cx="18" cy="6" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+      <circle cx="18" cy="18" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+      <line x1="8.6" y1="10.6" x2="15.4" y2="7.4" stroke="currentColor" stroke-width="2"/>
+      <line x1="8.6" y1="13.4" x2="15.4" y2="16.6" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+    <symbol id="ic-tip-edit" viewBox="0 0 24 24">
+      <path d="M4 20 L4 16 L16 4 L20 8 L8 20 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      <line x1="13" y1="7" x2="17" y2="11" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+    <symbol id="ic-tip-globe" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
+      <ellipse cx="12" cy="12" rx="4" ry="9" fill="none" stroke="currentColor" stroke-width="2"/>
+      <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+    <symbol id="ic-tip-shield" viewBox="0 0 24 24">
+      <path d="M12 3 L20 6 V12 C20 17 16 20 12 21 C8 20 4 17 4 12 V6 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M9 12 L11 14 L15 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </symbol>
+    <symbol id="ic-back" viewBox="0 0 24 24">
+      <path d="M14 6 L8 12 L14 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="ic-arrow" viewBox="0 0 24 24">
+      <path d="M5 12 L19 12 M13 6 L19 12 L13 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+</head>
+<body>
+
+<header class="top-bar">
+    <a href="../" class="back-link" data-testid="back-home">
+        <svg><use href="#ic-back"/></svg>
+        <span data-i18n="nav.home">Accueil</span>
+    </a>
+    <div class="brand">Spinfinity</div>
+    <div class="lang-switch">
+        <button class="lang-btn" data-lang="fr" data-testid="lang-fr">FR</button>
+        <button class="lang-btn" data-lang="en" data-testid="lang-en">EN</button>
+    </div>
+</header>
+
+<section class="hero">
+    <span class="hero-eyebrow" data-i18n="hero.eyebrow">Guide rapide</span>
+    <h1>
+        <span data-i18n="hero.title.start">Comment ça marche,</span>
+        <span class="accent" data-i18n="hero.title.accent">en 5 étapes</span>
+    </h1>
+    <p data-i18n="hero.lead">Importe une liste, choisis ton style, lance la roue et partage la vidéo. Tout se passe dans ton navigateur — aucune donnée n'est envoyée sur un serveur.</p>
+</section>
+
+<section class="section">
+    <h2 data-i18n="steps.title">Les étapes</h2>
+    <p class="lead" data-i18n="steps.lead">Le parcours type d'un tirage Spinfinity, de l'import au partage social.</p>
+    <div class="steps">
+        <article class="step s1">
+            <div class="step-illustration"><svg viewBox="0 0 200 110"><use href="#i-import"/></svg></div>
+            <span class="step-num" data-i18n="step.1.num">Étape 1</span>
+            <h3 data-i18n="step.1.title">Importe les participants</h3>
+            <p data-i18n="step.1.desc">Colle la liste dans la zone de saisie : un nom par ligne ou séparés par des virgules. Clique « Import » et c'est prêt.</p>
+        </article>
+        <article class="step s2">
+            <div class="step-illustration"><svg viewBox="0 0 200 110"><use href="#i-prize"/></svg></div>
+            <span class="step-num" data-i18n="step.2.num">Étape 2 (optionnel)</span>
+            <h3 data-i18n="step.2.title">Ajoute des lots</h3>
+            <p data-i18n="step.2.desc">Liste les lots dans la deuxième zone. Le 1er gagnant remporte le 1er lot, et ainsi de suite. S'affichent dans la vidéo replay.</p>
+        </article>
+        <article class="step s6">
+            <div class="step-illustration"><svg viewBox="0 0 200 110"><use href="#i-toggle"/></svg></div>
+            <span class="step-num" data-i18n="step.3.num">Étape 3 (optionnel)</span>
+            <h3 data-i18n="step.3.title">Garder les gagnants ?</h3>
+            <p data-i18n="step.3.desc">Coche la case sous la liste si tu veux que le gagnant reste dans le pool (utile pour les jeux d'icebreaker ou les tirages avec remise).</p>
+        </article>
+        <article class="step s3">
+            <div class="step-illustration"><svg viewBox="0 0 200 110"><use href="#i-slot"/></svg></div>
+            <span class="step-num" data-i18n="step.4.num">Étape 4</span>
+            <h3 data-i18n="step.4.title">Lance la roue</h3>
+            <p data-i18n="step.4.desc">Appuie sur le gros bouton « Spin » au centre. Anime, ralentit, jauge thématique qui se charge — chaque thème a sa mécanique propre.</p>
+        </article>
+        <article class="step s4">
+            <div class="step-illustration"><svg viewBox="0 0 200 110"><use href="#i-winner"/></svg></div>
+            <span class="step-num" data-i18n="step.5.num">Étape 5</span>
+            <h3 data-i18n="step.5.title">Le gagnant est révélé</h3>
+            <p data-i18n="step.5.desc">Confettis, surlignage, son du thème. Le nom apparaît dans la colonne « Gagnants », son lot s'affiche s'il y en a un.</p>
+        </article>
+        <article class="step s5">
+            <div class="step-illustration"><svg viewBox="0 0 200 110"><use href="#i-replay"/></svg></div>
+            <span class="step-num" data-i18n="step.6.num">Étape 6</span>
+            <h3 data-i18n="step.6.title">Replay vidéo & partage</h3>
+            <p data-i18n="step.6.desc">Une vidéo verticale 9:16 prête pour TikTok, Reels et Stories est générée automatiquement. Télécharge-la ou partage-la directement.</p>
+        </article>
+    </div>
+</section>
+
+<section class="section">
+    <h2 data-i18n="themes.title">Les 4 thèmes</h2>
+    <p class="lead" data-i18n="themes.lead">Même mécanique, ambiance totalement différente. Choisis selon le contexte.</p>
+    <div class="themes">
+        <article class="theme-card t-redline">
+            <div class="theme-illustration"><svg viewBox="0 0 100 90"><use href="#t-redline"/></svg></div>
+            <span class="vibe" data-i18n="theme.redline.vibe">Drift · Néon · F1</span>
+            <h3>Redline Roulette</h3>
+            <p data-i18n="theme.redline.desc">Vibe garage japonais et compteur qui s'affole. Idéal pour les tournois gaming, les paris entre potes ou les soirées geek.</p>
+        </article>
+        <article class="theme-card t-corporate">
+            <div class="theme-illustration"><svg viewBox="0 0 100 90"><use href="#t-corporate"/></svg></div>
+            <span class="vibe" data-i18n="theme.corporate.vibe">Sérieux · Premium</span>
+            <h3>Corporate Draw</h3>
+            <p data-i18n="theme.corporate.desc">Style sobre et professionnel. Le titre est éditable (clique l'icône crayon) pour adapter à ton événement, séminaire ou convention.</p>
+        </article>
+        <article class="theme-card t-casino">
+            <div class="theme-illustration"><svg viewBox="0 0 100 90"><use href="#t-casino"/></svg></div>
+            <span class="vibe" data-i18n="theme.casino.vibe">Jackpot · Vegas</span>
+            <h3>Casino Royale</h3>
+            <p data-i18n="theme.casino.desc">Lumières dorées et ambiance Las Vegas. Pour les tirages de tombola, les anniversaires fun et les events « gros lot ».</p>
+        </article>
+        <article class="theme-card t-tvshow">
+            <div class="theme-illustration"><svg viewBox="0 0 100 90"><use href="#t-tvshow"/></svg></div>
+            <span class="vibe" data-i18n="theme.tvshow.vibe">Studio · Spotlight</span>
+            <h3>Prime Time</h3>
+            <p data-i18n="theme.tvshow.desc">Studio télé, projecteurs et grand spectacle. Parfait pour les tirages animés en direct, les podcasts ou les lives Twitch.</p>
+        </article>
+    </div>
+</section>
+
+<section class="section">
+    <h2 data-i18n="tips.title">Bons à savoir</h2>
+    <p class="lead" data-i18n="tips.lead">Quelques détails qui font la différence.</p>
+    <div class="tips">
+        <div class="tip">
+            <div class="tip-icon"><svg><use href="#ic-tip-share"/></svg></div>
+            <div>
+                <h4 data-i18n="tip.share.title">Partage 1-clic mobile</h4>
+                <p data-i18n="tip.share.desc">Sur mobile, le bouton « Partager » ouvre directement l'app de ton choix (TikTok, Insta, FB, WhatsApp...) avec la vidéo prête à publier.</p>
+            </div>
+        </div>
+        <div class="tip">
+            <div class="tip-icon"><svg><use href="#ic-tip-edit"/></svg></div>
+            <div>
+                <h4 data-i18n="tip.edit.title">Titre Corporate éditable</h4>
+                <p data-i18n="tip.edit.desc">Sur le thème Corporate uniquement : clique l'icône crayon à côté du titre pour le personnaliser. La modification est sauvegardée localement.</p>
+            </div>
+        </div>
+        <div class="tip">
+            <div class="tip-icon"><svg><use href="#ic-tip-globe"/></svg></div>
+            <div>
+                <h4 data-i18n="tip.lang.title">FR / EN automatique</h4>
+                <p data-i18n="tip.lang.desc">Le site détecte la langue du navigateur. Tu peux forcer FR ou EN à tout moment via les boutons en haut à droite.</p>
+            </div>
+        </div>
+        <div class="tip">
+            <div class="tip-icon"><svg><use href="#ic-tip-shield"/></svg></div>
+            <div>
+                <h4 data-i18n="tip.privacy.title">100% local, 0% serveur</h4>
+                <p data-i18n="tip.privacy.desc">Tes listes ne sont jamais envoyées en ligne. Tout — tirage, animation, vidéo — se passe dans ton navigateur. Zéro tracking de noms.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-footer">
+    <a href="../" class="cta-btn" data-testid="cta-start">
+        <span data-i18n="cta.start">Lancer un tirage</span>
+        <svg><use href="#ic-arrow"/></svg>
+    </a>
+    <p class="footer-note">
+        <span data-i18n="footer.questions">Une question ?</span>
+        <a href="../" data-i18n="footer.back">Retour à l'accueil</a>
+    </p>
+</section>
+
+<script>
+const I18N = {
+    fr: {
+        'meta.title':           'Spinfinity — Comment ça marche',
+        'meta.description':     'Apprends comment Spinfinity fonctionne : import des participants, lots, tirage au sort, replay vidéo et partage social.',
+        'nav.home':             'Accueil',
+        'hero.eyebrow':         'Guide rapide',
+        'hero.title.start':     'Comment ça marche,',
+        'hero.title.accent':    'en 6 étapes',
+        'hero.lead':            "Importe une liste, choisis ton style, lance la roue et partage la vidéo. Tout se passe dans ton navigateur — aucune donnée n'est envoyée sur un serveur.",
+        'steps.title':          'Les étapes',
+        'steps.lead':           "Le parcours type d'un tirage Spinfinity, de l'import au partage social.",
+        'step.1.num':           'Étape 1',
+        'step.1.title':         'Importe les participants',
+        'step.1.desc':          "Colle la liste dans la zone de saisie : un nom par ligne ou séparés par des virgules. Clique « Import » et c'est prêt.",
+        'step.2.num':           'Étape 2 (optionnel)',
+        'step.2.title':         'Ajoute des lots',
+        'step.2.desc':          "Liste les lots dans la deuxième zone. Le 1er gagnant remporte le 1er lot, et ainsi de suite. S'affichent dans la vidéo replay.",
+        'step.3.num':           'Étape 3 (optionnel)',
+        'step.3.title':         'Garder les gagnants ?',
+        'step.3.desc':          "Coche la case sous la liste si tu veux que le gagnant reste dans le pool (utile pour les jeux d'icebreaker ou les tirages avec remise).",
+        'step.4.num':           'Étape 4',
+        'step.4.title':         'Lance la roue',
+        'step.4.desc':          "Appuie sur le gros bouton « Spin » au centre. Anime, ralentit, jauge thématique qui se charge — chaque thème a sa mécanique propre.",
+        'step.5.num':           'Étape 5',
+        'step.5.title':         'Le gagnant est révélé',
+        'step.5.desc':          "Confettis, surlignage, son du thème. Le nom apparaît dans la colonne « Gagnants », son lot s'affiche s'il y en a un.",
+        'step.6.num':           'Étape 6',
+        'step.6.title':         'Replay vidéo & partage',
+        'step.6.desc':          "Une vidéo verticale 9:16 prête pour TikTok, Reels et Stories est générée automatiquement. Télécharge-la ou partage-la directement.",
+        'themes.title':         'Les 4 thèmes',
+        'themes.lead':          "Même mécanique, ambiance totalement différente. Choisis selon le contexte.",
+        'theme.redline.vibe':   'Drift · Néon · F1',
+        'theme.redline.desc':   "Vibe garage japonais et compteur qui s'affole. Idéal pour les tournois gaming, les paris entre potes ou les soirées geek.",
+        'theme.corporate.vibe': 'Sérieux · Premium',
+        'theme.corporate.desc': "Style sobre et professionnel. Le titre est éditable (clique l'icône crayon) pour adapter à ton événement, séminaire ou convention.",
+        'theme.casino.vibe':    'Jackpot · Vegas',
+        'theme.casino.desc':    "Lumières dorées et ambiance Las Vegas. Pour les tirages de tombola, les anniversaires fun et les events « gros lot ».",
+        'theme.tvshow.vibe':    'Studio · Spotlight',
+        'theme.tvshow.desc':    "Studio télé, projecteurs et grand spectacle. Parfait pour les tirages animés en direct, les podcasts ou les lives Twitch.",
+        'tips.title':           'Bons à savoir',
+        'tips.lead':            'Quelques détails qui font la différence.',
+        'tip.share.title':      'Partage 1-clic mobile',
+        'tip.share.desc':       "Sur mobile, le bouton « Partager » ouvre directement l'app de ton choix (TikTok, Insta, FB, WhatsApp...) avec la vidéo prête à publier.",
+        'tip.edit.title':       'Titre Corporate éditable',
+        'tip.edit.desc':        "Sur le thème Corporate uniquement : clique l'icône crayon à côté du titre pour le personnaliser. La modification est sauvegardée localement.",
+        'tip.lang.title':       'FR / EN automatique',
+        'tip.lang.desc':        'Le site détecte la langue du navigateur. Tu peux forcer FR ou EN à tout moment via les boutons en haut à droite.',
+        'tip.privacy.title':    '100% local, 0% serveur',
+        'tip.privacy.desc':     'Tes listes ne sont jamais envoyées en ligne. Tout — tirage, animation, vidéo — se passe dans ton navigateur. Zéro tracking de noms.',
+        'cta.start':            'Lancer un tirage',
+        'footer.questions':     'Une question ?',
+        'footer.back':          "Retour à l'accueil"
+    },
+    en: {
+        'meta.title':           'Spinfinity — How it works',
+        'meta.description':     'Learn how Spinfinity works: import participants, prizes, run a draw, video replay and social sharing.',
+        'nav.home':             'Home',
+        'hero.eyebrow':         'Quick start',
+        'hero.title.start':     'How it works,',
+        'hero.title.accent':    'in 6 steps',
+        'hero.lead':            "Import a list, pick a style, spin the wheel and share the video. Everything runs in your browser — no data sent to any server.",
+        'steps.title':          'The steps',
+        'steps.lead':           "The full Spinfinity flow, from import to social share.",
+        'step.1.num':           'Step 1',
+        'step.1.title':         'Import participants',
+        'step.1.desc':          "Paste your list in the input — one name per line or comma-separated. Click 'Import' and you're done.",
+        'step.2.num':           'Step 2 (optional)',
+        'step.2.title':         'Add prizes',
+        'step.2.desc':          "List the prizes in the second input. The 1st winner gets the 1st prize, and so on. Prizes appear in the replay video too.",
+        'step.3.num':           'Step 3 (optional)',
+        'step.3.title':         'Keep winners in the pool?',
+        'step.3.desc':          "Tick the box under the names input if you want the winner to stay in the pool (useful for icebreaker games or draws with replacement).",
+        'step.4.num':           'Step 4',
+        'step.4.title':         'Spin the wheel',
+        'step.4.desc':          "Press the big 'Spin' button in the center. Animations, deceleration, themed gauge filling — each theme has its own mechanic.",
+        'step.5.num':           'Step 5',
+        'step.5.title':         'Winner revealed',
+        'step.5.desc':          "Confetti, highlight, theme sound. The name shows up in the 'Winners' column, with its prize if there's one.",
+        'step.6.num':           'Step 6',
+        'step.6.title':         'Video replay & share',
+        'step.6.desc':          "A 9:16 vertical video — ready for TikTok, Reels & Stories — is auto-generated. Download or share it in one click.",
+        'themes.title':         'The 4 themes',
+        'themes.lead':          'Same mechanic, totally different vibe. Pick based on context.',
+        'theme.redline.vibe':   'Drift · Neon · F1',
+        'theme.redline.desc':   "Japanese garage vibe with a redlining tachometer. Great for gaming tournaments, friendly bets and geek nights.",
+        'theme.corporate.vibe': 'Serious · Premium',
+        'theme.corporate.desc': "Clean professional style. The title is editable (click the pencil icon) to match your event, seminar or convention.",
+        'theme.casino.vibe':    'Jackpot · Vegas',
+        'theme.casino.desc':    "Golden lights and Las Vegas vibes. For raffle draws, fun birthdays and 'big prize' events.",
+        'theme.tvshow.vibe':    'Studio · Spotlight',
+        'theme.tvshow.desc':    "TV studio, spotlights and showbusiness. Perfect for live-hosted draws, podcasts or Twitch streams.",
+        'tips.title':           'Good to know',
+        'tips.lead':            'A few details that make the difference.',
+        'tip.share.title':      '1-tap mobile sharing',
+        'tip.share.desc':       "On mobile, the 'Share' button opens your app of choice directly (TikTok, Insta, FB, WhatsApp...) with the video ready to post.",
+        'tip.edit.title':       'Editable Corporate title',
+        'tip.edit.desc':        "Corporate theme only: click the pencil icon next to the title to customize it. Saved locally on your device.",
+        'tip.lang.title':       'Auto FR / EN',
+        'tip.lang.desc':        'The site detects your browser language. You can force FR or EN any time via the top-right buttons.',
+        'tip.privacy.title':    '100% local, 0% server',
+        'tip.privacy.desc':     'Your lists never leave your device. Everything — draw, animation, video — happens in your browser. Zero name tracking.',
+        'cta.start':            'Run a draw',
+        'footer.questions':     'A question?',
+        'footer.back':          'Back to home'
+    }
+};
+
+function detectLanguage() {
+    const url = new URLSearchParams(location.search).get('lang');
+    if (url === 'fr' || url === 'en') return url;
+    const stored = localStorage.getItem('spinfinity-lang');
+    if (stored === 'fr' || stored === 'en') return stored;
+    return (navigator.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
+}
+
+function applyLanguage(lang) {
+    const dict = I18N[lang] || I18N.fr;
+    document.documentElement.lang = lang;
+    localStorage.setItem('spinfinity-lang', lang);
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        const attr = el.dataset.i18nAttr;
+        if (dict[key] !== undefined) {
+            if (attr) el.setAttribute(attr, dict[key]);
+            else el.textContent = dict[key];
+        }
+    });
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
+});
+
+applyLanguage(detectLanguage());
+</script>
+
+</body>
+</html>

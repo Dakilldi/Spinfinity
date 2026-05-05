@@ -933,7 +933,7 @@ function openReplayModal() {
     const cfg = { ...THEME_CONFIG };
     const customTitle = localStorage.getItem(TITLE_KEY);
     if (customTitle) cfg.display = customTitle;
-    window.SpinfinityReplay.showReplayModal(cfg, lastDrawSnapshot.participants, lastDrawSnapshot.winner);
+    window.SpinfinityReplay.showReplayModal(cfg, lastDrawSnapshot.participants, lastDrawSnapshot.winner, lastDrawSnapshot.prize);
 }
 
 const slot    = document.getElementById("slot");
@@ -1347,7 +1347,7 @@ function spin() {
             setRingProgress(1);
             const participantsSnapshot = [...names];
             winners.push(winner); names.splice(winnerIndex, 1);
-            lastDrawSnapshot = { participants: participantsSnapshot, winner };
+            lastDrawSnapshot = { participants: participantsSnapshot, winner, prize: prizes[winners.length - 1] || null };
             renderLists(); lastWinner = winner;
             spinning = false; spinBtn.disabled = false; spinBtn.classList.remove('active');
             ringProgressEl.textContent = (names.length === 0) ? t('done') : t('ready');

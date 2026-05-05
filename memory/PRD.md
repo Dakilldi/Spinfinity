@@ -54,6 +54,11 @@ Two pages already coded (Main + Redline). Task: create the 3 missing themes (Cor
 - ✅ Toast notification when no participants
 - ✅ Fireworks/confetti on winner
 - ✅ data-testid attributes on all interactive elements
+- ✅ **Video Replay (9:16) for social media** — canvas-based MediaRecorder generates an MP4/WebM with intro → spin → winner reveal → outro. Share via Web Share API (TikTok / Insta / Stories) or download.
+- ✅ **Watermark `spinfinity.app`** — frosted pill with theme-color glowing dot, positioned above default video controls (Feb 2026)
+- ✅ **Prize displayed in replay video** — when prizes are imported, the winning prize is shown in a themed pill below the winner name with "WINS" / "GAGNE" label (Feb 2026)
+- ✅ Editable Corporate theme title (localStorage persisted)
+- ✅ "Audio loaded" log hidden across all themes
 
 ### Testing
 - Manual screenshot verification on all 4 themes (empty / idle / spinning / winner states)

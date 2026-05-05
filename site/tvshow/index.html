@@ -892,7 +892,7 @@ function showReplayButton() { document.getElementById('replayBtn')?.classList.ad
 function hideReplayButton() { document.getElementById('replayBtn')?.classList.remove('visible'); }
 function openReplayModal() {
     if (!lastDrawSnapshot || !window.SpinfinityReplay) return;
-    window.SpinfinityReplay.showReplayModal(THEME_CONFIG, lastDrawSnapshot.participants, lastDrawSnapshot.winner);
+    window.SpinfinityReplay.showReplayModal(THEME_CONFIG, lastDrawSnapshot.participants, lastDrawSnapshot.winner, lastDrawSnapshot.prize);
 }
 
 const slot      = document.getElementById("slot");
@@ -1328,7 +1328,7 @@ function spin() {
             for (let k = 0; k < 18; k++) emitStageParticles(1.6);
             setTimeout(() => { smokeActive = false; }, 1000);
             winners.push(winner); names.splice(winnerIndex, 1);
-            lastDrawSnapshot = { participants: names.concat(winner), winner };
+            lastDrawSnapshot = { participants: names.concat(winner), winner, prize: prizes[winners.length - 1] || null };
             renderLists(); lastWinner = winner;
             spinning = false; spinBtn.disabled = false; spinBtn.classList.remove('active');
             launchConfetti(); playApplause();

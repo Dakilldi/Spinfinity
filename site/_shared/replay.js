@@ -129,6 +129,7 @@ const I18N = {
         shareText:    'Et le gagnant est {winner} ! 🎉 #Spinfinity',
         note:         'Format 9:16 prêt pour TikTok, Reels, Stories. Sur mobile, le bouton Partager ouvre directement l\'app de votre choix.',
         revealLabel:  '🎉 ET LE GAGNANT EST',
+        prizeLabel:   'GAGNE',
         shareFail:    'Le partage direct n\'est pas disponible sur ce navigateur. Téléchargez la vidéo et partagez-la depuis votre app.',
         notSupported: 'Votre navigateur ne supporte pas la génération vidéo (MediaRecorder).',
     },
@@ -141,6 +142,7 @@ const I18N = {
         shareText:    'And the winner is {winner}! 🎉 #Spinfinity',
         note:         'Vertical 9:16 format ready for TikTok, Reels, Stories. On mobile, the Share button opens your app of choice directly.',
         revealLabel:  '🎉 AND THE WINNER IS',
+        prizeLabel:   'WINS',
         shareFail:    'Direct share is not available on this browser. Download the video and share it from your app.',
         notSupported: 'Your browser does not support video generation (MediaRecorder).',
     }
@@ -182,7 +184,7 @@ class ReplayRecorder {
         return '';
     }
 
-    async record(participants, winner, onProgress) {
+    async record(participants, winner, onProgress, prize) {
         if (typeof MediaRecorder === 'undefined') {
             throw new Error(I18N[this.lang].notSupported);
         }
@@ -205,11 +207,11 @@ class ReplayRecorder {
 
         recorder.start();
 
-        // Phases (ms)
+        // Phases (ms) — slightly longer reveal/outro when there's a prize
         const T_INTRO = 800;
         const T_SPIN = 3500;
-        const T_REVEAL = 1400;
-        const T_OUTRO = 1100;
+        const T_REVEAL = prize ? 1700 : 1400;
+        const T_OUTRO = prize ? 1400 : 1100;
         const TOTAL = T_INTRO + T_SPIN + T_REVEAL + T_OUTRO;
 
         const seq = this.buildSequence(participants, winner, 60);
@@ -219,7 +221,7 @@ class ReplayRecorder {
         await new Promise(resolve => {
             const tick = (now) => {
                 const t = now - startTime;
-                this.renderFrame(t, T_INTRO, T_SPIN, T_REVEAL, T_OUTRO, seq, winner);
+                this.renderFrame(t, T_INTRO, T_SPIN, T_REVEAL, T_OUTRO, seq, winner, prize);
                 if (onProgress) onProgress(Math.min(1, t / TOTAL));
                 if (t < TOTAL) requestAnimationFrame(tick);
                 else resolve();
@@ -243,7 +245,7 @@ class ReplayRecorder {
         return seq;
     }
 
-    renderFrame(t, T_INTRO, T_SPIN, T_REVEAL, T_OUTRO, seq, winner) {
+    renderFrame(t, T_INTRO, T_SPIN, T_REVEAL, T_OUTRO, seq, winner, prize) {
         let phase, pt;
         if (t < T_INTRO) { phase = 'intro'; pt = t / T_INTRO; }
         else if (t < T_INTRO + T_SPIN) { phase = 'spin'; pt = (t - T_INTRO) / T_SPIN; }
@@ -257,7 +259,7 @@ class ReplayRecorder {
         if (phase === 'reveal' || phase === 'outro') {
             this.updateConfetti(phase === 'reveal' ? pt : 1.1);
             this.drawConfetti();
-            this.drawWinnerReveal(winner, phase === 'reveal' ? pt : 1, phase === 'outro' ? pt : 0);
+            this.drawWinnerReveal(winner, phase === 'reveal' ? pt : 1, phase === 'outro' ? pt : 0, prize);
         }
         this.drawWatermark(phase, pt);
     }
@@ -399,11 +401,14 @@ class ReplayRecorder {
         ctx.restore();
     }
 
-    drawWinnerReveal(winner, rt, ot) {
+    drawWinnerReveal(winner, rt, ot, prize) {
         const ctx = this.ctx, { W, theme } = this;
-        const labelY = 990;
-        const nameY = 1080;
-        const labelText = I18N[this.lang].revealLabel;
+        const hasPrize = prize && String(prize).trim().length > 0;
+        // Tighter layout when there's a prize line, default otherwise
+        const labelY = hasPrize ? 945 : 990;
+        const nameY = hasPrize ? 1015 : 1080;
+        const dict = I18N[this.lang];
+        const labelText = dict.revealLabel;
 
         ctx.save();
         ctx.globalAlpha = Math.min(1, rt * 1.8);
@@ -418,7 +423,8 @@ class ReplayRecorder {
         ctx.translate(W/2, nameY);
         ctx.scale(scale, scale);
 
-        ctx.font = '800 70px ' + theme.font;
+        const nameSize = hasPrize ? 58 : 70;
+        ctx.font = `800 ${nameSize}px ` + theme.font;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = theme.accent_text;
@@ -428,6 +434,50 @@ class ReplayRecorder {
         const truncated = this.truncate(ctx, winner, W - 60);
         ctx.fillText(truncated, 0, 0);
         ctx.restore();
+
+        if (hasPrize) {
+            // Prize line appears just after the name, slightly delayed
+            const prizeAlpha = Math.max(0, Math.min(1, (rt - 0.35) * 2.4));
+            if (prizeAlpha > 0) {
+                ctx.save();
+                ctx.globalAlpha = prizeAlpha;
+
+                // "WINS" label
+                ctx.font = '700 18px "Manrope", system-ui, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = theme.text;
+                ctx.fillText(dict.prizeLabel, W/2, 1075);
+
+                // Prize pill
+                ctx.font = '700 28px ' + theme.font;
+                const prizeStr = String(prize).trim();
+                const truncPrize = this.truncate(ctx, prizeStr, W - 120);
+                const tw = ctx.measureText(truncPrize).width;
+                const pillPad = 26;
+                const pillH = 46;
+                const pillW = Math.min(W - 80, tw + pillPad * 2);
+                const pillX = W/2 - pillW/2;
+                const pillY = 1095;
+
+                ctx.fillStyle = this.toRGBA(theme.accent1, 0.18);
+                this.roundRect(ctx, pillX, pillY, pillW, pillH, pillH/2);
+                ctx.fill();
+
+                ctx.strokeStyle = theme.accent_text;
+                ctx.lineWidth = 2;
+                ctx.shadowColor = theme.accent_text;
+                ctx.shadowBlur = 16;
+                this.roundRect(ctx, pillX, pillY, pillW, pillH, pillH/2);
+                ctx.stroke();
+
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#ffffff';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(truncPrize, W/2, pillY + pillH/2 + 2);
+
+                ctx.restore();
+            }
+        }
     }
 
     drawWatermark(phase, pt) {
@@ -569,7 +619,7 @@ class ReplayRecorder {
 }
 
 /* ---------- Modal flow ---------- */
-async function showReplayModal(theme, participants, winner) {
+async function showReplayModal(theme, participants, winner, prize) {
     const lang = getLang();
     const dict = I18N[lang];
 
@@ -602,7 +652,7 @@ async function showReplayModal(theme, participants, winner) {
     try {
         result = await recorder.record(participants, winner, p => {
             progressBar.style.width = `${(p * 100).toFixed(1)}%`;
-        });
+        }, prize);
     } catch (e) {
         modal.querySelector('.replay-loading').innerHTML =
             `<div class="replay-error">⚠ ${e.message || dict.notSupported}</div>`;

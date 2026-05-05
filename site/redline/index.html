@@ -305,6 +305,7 @@ h1 .flag.right { animation-delay: 1.1s; }
 .keep-pool { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font-family: 'Audiowide', sans-serif; font-size: 12px; letter-spacing: 0.08em; color: var(--cyan-soft); user-select: none; padding: 8px 14px; border: 1px solid rgba(0,240,255,0.25); border-radius: 6px; background: rgba(0,240,255,0.04); transition: border-color .2s, background .2s; }
 .keep-pool:hover { border-color: var(--cyan); background: rgba(0,240,255,0.08); }
 .keep-pool input { accent-color: var(--cyan); width: 16px; height: 16px; cursor: pointer; margin: 0; }
+.win-count { display: inline-block; margin-left: 6px; padding: 2px 8px; font-size: 11px; font-family: 'Audiowide', sans-serif; letter-spacing: 0.06em; color: #1a0808; background: var(--gold); border-radius: 999px; vertical-align: middle; box-shadow: 0 0 8px rgba(255,230,0,0.45); }
 .btn {
     padding: 12px 22px;
     background: linear-gradient(180deg, #ff5a8a 0%, var(--pink) 100%);
@@ -819,7 +820,10 @@ function renderLists() {
     } else {
         winEl.innerHTML = winners.map((w, i) => {
             const p = prizes[i];
-            return p ? `${w} → 🎁 <strong style="color:var(--gold)">${p}</strong>` : w;
+            const count = winners.slice(0, i + 1).filter(x => x === w).length;
+            const badge = count > 1 ? ` <span class="win-count">×${count} 🏆</span>` : '';
+            const base = p ? `${w} → 🎁 <strong style="color:var(--gold)">${p}</strong>` : w;
+            return base + badge;
         }).join("<br>");
     }
 

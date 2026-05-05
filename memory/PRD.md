@@ -59,6 +59,7 @@ Two pages already coded (Main + Redline). Task: create the 3 missing themes (Cor
 - ✅ **Prize displayed in replay video** — when prizes are imported, the winning prize is shown in a themed pill below the winner name with "WINS" / "GAGNE" label (Feb 2026)
 - ✅ **Dynamic prize hashtag in share text** — share text becomes "Et le gagnant du {prize} est {winner}! 🎉 #Spinfinity #PrizeName" (Feb 2026)
 - ✅ **"Keep winners in the pool" checkbox** — under the names input, persisted to localStorage per theme. When enabled, winners stay in the participants list (draw with replacement, useful for repeating draws like games / icebreakers) (Feb 2026)
+- ✅ **Multi-win counter badge** — when the same person wins multiple times (keep-pool mode), each subsequent entry shows a `×N 🏆` badge in theme accent color in the Winners list (Feb 2026)
 - ✅ Editable Corporate theme title (localStorage persisted)
 - ✅ "Audio loaded" log hidden across all themes
 

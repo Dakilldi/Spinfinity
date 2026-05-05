@@ -431,18 +431,60 @@ class ReplayRecorder {
     }
 
     drawWatermark(phase, pt) {
-        const ctx = this.ctx, { W, H } = this;
-        let alpha = 0;
-        if (phase === 'reveal') alpha = pt * 0.55;
-        else if (phase === 'outro') alpha = 0.55 + pt * 0.45;
+        const ctx = this.ctx, { W, H, theme } = this;
+        // Always visible after a quick fade-in during intro
+        const alpha = phase === 'intro' ? this.easeOut(pt) : 1;
         if (alpha <= 0) return;
 
         ctx.save();
         ctx.globalAlpha = alpha;
-        ctx.font = '600 22px "Manrope", system-ui, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillStyle = 'rgba(255,255,255,0.75)';
-        ctx.fillText('spinfinity.app', W/2, H - 50);
+
+        const text = 'spinfinity.app';
+        ctx.font = '700 26px "Manrope", system-ui, sans-serif';
+        ctx.textBaseline = 'middle';
+
+        const padding = 22;
+        const dotSize = 9;
+        const gap = 12;
+        const textW = ctx.measureText(text).width;
+        const pillW = padding + dotSize + gap + textW + padding;
+        const pillH = 52;
+        const pillX = W/2 - pillW/2;
+        const pillY = H - 135;
+
+        // Soft drop shadow under pill
+        ctx.shadowColor = 'rgba(0,0,0,0.45)';
+        ctx.shadowBlur = 16;
+        ctx.shadowOffsetY = 4;
+
+        // Pill background (frosted)
+        ctx.fillStyle = 'rgba(255,255,255,0.16)';
+        this.roundRect(ctx, pillX, pillY, pillW, pillH, pillH/2);
+        ctx.fill();
+
+        // Reset shadow for crisp border
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetY = 0;
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Theme-color glowing dot
+        ctx.fillStyle = theme.accent1;
+        ctx.shadowColor = theme.accent1;
+        ctx.shadowBlur = 14;
+        ctx.beginPath();
+        ctx.arc(pillX + padding + dotSize/2, pillY + pillH/2, dotSize/2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Brand text
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(text, pillX + padding + dotSize + gap, pillY + pillH/2 + 1);
+
         ctx.restore();
     }
 

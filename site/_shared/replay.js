@@ -129,7 +129,7 @@ const I18N = {
         shareText:    'Et le gagnant est {winner} ! 🎉 #Spinfinity',
         shareTextPrize: 'Et le gagnant du {prize} est {winner} ! 🎉 #Spinfinity{prizeTag}',
         note:         'Format 9:16 prêt pour TikTok, Reels, Stories. Sur mobile, le bouton Partager ouvre directement l\'app de votre choix.',
-        revealLabel:  '🎉 ET LE GAGNANT EST',
+        revealLabel:  '🎉 LE GAGNANT EST',
         prizeLabel:   'GAGNE',
         shareFail:    'Le partage direct n\'est pas disponible sur ce navigateur. Téléchargez la vidéo et partagez-la depuis votre app.',
         notSupported: 'Votre navigateur ne supporte pas la génération vidéo (MediaRecorder).',
@@ -156,6 +156,87 @@ function getLang() {
     const nav = (navigator.language || 'fr').slice(0,2).toLowerCase();
     return I18N[nav] ? nav : 'fr';
 }
+
+/* ---------- Audio (synthesized soundtrack) ---------- */
+const ReplayAudio = {
+    scheduleTick(ctx, dest, when, idx, total) {
+        // Slight pitch variation across the spin so it feels alive
+        const ratio = total ? idx / total : 0;
+        const baseFreq = 1750 - ratio * 350;
+        const osc = ctx.createOscillator();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(baseFreq, when);
+        osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.55, when + 0.05);
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.0001, when);
+        gain.gain.exponentialRampToValueAtTime(0.085, when + 0.004);
+        gain.gain.exponentialRampToValueAtTime(0.0001, when + 0.06);
+        osc.connect(gain).connect(dest);
+        osc.start(when);
+        osc.stop(when + 0.075);
+    },
+    scheduleLockClunk(ctx, dest, when) {
+        // Heavy "lock-in" thud when the wheel stops
+        const osc = ctx.createOscillator();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, when);
+        osc.frequency.exponentialRampToValueAtTime(80, when + 0.18);
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.0001, when);
+        gain.gain.exponentialRampToValueAtTime(0.32, when + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, when + 0.32);
+        osc.connect(gain).connect(dest);
+        osc.start(when);
+        osc.stop(when + 0.36);
+    },
+    scheduleReveal(ctx, dest, when) {
+        // Ascending arpeggio C5 → E5 → G5 → C6 then sustained chord
+        const arpeggio = [523.25, 659.25, 783.99, 1046.50];
+        arpeggio.forEach((freq, i) => {
+            const t = when + i * 0.075;
+            const osc = ctx.createOscillator();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, t);
+            const gain = ctx.createGain();
+            gain.gain.setValueAtTime(0.0001, t);
+            gain.gain.exponentialRampToValueAtTime(0.18, t + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
+            osc.connect(gain).connect(dest);
+            osc.start(t); osc.stop(t + 0.5);
+        });
+        // Sustained celebration chord (C major) starting just after arpeggio
+        const chordTime = when + 0.30;
+        [523.25, 659.25, 783.99].forEach(freq => {
+            const osc = ctx.createOscillator();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, chordTime);
+            const gain = ctx.createGain();
+            gain.gain.setValueAtTime(0.0001, chordTime);
+            gain.gain.exponentialRampToValueAtTime(0.13, chordTime + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.0001, chordTime + 1.4);
+            osc.connect(gain).connect(dest);
+            osc.start(chordTime); osc.stop(chordTime + 1.5);
+        });
+    },
+    /**
+     * Schedule the full soundtrack relative to `audioStart` (audioCtx clock).
+     * Phase durations are in ms, totalSpinSteps = number of items the wheel scrolls past.
+     */
+    scheduleSoundtrack(ctx, dest, T_INTRO, T_SPIN, totalSpinSteps, audioStart) {
+        const total = Math.max(1, totalSpinSteps);
+        // Tick at every integer step boundary; uses inverse easeOut so ticks slow with the wheel
+        for (let k = 1; k <= total; k++) {
+            const targetEased = k / total;
+            const pt = 1 - Math.pow(1 - targetEased, 1/5);
+            const tMs = T_INTRO + pt * T_SPIN;
+            this.scheduleTick(ctx, dest, audioStart + tMs / 1000, k, total);
+        }
+        // Lock-in thud at the moment wheel stops
+        this.scheduleLockClunk(ctx, dest, audioStart + (T_INTRO + T_SPIN) / 1000);
+        // Reveal chord just after the lock-in
+        this.scheduleReveal(ctx, dest, audioStart + (T_INTRO + T_SPIN + 80) / 1000);
+    }
+};
 
 /* ---------- Recorder ---------- */
 class ReplayRecorder {
@@ -199,8 +280,30 @@ class ReplayRecorder {
         try { await document.fonts.ready; } catch (e) {}
 
         const mime = this.pickMime();
-        const stream = this.canvas.captureStream(30);
+
+        // ---- Audio: synthesize a soundtrack and merge it with the canvas video ----
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+        let audioDest = null;
+        if (AudioCtx) {
+            try {
+                audioCtx = new AudioCtx();
+                if (audioCtx.state === 'suspended') {
+                    try { await audioCtx.resume(); } catch (e) {}
+                }
+                audioDest = audioCtx.createMediaStreamDestination();
+            } catch (e) {
+                audioCtx = null;
+            }
+        }
+
+        const videoStream = this.canvas.captureStream(30);
+        const tracks = [...videoStream.getVideoTracks()];
+        if (audioDest) tracks.push(...audioDest.stream.getAudioTracks());
+        const stream = new MediaStream(tracks);
+
         const opts = { videoBitsPerSecond: 5_000_000 };
+        if (audioDest) opts.audioBitsPerSecond = 128_000;
         if (mime) opts.mimeType = mime;
         const recorder = new MediaRecorder(stream, opts);
         const chunks = [];
@@ -209,6 +312,7 @@ class ReplayRecorder {
         const recDone = new Promise(resolve => {
             recorder.onstop = () => {
                 const type = mime || 'video/webm';
+                if (audioCtx) { try { audioCtx.close(); } catch (e) {} }
                 resolve({ blob: new Blob(chunks, { type }), mime: type });
             };
         });
@@ -224,6 +328,16 @@ class ReplayRecorder {
 
         const seq = this.buildSequence(participants, winner, 60);
         this.confetti = [];
+
+        // Schedule the audio soundtrack so it stays perfectly in sync with the visuals
+        if (audioCtx && audioDest) {
+            const totalSpinSteps = seq.winnerIdx - seq.startIdx;
+            ReplayAudio.scheduleSoundtrack(
+                audioCtx, audioDest,
+                T_INTRO, T_SPIN, totalSpinSteps,
+                audioCtx.currentTime + 0.05
+            );
+        }
 
         const startTime = performance.now();
         await new Promise(resolve => {
@@ -762,8 +876,13 @@ async function showReplayModal(theme, participants, winner, prize) {
     const video = modal.querySelector('.replay-video');
     video.src = url;
     video.style.display = 'block';
-    video.muted = true;
-    video.play().catch(() => {});
+    // Try with sound first (user just clicked Replay → counts as gesture); fall back to muted if blocked
+    video.muted = false;
+    video.volume = 0.85;
+    video.play().catch(() => {
+        video.muted = true;
+        video.play().catch(() => {});
+    });
     modal.querySelector('.replay-loading').style.display = 'none';
     modal.querySelector('.replay-actions').style.display = 'grid';
     modal.querySelector('.replay-note').style.display = 'block';
@@ -813,6 +932,6 @@ async function showReplayModal(theme, participants, winner, prize) {
     modal.addEventListener('click', e => { if (e.target === modal) close(); });
 }
 
-window.SpinfinityReplay = { ReplayRecorder, showReplayModal };
+window.SpinfinityReplay = { ReplayRecorder, showReplayModal, ReplayAudio };
 
 })();

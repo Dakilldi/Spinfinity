@@ -212,6 +212,34 @@ main {
     background: linear-gradient(135deg, rgba(168,85,247,0.35), rgba(236,72,153,0.25), rgba(255,255,255,0.05));
     box-shadow: 0 30px 70px rgba(168,85,247,0.25), 0 0 0 1px rgba(255,255,255,0.06);
 }
+.preview-sound-btn {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: #fff;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 3;
+    padding: 0;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+.preview-sound-btn:hover {
+    background: rgba(168,85,247,0.55);
+    transform: scale(1.06);
+    box-shadow: 0 0 18px rgba(168,85,247,0.6);
+}
+.preview-sound-btn svg { width: 18px; height: 18px; }
+.preview-sound-btn.on { background: linear-gradient(135deg, #a855f7, #ec4899); border-color: transparent; }
+.preview-sound-btn .icon-on { display: none; }
+.preview-sound-btn.on .icon-on { display: block; }
+.preview-sound-btn.on .icon-off { display: none; }
 .preview-frame::after {
     content: '';
     position: absolute; inset: -2px;
@@ -547,6 +575,18 @@ footer {
             <span class="accent" data-i18n="preview.title.accent">TikTok, Reels & Stories</span>
         </h2>
         <div class="preview-frame" data-testid="landing-preview">
+            <button type="button" class="preview-sound-btn" id="previewSoundBtn" aria-label="Toggle sound" data-testid="preview-sound-toggle" title="Activer le son">
+                <svg class="icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <line x1="23" y1="9" x2="17" y2="15"></line>
+                    <line x1="17" y1="9" x2="23" y2="15"></line>
+                </svg>
+                <svg class="icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                </svg>
+            </button>
             <canvas class="preview-canvas" id="previewCanvas" width="540" height="960" aria-hidden="true"></canvas>
         </div>
         <div class="preview-dots" id="previewDots" aria-hidden="true"></div>
@@ -787,11 +827,51 @@ applyLanguage(detectLanguage());
     let seq = recorder.buildSequence(PARTICIPANTS, WINNER, 50);
     recorder.confetti = [];
 
+    /* ---- Sound toggle (off by default — browsers block autoplay with sound) ---- */
+    const soundBtn = document.getElementById('previewSoundBtn');
+    let soundOn = false;
+    let audioCtx = null;
+    let cycleSoundScheduled = false;
+
+    function ensureAudioCtx() {
+        if (audioCtx) return audioCtx;
+        const C = window.AudioContext || window.webkitAudioContext;
+        if (!C) return null;
+        audioCtx = new C();
+        return audioCtx;
+    }
+    function scheduleCurrentCycleAudio() {
+        if (!soundOn || cycleSoundScheduled) return;
+        const ctx = ensureAudioCtx();
+        if (!ctx) return;
+        if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+        const totalSpinSteps = seq.winnerIdx - seq.startIdx;
+        // Align the audio start with where the visual is right now in the cycle
+        const audioStartOffset = Math.max(0, -frameTime / 1000); // 0 at cycle start
+        const audioStart = ctx.currentTime + audioStartOffset + 0.02;
+        window.SpinfinityReplay.ReplayAudio.scheduleSoundtrack(
+            ctx, ctx.destination, T_INTRO, T_SPIN, totalSpinSteps, audioStart
+        );
+        cycleSoundScheduled = true;
+    }
+    if (soundBtn) {
+        soundBtn.addEventListener('click', () => {
+            soundOn = !soundOn;
+            soundBtn.classList.toggle('on', soundOn);
+            soundBtn.setAttribute('title', soundOn ? 'Couper le son' : 'Activer le son');
+            if (soundOn) {
+                // If we're at the start of a cycle, schedule immediately; otherwise wait for next cycle
+                if (frameTime < 50) scheduleCurrentCycleAudio();
+            }
+        });
+    }
+
     function nextTheme() {
         themeIdx = (themeIdx + 1) % THEMES.length;
         recorder = new window.SpinfinityReplay.ReplayRecorder(THEMES[themeIdx], canvas);
         seq = recorder.buildSequence(PARTICIPANTS, WINNER, 50);
         recorder.confetti = [];
+        cycleSoundScheduled = false;
         setActiveDot(themeIdx);
     }
 
@@ -813,6 +893,9 @@ applyLanguage(detectLanguage());
             requestAnimationFrame(tick);
             return;
         }
+
+        // Schedule cycle audio at the start of each cycle
+        if (frameTime < 50) scheduleCurrentCycleAudio();
 
         frameTime += dt;
         if (frameTime >= TOTAL) {
@@ -837,6 +920,8 @@ applyLanguage(detectLanguage());
     // Pause on tab hidden
     document.addEventListener('visibilitychange', () => {
         visible = !document.hidden;
+        if (document.hidden && audioCtx) audioCtx.suspend().catch(() => {});
+        else if (!document.hidden && audioCtx && soundOn) audioCtx.resume().catch(() => {});
     });
 
     document.fonts.ready.then(() => requestAnimationFrame(tick));

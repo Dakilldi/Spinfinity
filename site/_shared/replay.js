@@ -127,6 +127,7 @@ const I18N = {
         share:        '📲 Partager (TikTok / Insta / FB)',
         close:        'Fermer',
         shareText:    'Et le gagnant est {winner} ! 🎉 #Spinfinity',
+        shareTextPrize: 'Et le gagnant du {prize} est {winner} ! 🎉 #Spinfinity{prizeTag}',
         note:         'Format 9:16 prêt pour TikTok, Reels, Stories. Sur mobile, le bouton Partager ouvre directement l\'app de votre choix.',
         revealLabel:  '🎉 ET LE GAGNANT EST',
         prizeLabel:   'GAGNE',
@@ -140,6 +141,7 @@ const I18N = {
         share:        '📲 Share (TikTok / Insta / FB)',
         close:        'Close',
         shareText:    'And the winner is {winner}! 🎉 #Spinfinity',
+        shareTextPrize: 'And the winner of {prize} is {winner}! 🎉 #Spinfinity{prizeTag}',
         note:         'Vertical 9:16 format ready for TikTok, Reels, Stories. On mobile, the Share button opens your app of choice directly.',
         revealLabel:  '🎉 AND THE WINNER IS',
         prizeLabel:   'WINS',
@@ -683,7 +685,24 @@ async function showReplayModal(theme, participants, winner, prize) {
 
     modal.querySelector('.replay-share').onclick = async () => {
         const file = new File([blob], filename, { type: mime });
-        const shareText = dict.shareText.replace('{winner}', winner);
+        const hasPrize = prize && String(prize).trim().length > 0;
+        let shareText;
+        if (hasPrize) {
+            const prizeStr = String(prize).trim();
+            // Build a clean #PascalCase hashtag from the prize name
+            const prizeTag = prizeStr
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')   // strip accents
+                .replace(/[^a-zA-Z0-9 ]/g, ' ')
+                .split(/\s+/).filter(Boolean)
+                .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+                .join('');
+            shareText = dict.shareTextPrize
+                .replace('{winner}', winner)
+                .replace('{prize}', prizeStr)
+                .replace('{prizeTag}', prizeTag ? ' #' + prizeTag : '');
+        } else {
+            shareText = dict.shareText.replace('{winner}', winner);
+        }
         const shareData = { files: [file], title: 'Spinfinity', text: shareText };
 
         if (navigator.canShare && navigator.canShare(shareData)) {

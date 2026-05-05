@@ -510,6 +510,10 @@ h1 .star.right { animation-delay: 1s; }
 .input-row textarea::placeholder { color: var(--text-faded); }
 .input-row textarea:focus { border-color: var(--purple-light); box-shadow: 0 0 14px rgba(168,85,247,0.4); }
 .input-buttons { display: flex; flex-direction: column; gap: 10px; }
+.keep-pool-row { display: flex; justify-content: center; margin: -8px auto 16px; padding: 0 16px; }
+.keep-pool { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font-family: 'Bebas Neue', sans-serif; font-size: 14px; letter-spacing: 0.10em; color: var(--text-dim); user-select: none; padding: 8px 14px; border: 1px solid rgba(168,85,247,0.30); border-radius: 8px; background: rgba(168,85,247,0.06); transition: border-color .2s, background .2s, color .2s; }
+.keep-pool:hover { border-color: var(--purple-light); background: rgba(168,85,247,0.12); color: var(--text); }
+.keep-pool input { accent-color: var(--purple); width: 16px; height: 16px; cursor: pointer; margin: 0; }
 .btn {
     padding: 12px 22px;
     background: linear-gradient(135deg, var(--purple), var(--pink));
@@ -716,6 +720,12 @@ h1 .star.right { animation-delay: 1s; }
             <button class="btn ghost" onclick="resetAll()" data-i18n="btn.reset" data-testid="reset-btn">Reset</button>
         </div>
     </div>
+    <div class="keep-pool-row">
+        <label class="keep-pool">
+            <input type="checkbox" id="keepWinners" data-testid="keep-winners-checkbox">
+            <span data-i18n="keepPool.label">Garder les gagnants dans la liste (tirage avec remise)</span>
+        </label>
+    </div>
 
     <div class="boxes">
         <div class="box">
@@ -766,6 +776,7 @@ const I18N = {
         'btn.importPrizes':   'Import Cadeaux',
         'btn.clear':          'Effacer',
         'btn.replay':         '📲 Replay vidéo',
+        'keepPool.label':     'Garder les gagnants dans la liste (tirage avec remise)',
         'ph.names':           'Colle les candidats ici (un par ligne ou séparés par des virgules)',
         'ph.prizes':          'Liste des cadeaux (1 par ligne, dans l\'ordre de remise)',
         'title.winners':      '★ Gagnants',
@@ -800,6 +811,7 @@ const I18N = {
         'btn.importPrizes':   'Import Gifts',
         'btn.clear':          'Clear',
         'btn.replay':         '📲 Video replay',
+        'keepPool.label':     'Keep winners in the pool (draw with replacement)',
         'ph.names':           'Paste contestants here (one per line or comma-separated)',
         'ph.prizes':          'Gift list (1 per line, in award order)',
         'title.winners':      '★ Winners',
@@ -870,6 +882,16 @@ function showToast(message) {
 document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
 });
+
+(function initKeepWinnersToggle() {
+    const cb = document.getElementById('keepWinners');
+    if (!cb) return;
+    const KEY = 'spinfinity-tvshow-keep-pool';
+    cb.checked = localStorage.getItem(KEY) === '1';
+    cb.addEventListener('change', () => {
+        localStorage.setItem(KEY, cb.checked ? '1' : '0');
+    });
+})();
 
 /* =========================================================
    STATE
@@ -1327,8 +1349,11 @@ function spin() {
             smokeActive = true; startSmokeLoop();
             for (let k = 0; k < 18; k++) emitStageParticles(1.6);
             setTimeout(() => { smokeActive = false; }, 1000);
-            winners.push(winner); names.splice(winnerIndex, 1);
-            lastDrawSnapshot = { participants: names.concat(winner), winner, prize: prizes[winners.length - 1] || null };
+            const participantsSnapshot = [...names];
+            const keepInPool = document.getElementById('keepWinners')?.checked;
+            winners.push(winner);
+            if (!keepInPool) names.splice(winnerIndex, 1);
+            lastDrawSnapshot = { participants: participantsSnapshot, winner, prize: prizes[winners.length - 1] || null };
             renderLists(); lastWinner = winner;
             spinning = false; spinBtn.disabled = false; spinBtn.classList.remove('active');
             launchConfetti(); playApplause();
@@ -1368,7 +1393,8 @@ function resetAll() {
 function restoreWinners() {
     if (spinning || winners.length === 0) return;
     cancelIdleRestart();
-    names = names.concat(winners); winners = []; lastWinner = null;
+    const toAdd = winners.filter(w => !names.includes(w));
+    names = names.concat(toAdd); winners = []; lastWinner = null;
     renderLists(); startIdleFresh();
 }
 function importPrizes() {

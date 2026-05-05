@@ -428,6 +428,10 @@ h1 .chip.right { animation-delay: 1.2s; }
 .input-row textarea::placeholder { color: var(--text-faded); }
 .input-row textarea:focus { border-color: var(--gold); box-shadow: 0 0 12px rgba(251,191,36,0.3); }
 .input-buttons { display: flex; flex-direction: column; gap: 10px; }
+.keep-pool-row { display: flex; justify-content: center; margin: -8px auto 16px; padding: 0 16px; }
+.keep-pool { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font-family: 'Bungee', sans-serif; font-size: 11px; letter-spacing: 0.08em; color: var(--gold-bright); user-select: none; padding: 8px 14px; border: 1px solid rgba(251,191,36,0.35); border-radius: 6px; background: rgba(251,191,36,0.06); transition: border-color .2s, background .2s; }
+.keep-pool:hover { border-color: var(--gold); background: rgba(251,191,36,0.12); }
+.keep-pool input { accent-color: var(--gold); width: 16px; height: 16px; cursor: pointer; margin: 0; }
 .btn {
     padding: 12px 22px;
     background: linear-gradient(180deg, var(--gold-bright), var(--gold) 50%, var(--gold-deep));
@@ -614,6 +618,12 @@ h1 .chip.right { animation-delay: 1.2s; }
             <button class="btn ghost" onclick="resetAll()" data-i18n="btn.reset" data-testid="reset-btn">♻️ Reset</button>
         </div>
     </div>
+    <div class="keep-pool-row">
+        <label class="keep-pool">
+            <input type="checkbox" id="keepWinners" data-testid="keep-winners-checkbox">
+            <span data-i18n="keepPool.label">Garder les gagnants dans la liste (tirage avec remise)</span>
+        </label>
+    </div>
 
     <div class="boxes">
         <div class="box">
@@ -700,6 +710,7 @@ const I18N = {
         'btn.importPrizes':   '📥 Import Lots',
         'btn.clear':          '🗑️ Effacer',
         'btn.replay':         '📲 Replay vidéo',
+        'keepPool.label':     'Garder les gagnants dans la liste (tirage avec remise)',
         'ph.names':           'Colle les noms ici (un par ligne ou séparés par des virgules)',
         'ph.prizes':          'Liste des lots à gagner (1 par ligne, dans l\'ordre de remise)',
         'title.winners':      '🏆 Gagnants',
@@ -730,6 +741,7 @@ const I18N = {
         'btn.importPrizes':   '📥 Import Prizes',
         'btn.clear':          '🗑️ Clear',
         'btn.replay':         '📲 Video replay',
+        'keepPool.label':     'Keep winners in the pool (draw with replacement)',
         'ph.names':           'Paste names here (one per line or comma-separated)',
         'ph.prizes':          'Prize list (1 per line, in award order)',
         'title.winners':      '🏆 Winners',
@@ -796,6 +808,16 @@ function showToast(message) {
 document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
 });
+
+(function initKeepWinnersToggle() {
+    const cb = document.getElementById('keepWinners');
+    if (!cb) return;
+    const KEY = 'spinfinity-casino-keep-pool';
+    cb.checked = localStorage.getItem(KEY) === '1';
+    cb.addEventListener('change', () => {
+        localStorage.setItem(KEY, cb.checked ? '1' : '0');
+    });
+})();
 
 /* =========================================================
    STATE
@@ -1255,8 +1277,11 @@ function spin() {
                 rainFrames++;
                 if (rainFrames > 12) { clearInterval(rainInterval); smokeActive = false; }
             }, 80);
-            winners.push(winner); names.splice(winnerIndex, 1);
-            lastDrawSnapshot = { participants: names.concat(winner), winner, prize: prizes[winners.length - 1] || null };
+            const participantsSnapshot = [...names];
+            const keepInPool = document.getElementById('keepWinners')?.checked;
+            winners.push(winner);
+            if (!keepInPool) names.splice(winnerIndex, 1);
+            lastDrawSnapshot = { participants: participantsSnapshot, winner, prize: prizes[winners.length - 1] || null };
             renderLists(); lastWinner = winner;
             spinning = false; spinBtn.disabled = false; spinBtn.classList.remove('active');
             launchConfetti(); playJackpot();
@@ -1296,7 +1321,8 @@ function resetAll() {
 function restoreWinners() {
     if (spinning || winners.length === 0) return;
     cancelIdleRestart();
-    names = names.concat(winners); winners = []; lastWinner = null;
+    const toAdd = winners.filter(w => !names.includes(w));
+    names = names.concat(toAdd); winners = []; lastWinner = null;
     renderLists(); startIdleFresh();
 }
 function importPrizes() {

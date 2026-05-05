@@ -21,6 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Manrope:wght@500;600;700;800&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<script defer src="../_shared/replay.js"></script>
 
 <style>
 :root {
@@ -258,6 +259,37 @@ h1 .flag.right { animation-delay: 1.1s; }
     letter-spacing: 2px; margin: 0 auto 15px; color: var(--cyan);
 }
 
+/* ---------- REPLAY CTA ---------- */
+.replay-cta {
+    display: none;
+    margin: 0 auto 25px;
+    align-items: center; gap: 10px;
+    padding: 12px 24px;
+    background: rgba(168,85,247,0.14);
+    border: 1px solid rgba(168,85,247,0.5);
+    border-radius: 100px;
+    color: #c084fc;
+    font-family: 'Audiowide', sans-serif;
+    font-size: 12px; letter-spacing: 2px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
+    animation: replayCtaIn 0.5s ease-out;
+}
+.replay-cta.visible { display: inline-flex; }
+.replay-cta:hover {
+    background: rgba(168,85,247,0.22);
+    border-color: #a855f7; color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(168,85,247,0.35);
+}
+.replay-cta svg { width: 16px; height: 16px; }
+@keyframes replayCtaIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
 .input-row { display: flex; justify-content: center; align-items: center; gap: 18px; margin: 25px auto; flex-wrap: wrap; }
 .input-row textarea {
     width: clamp(260px, 50vw, 340px); height: 110px; padding: 12px;
@@ -434,6 +466,13 @@ h1 .flag.right { animation-delay: 1.1s; }
         </button>
     </div>
 
+    <button id="replayBtn" class="replay-cta" onclick="openReplayModal()" data-testid="replay-cta-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="6 4 20 12 6 20 6 4"/>
+        </svg>
+        <span data-i18n="btn.replay">📲 Replay vidéo</span>
+    </button>
+
     <div id="audio-status" data-i18n="audio.loading">🔊 CHARGEMENT AUDIO...</div>
 
     <div class="input-row">
@@ -488,6 +527,7 @@ const I18N = {
         'btn.restore':        '↩️ Renvoyer dans Participants',
         'btn.importPrizes':   '📥 Import Lots',
         'btn.clear':          '🗑️ Effacer',
+        'btn.replay':         '📲 Replay vidéo',
         'ph.names':           'Colle les noms ici (un par ligne ou séparés par des virgules)',
         'ph.prizes':          'Liste des lots à gagner (1 par ligne, dans l\'ordre de remise)',
         'title.winners':      '🏆 Gagnants',
@@ -515,6 +555,7 @@ const I18N = {
         'btn.restore':        '↩️ Send back to Participants',
         'btn.importPrizes':   '📥 Import Prizes',
         'btn.clear':          '🗑️ Clear',
+        'btn.replay':         '📲 Video replay',
         'ph.names':           'Paste names here (one per line or comma-separated)',
         'ph.prizes':          'Prize list (1 per line, in award order)',
         'title.winners':      '🏆 Winners',
@@ -586,6 +627,24 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
 
 let names = [], winners = [], prizes = [];
 let spinning = false, lastWinner = null, nameBag = [], lastServedName = null;
+let lastDrawSnapshot = null;
+
+const THEME_CONFIG = {
+    slug: 'redline',
+    display: 'Redline Roulette',
+    bg: '#0a0e1a',
+    accent1: '#ff2e63',
+    accent2: '#00f0ff',
+    text: '#ffffff',
+    accent_text: '#ffe600',
+    font: '"Audiowide", sans-serif'
+};
+function showReplayButton() { document.getElementById('replayBtn')?.classList.add('visible'); }
+function hideReplayButton() { document.getElementById('replayBtn')?.classList.remove('visible'); }
+function openReplayModal() {
+    if (!lastDrawSnapshot || !window.SpinfinityReplay) return;
+    window.SpinfinityReplay.showReplayModal(THEME_CONFIG, lastDrawSnapshot.participants, lastDrawSnapshot.winner);
+}
 
 const slot      = document.getElementById("slot");
 const reel      = document.getElementById("reel");
@@ -897,6 +956,7 @@ function spin() {
         return;
     }
     hidePrizeBanner();
+    hideReplayButton();
     ensureAudio(); unlockV8();
     cancelIdleRestart(); stopIdle();
     spinning = true; spinBtn.disabled = true;
@@ -951,9 +1011,11 @@ function spin() {
             showSkidMarks();
             setRPM(0); setTimeout(() => setRPM(800), 800);
             winners.push(winner); names.splice(winnerIndex, 1);
+            lastDrawSnapshot = { participants: names.concat(winner), winner };
             renderLists(); lastWinner = winner;
             spinning = false; spinBtn.disabled = false; spinBtn.classList.remove('active');
             launchFireworks(); playV8Start();
+            showReplayButton();
             const prize = prizes[winners.length - 1];
             if (prize) showPrizeBanner(prize);
             idleRestartId = setTimeout(() => {
@@ -980,6 +1042,7 @@ function resetAll() {
     cancelIdleRestart(); stopIdle();
     names = []; winners = []; lastWinner = null; prizes = [];
     nameBag = []; lastServedName = null;
+    lastDrawSnapshot = null; hideReplayButton();
     renderLists(); showReadyEmpty(); setRPM(0);
 }
 function restoreWinners() {

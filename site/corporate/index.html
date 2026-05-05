@@ -21,6 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script defer src="../_shared/replay.js"></script>
 
 <style>
 :root {
@@ -418,6 +419,37 @@ h1 .accent {
     text-transform: uppercase;
 }
 
+/* ---------- REPLAY CTA ---------- */
+.replay-cta {
+    display: none;
+    margin: 0 auto 25px;
+    align-items: center; gap: 10px;
+    padding: 12px 24px;
+    background: rgba(168,85,247,0.10);
+    border: 1px solid rgba(168,85,247,0.4);
+    border-radius: 100px;
+    color: #c084fc;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px; font-weight: 700;
+    letter-spacing: 0.04em; cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
+    animation: replayCtaIn 0.5s ease-out;
+}
+.replay-cta.visible { display: inline-flex; }
+.replay-cta:hover {
+    background: rgba(168,85,247,0.18);
+    border-color: #a855f7; color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(168,85,247,0.3);
+}
+.replay-cta svg { width: 16px; height: 16px; }
+@keyframes replayCtaIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ---------- INPUT ROW ---------- */
 .input-row { display: flex; justify-content: center; align-items: center; gap: 16px; margin: 28px auto; flex-wrap: wrap; }
 .input-row textarea {
@@ -588,9 +620,6 @@ h1 .accent {
         </span>
         <input id="titleInput" type="text" class="title-input" maxlength="60" data-i18n-attr="placeholder" data-i18n="title.placeholder" placeholder="Ma Société" data-testid="title-input">
     </h1>
-    <p class="subtitle" data-i18n="subtitle">
-        Tirage au sort élégant pour vos événements d'entreprise, séminaires et conventions.
-    </p>
 
     <div class="wheel-wrapper">
         <div class="slot-container">
@@ -636,6 +665,13 @@ h1 .accent {
             <span data-i18n="btn.start">Lancer le tirage</span>
         </button>
     </div>
+
+    <button id="replayBtn" class="replay-cta" onclick="openReplayModal()" data-testid="replay-cta-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="6 4 20 12 6 20 6 4"/>
+        </svg>
+        <span data-i18n="btn.replay">📲 Replay vidéo</span>
+    </button>
 
     <div id="audio-status" data-i18n="audio.loading">Chargement audio...</div>
 
@@ -700,6 +736,7 @@ const I18N = {
         'btn.restore':        '↩ Renvoyer dans Participants',
         'btn.importPrizes':   'Importer les lots',
         'btn.clear':          'Effacer',
+        'btn.replay':         '📲 Replay vidéo',
         'ph.names':           'Collez les noms ici (un par ligne ou séparés par des virgules)',
         'ph.prizes':          'Liste des lots à attribuer (1 par ligne, dans l\'ordre de remise)',
         'title.winners':      'Gagnants',
@@ -736,6 +773,7 @@ const I18N = {
         'btn.restore':        '↩ Send back to Participants',
         'btn.importPrizes':   'Import prizes',
         'btn.clear':          'Clear',
+        'btn.replay':         '📲 Video replay',
         'ph.names':           'Paste names here (one per line or comma-separated)',
         'ph.prizes':          'Prize list (1 per line, in award order)',
         'title.winners':      'Winners',
@@ -870,6 +908,33 @@ function saveTitleEdit() {
 ========================================================= */
 let names = [], winners = [], prizes = [];
 let spinning = false, lastWinner = null, nameBag = [], lastServedName = null;
+let lastDrawSnapshot = null;
+
+/* Theme config for replay video */
+const THEME_CONFIG = {
+    slug: 'corporate',
+    display: 'Corporate Draw',
+    bg: '#0f172a',
+    accent1: '#3b82f6',
+    accent2: '#60a5fa',
+    text: '#e2e8f0',
+    accent_text: '#fbbf24',
+    font: '"Space Grotesk", sans-serif'
+};
+
+function showReplayButton() {
+    document.getElementById('replayBtn')?.classList.add('visible');
+}
+function hideReplayButton() {
+    document.getElementById('replayBtn')?.classList.remove('visible');
+}
+function openReplayModal() {
+    if (!lastDrawSnapshot || !window.SpinfinityReplay) return;
+    const cfg = { ...THEME_CONFIG };
+    const customTitle = localStorage.getItem(TITLE_KEY);
+    if (customTitle) cfg.display = customTitle;
+    window.SpinfinityReplay.showReplayModal(cfg, lastDrawSnapshot.participants, lastDrawSnapshot.winner);
+}
 
 const slot    = document.getElementById("slot");
 const reel    = document.getElementById("reel");
@@ -1227,6 +1292,7 @@ function spin() {
     if (names.length === 0) { showToast(t('toast.noNames')); return; }
 
     hidePrizeBanner();
+    hideReplayButton();
     ensureAudio(); unlockAudio();
     cancelIdleRestart(); stopIdle();
     spinning = true; spinBtn.disabled = true;
@@ -1279,11 +1345,14 @@ function spin() {
             for (let k = 0; k < 14; k++) emitPapers(1.4);
             setTimeout(() => { smokeActive = false; }, 800);
             setRingProgress(1);
+            const participantsSnapshot = [...names];
             winners.push(winner); names.splice(winnerIndex, 1);
+            lastDrawSnapshot = { participants: participantsSnapshot, winner };
             renderLists(); lastWinner = winner;
             spinning = false; spinBtn.disabled = false; spinBtn.classList.remove('active');
             ringProgressEl.textContent = (names.length === 0) ? t('done') : t('ready');
             launchConfetti(); playChime();
+            showReplayButton();
             const prize = prizes[winners.length - 1];
             if (prize) showPrizeBanner(prize);
             idleRestartId = setTimeout(() => {
@@ -1313,6 +1382,7 @@ function resetAll() {
     cancelIdleRestart(); stopIdle();
     names = []; winners = []; lastWinner = null; prizes = [];
     nameBag = []; lastServedName = null;
+    lastDrawSnapshot = null; hideReplayButton();
     renderLists(); showReadyEmpty(); setRingProgress(0);
 }
 function restoreWinners() {

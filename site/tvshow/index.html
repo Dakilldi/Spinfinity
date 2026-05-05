@@ -21,6 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&family=Manrope:wght@500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script defer src="../_shared/replay.js"></script>
 
 <style>
 :root {
@@ -465,6 +466,37 @@ h1 .star.right { animation-delay: 1s; }
     text-transform: uppercase;
 }
 
+/* ---------- REPLAY CTA ---------- */
+.replay-cta {
+    display: none;
+    margin: 0 auto 25px;
+    align-items: center; gap: 10px;
+    padding: 12px 26px;
+    background: rgba(168,85,247,0.14);
+    border: 1px solid rgba(168,85,247,0.5);
+    border-radius: 100px;
+    color: var(--purple-light);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px; letter-spacing: 2.5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
+    animation: replayCtaIn 0.5s ease-out;
+}
+.replay-cta.visible { display: inline-flex; }
+.replay-cta:hover {
+    background: rgba(168,85,247,0.22);
+    border-color: var(--purple); color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(168,85,247,0.4);
+}
+.replay-cta svg { width: 16px; height: 16px; }
+@keyframes replayCtaIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ---------- INPUT ---------- */
 .input-row { display: flex; justify-content: center; align-items: center; gap: 18px; margin: 25px auto; flex-wrap: wrap; }
 .input-row textarea {
@@ -668,6 +700,13 @@ h1 .star.right { animation-delay: 1s; }
         </button>
     </div>
 
+    <button id="replayBtn" class="replay-cta" onclick="openReplayModal()" data-testid="replay-cta-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="6 4 20 12 6 20 6 4"/>
+        </svg>
+        <span data-i18n="btn.replay">📲 Replay vidéo</span>
+    </button>
+
     <div id="audio-status" data-i18n="audio.loading">🔊 Chargement applaudissements...</div>
 
     <div class="input-row">
@@ -726,6 +765,7 @@ const I18N = {
         'btn.restore':        '↩ Renvoyer dans Candidats',
         'btn.importPrizes':   'Import Cadeaux',
         'btn.clear':          'Effacer',
+        'btn.replay':         '📲 Replay vidéo',
         'ph.names':           'Colle les candidats ici (un par ligne ou séparés par des virgules)',
         'ph.prizes':          'Liste des cadeaux (1 par ligne, dans l\'ordre de remise)',
         'title.winners':      '★ Gagnants',
@@ -759,6 +799,7 @@ const I18N = {
         'btn.restore':        '↩ Send back to Contestants',
         'btn.importPrizes':   'Import Gifts',
         'btn.clear':          'Clear',
+        'btn.replay':         '📲 Video replay',
         'ph.names':           'Paste contestants here (one per line or comma-separated)',
         'ph.prizes':          'Gift list (1 per line, in award order)',
         'title.winners':      '★ Winners',
@@ -835,6 +876,24 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
 ========================================================= */
 let names = [], winners = [], prizes = [];
 let spinning = false, lastWinner = null, nameBag = [], lastServedName = null;
+let lastDrawSnapshot = null;
+
+const THEME_CONFIG = {
+    slug: 'tvshow',
+    display: 'Prime Time',
+    bg: '#1a0a2e',
+    accent1: '#a855f7',
+    accent2: '#ec4899',
+    text: '#faf5ff',
+    accent_text: '#fde047',
+    font: '"Bebas Neue", sans-serif'
+};
+function showReplayButton() { document.getElementById('replayBtn')?.classList.add('visible'); }
+function hideReplayButton() { document.getElementById('replayBtn')?.classList.remove('visible'); }
+function openReplayModal() {
+    if (!lastDrawSnapshot || !window.SpinfinityReplay) return;
+    window.SpinfinityReplay.showReplayModal(THEME_CONFIG, lastDrawSnapshot.participants, lastDrawSnapshot.winner);
+}
 
 const slot      = document.getElementById("slot");
 const reel      = document.getElementById("reel");
@@ -1206,6 +1265,7 @@ function spin() {
     if (names.length === 0) { showToast(t('toast.noNames')); return; }
 
     hidePrizeBanner();
+    hideReplayButton();
     ensureAudio(); unlockAudio();
     cancelIdleRestart(); stopIdle();
     spinning = true; spinBtn.disabled = true;
@@ -1268,9 +1328,11 @@ function spin() {
             for (let k = 0; k < 18; k++) emitStageParticles(1.6);
             setTimeout(() => { smokeActive = false; }, 1000);
             winners.push(winner); names.splice(winnerIndex, 1);
+            lastDrawSnapshot = { participants: names.concat(winner), winner };
             renderLists(); lastWinner = winner;
             spinning = false; spinBtn.disabled = false; spinBtn.classList.remove('active');
             launchConfetti(); playApplause();
+            showReplayButton();
             const prize = prizes[winners.length - 1];
             if (prize) showPrizeBanner(prize);
             idleRestartId = setTimeout(() => {
@@ -1300,6 +1362,7 @@ function resetAll() {
     cancelIdleRestart(); stopIdle();
     names = []; winners = []; lastWinner = null; prizes = [];
     nameBag = []; lastServedName = null;
+    lastDrawSnapshot = null; hideReplayButton();
     renderLists(); showReadyEmpty(); setMeter(0); updateBarValue();
 }
 function restoreWinners() {

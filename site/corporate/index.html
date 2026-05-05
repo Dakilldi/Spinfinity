@@ -136,6 +136,54 @@ h1 .accent {
     -webkit-background-clip: text; background-clip: text;
     color: transparent;
 }
+.title-wrap {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    flex-wrap: wrap; gap: 8px;
+}
+.title-wrap .title-display {
+    display: inline-flex; align-items: center; gap: 10px;
+}
+.title-edit-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0.55;
+    flex-shrink: 0;
+    padding: 0;
+    font: inherit;
+}
+.title-edit-btn:hover {
+    opacity: 1;
+    color: var(--blue-light);
+    border-color: var(--blue);
+    background: rgba(59,130,246,0.08);
+}
+.title-edit-btn svg { width: 16px; height: 16px; }
+.title-input {
+    display: none;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(28px, 6vw, 48px);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    background: var(--surface);
+    color: var(--text);
+    border: 2px solid var(--blue);
+    border-radius: 12px;
+    padding: 6px 18px;
+    text-align: center;
+    width: clamp(280px, 65vw, 600px);
+    box-shadow: 0 0 0 4px rgba(59,130,246,0.15);
+    outline: none;
+    line-height: 1.05;
+}
+.title-wrap.editing .title-display { display: none; }
+.title-wrap.editing .title-input { display: inline-block; }
 .subtitle {
     color: var(--text-dim);
     font-size: clamp(14px, 2vw, 16px);
@@ -363,6 +411,7 @@ h1 .accent {
 .start-btn.active .led { animation: ledBreath 0.4s ease-in-out infinite; }
 
 #audio-status {
+    display: none;
     font-family: 'JetBrains Mono', monospace; font-size: 10px;
     opacity: 0.55; letter-spacing: 0.2em;
     margin: 0 auto 25px; color: var(--blue-light);
@@ -524,9 +573,20 @@ h1 .accent {
         <span data-i18n="badge.live">Tirage en cours</span>
     </div>
 
-    <h1>
-        <span data-i18n="title.line1">Corporate</span>
-        <span class="accent" data-i18n="title.line2">Draw</span>
+    <h1 class="title-wrap" id="titleWrap">
+        <span class="title-display">
+            <span id="customTitle">
+                <span data-i18n="title.line1">Corporate</span>
+                <span class="accent" data-i18n="title.line2">Draw</span>
+            </span>
+            <button class="title-edit-btn" onclick="startEditTitle()" data-testid="edit-title-btn" data-i18n-attr="title" data-i18n="title.edit" title="Modifier le titre" aria-label="Modifier le titre" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 20h9"/>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+            </button>
+        </span>
+        <input id="titleInput" type="text" class="title-input" maxlength="60" data-i18n-attr="placeholder" data-i18n="title.placeholder" placeholder="Ma Société" data-testid="title-input">
     </h1>
     <p class="subtitle" data-i18n="subtitle">
         Tirage au sort élégant pour vos événements d'entreprise, séminaires et conventions.
@@ -631,6 +691,8 @@ const I18N = {
         'badge.live':         'Tirage en cours',
         'title.line1':        'Corporate',
         'title.line2':        'Draw',
+        'title.edit':         'Modifier le titre',
+        'title.placeholder':  'Ma Société',
         'subtitle':           'Tirage au sort élégant pour vos événements d\'entreprise, séminaires et conventions.',
         'btn.start':          'Lancer le tirage',
         'btn.import':         'Importer',
@@ -665,6 +727,8 @@ const I18N = {
         'badge.live':         'Live drawing',
         'title.line1':        'Corporate',
         'title.line2':        'Draw',
+        'title.edit':         'Edit title',
+        'title.placeholder':  'My Company',
         'subtitle':           'Elegant random picker for your corporate events, seminars and conventions.',
         'btn.start':          'Start draw',
         'btn.import':         'Import',
@@ -744,6 +808,62 @@ function showToast(message) {
 document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
 });
+
+/* =========================================================
+   CUSTOM TITLE (editable, persisted)
+========================================================= */
+const TITLE_KEY = 'spinfinity-corporate-title';
+function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function renderCustomTitle(text) {
+    const h = document.getElementById('customTitle');
+    const trimmed = (text || '').trim();
+    if (!trimmed) {
+        const dict = I18N[currentLang];
+        h.innerHTML = `<span data-i18n="title.line1">${dict['title.line1']}</span> <span class="accent" data-i18n="title.line2">${dict['title.line2']}</span>`;
+        return;
+    }
+    const words = trimmed.split(/\s+/);
+    if (words.length > 1) {
+        const last = words.pop();
+        h.innerHTML = `<span>${escapeHtml(words.join(' '))}</span> <span class="accent">${escapeHtml(last)}</span>`;
+    } else {
+        h.innerHTML = `<span class="accent">${escapeHtml(trimmed)}</span>`;
+    }
+}
+function loadCustomTitle() {
+    const saved = localStorage.getItem(TITLE_KEY);
+    if (saved) renderCustomTitle(saved);
+}
+function startEditTitle() {
+    const wrap = document.getElementById('titleWrap');
+    const inp  = document.getElementById('titleInput');
+    inp.value  = (localStorage.getItem(TITLE_KEY) || document.getElementById('customTitle').textContent.trim());
+    wrap.classList.add('editing');
+    setTimeout(() => { inp.focus(); inp.select(); }, 30);
+}
+function saveTitleEdit() {
+    const wrap = document.getElementById('titleWrap');
+    const inp  = document.getElementById('titleInput');
+    const val  = inp.value.trim();
+    if (val) {
+        localStorage.setItem(TITLE_KEY, val);
+        renderCustomTitle(val);
+    } else {
+        localStorage.removeItem(TITLE_KEY);
+        renderCustomTitle('');
+    }
+    wrap.classList.remove('editing');
+}
+(function wireTitleInput() {
+    const inp = document.getElementById('titleInput');
+    inp.addEventListener('blur', saveTitleEdit);
+    inp.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); saveTitleEdit(); }
+        else if (e.key === 'Escape') { document.getElementById('titleWrap').classList.remove('editing'); }
+    });
+})();
 
 /* =========================================================
    STATE
@@ -1285,6 +1405,7 @@ function launchConfetti() {
    INIT
 ========================================================= */
 applyLanguage(detectLanguage());
+loadCustomTitle();
 renderLists();
 if (names.length > 0) startIdleFresh();
 else showReadyEmpty();

@@ -590,21 +590,24 @@ class ReplayRecorder {
     drawWinnerReveal(winner, rt, ot, prize) {
         const ctx = this.ctx, { W, theme } = this;
         const hasPrize = prize && String(prize).trim().length > 0;
-        // Tighter layout when there's a prize line, default otherwise
-        const labelY = hasPrize ? 945 : 990;
-        const nameY = hasPrize ? 1015 : 1080;
         const dict = I18N[this.lang];
         const themeLabels = theme.labels && theme.labels[this.lang];
-        const labelText = (themeLabels && themeLabels.revealLabel) || dict.revealLabel;
+        const labelText = themeLabels && 'revealLabel' in themeLabels ? themeLabels.revealLabel : dict.revealLabel;
         const prizeLabelText = (themeLabels && themeLabels.prizeLabel) || dict.prizeLabel;
+        const showLabel = !!labelText;
+        // Tighter layout when there's a prize line, default otherwise; lift the name when no top label
+        const labelY = hasPrize ? 945 : 990;
+        const nameY = (hasPrize ? 1015 : 1080) - (showLabel ? 0 : 30);
 
-        ctx.save();
-        ctx.globalAlpha = Math.min(1, rt * 1.8);
-        ctx.font = '700 22px "Manrope", system-ui, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillStyle = theme.text;
-        ctx.fillText(labelText, W/2, labelY);
-        ctx.restore();
+        if (showLabel) {
+            ctx.save();
+            ctx.globalAlpha = Math.min(1, rt * 1.8);
+            ctx.font = '700 22px "Manrope", system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = theme.text;
+            ctx.fillText(labelText, W/2, labelY);
+            ctx.restore();
+        }
 
         ctx.save();
         const scale = 0.5 + this.easeOutBack(Math.min(1, rt * 1.3)) * 0.5;

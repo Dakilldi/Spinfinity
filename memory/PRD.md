@@ -63,7 +63,13 @@ Two pages already coded (Main + Redline). Task: create the 3 missing themes (Cor
 - ✅ **3D cylinder slot effect in replay** — items are now projected on a virtual rotating drum: padding above first/below winner, perspective scaling + alpha falloff, vertical gradient inside drum (Feb 2026)
 - ✅ **Replay header rebrand** — "Spinfinity" matches the landing-page mixed-case gradient (white → purple → pink), theme title is bigger with theme-specific gradient + glow, theme subtitle line added for visual coherence with each theme page (Feb 2026)
 - ✅ **Animated replay preview on landing page** — small 9:16 canvas above the themes grid plays a real-time replay loop and cycles through all 4 themes (Casino → Prime Time → Redline → Corporate) with active dots indicator. Pauses when off-screen for perf. Same render engine as the actual replay → 100% visual coherence. (Feb 2026)
-- ✅ **Audio in recorded replay video** — synthesized soundtrack (roulette tick-tick-tick that slows with the wheel + heavy lock-clunk + ascending C major arpeggio + sustained celebration chord) is mixed into the MP4/WebM via `MediaStreamDestination`. Audio tracks added to the MediaStream alongside video before MediaRecorder starts. (Feb 2026)
+- ✅ **Audio in recorded replay video** — synthesized soundtrack mixed into the MP4/WebM via `MediaStreamDestination`. Audio tracks added to the MediaStream alongside video before MediaRecorder starts. (Feb 2026)
+- ✅ **Theme-specific soundtracks** in replay (Feb 2026):
+   - Casino → coin "ting" ticks + ka-ching jackpot (A major chord cascade + metallic harmonics + coin shower noise)
+   - TV Show → snare-like ticks + applause (modulated noise) + cheer whoops
+   - Redline → low engine "blat" ticks + tire screech lock + V8 rev (bass thump + revving sawtooth)
+   - Corporate → digital ticks + ascending C major arpeggio + sustained chord
+- ✅ **Fixed share button on Android Chrome / Samsung** — strip codec params from MIME (`video/webm;codecs=vp9` → `video/webm`), graceful fallback chain: file share → auto-download + text share → alert. Updated `shareFail` message to reflect the auto-download. (Feb 2026)
 - ✅ **Sound toggle on landing preview** — circular speaker button (top-right of preview frame). Off by default (browsers block autoplay with sound). Click to unmute → schedules audio aligned with the next cycle start. Auto-suspends AudioContext when tab is hidden. (Feb 2026)
 - ✅ **Reveal label simplified** — "Et le gagnant est" → "Le gagnant est" (FR) for a punchier on-screen reveal. (Feb 2026)
 - ✅ **Corporate theme**: subtitle removed from replay header (matches the page which has no subtitle) (Feb 2026)

@@ -131,7 +131,7 @@ const I18N = {
         note:         'Format 9:16 prêt pour TikTok, Reels, Stories. Sur mobile, le bouton Partager ouvre directement l\'app de votre choix.',
         revealLabel:  '🎉 LE GAGNANT EST',
         prizeLabel:   'GAGNE',
-        shareFail:    'Le partage direct n\'est pas disponible sur ce navigateur. Téléchargez la vidéo et partagez-la depuis votre app.',
+        shareFail:    'Le partage direct du fichier vidéo n\'est pas supporté par votre navigateur. La vidéo a été téléchargée — partagez-la depuis votre galerie ou app de fichiers.',
         notSupported: 'Votre navigateur ne supporte pas la génération vidéo (MediaRecorder).',
     },
     en: {
@@ -145,7 +145,7 @@ const I18N = {
         note:         'Vertical 9:16 format ready for TikTok, Reels, Stories. On mobile, the Share button opens your app of choice directly.',
         revealLabel:  '🎉 AND THE WINNER IS',
         prizeLabel:   'WINS',
-        shareFail:    'Direct share is not available on this browser. Download the video and share it from your app.',
+        shareFail:    'Direct video file sharing isn\'t supported by your browser. The video was downloaded — share it from your gallery or files app.',
         notSupported: 'Your browser does not support video generation (MediaRecorder).',
     }
 };
@@ -159,82 +159,237 @@ function getLang() {
 
 /* ---------- Audio (synthesized soundtrack) ---------- */
 const ReplayAudio = {
-    scheduleTick(ctx, dest, when, idx, total) {
-        // Slight pitch variation across the spin so it feels alive
-        const ratio = total ? idx / total : 0;
-        const baseFreq = 1750 - ratio * 350;
+    /* ===== Helpers ===== */
+    _envOsc(ctx, dest, type, freq, when, dur, peakGain, freqEnd) {
         const osc = ctx.createOscillator();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(baseFreq, when);
-        osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.55, when + 0.05);
-        const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.0001, when);
-        gain.gain.exponentialRampToValueAtTime(0.085, when + 0.004);
-        gain.gain.exponentialRampToValueAtTime(0.0001, when + 0.06);
-        osc.connect(gain).connect(dest);
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, when);
+        if (typeof freqEnd === 'number') {
+            osc.frequency.exponentialRampToValueAtTime(Math.max(20, freqEnd), when + dur);
+        }
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.0001, when);
+        g.gain.exponentialRampToValueAtTime(peakGain, when + Math.min(0.02, dur * 0.15));
+        g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+        osc.connect(g).connect(dest);
         osc.start(when);
-        osc.stop(when + 0.075);
+        osc.stop(when + dur + 0.02);
+        return { osc, gain: g };
     },
-    scheduleLockClunk(ctx, dest, when) {
-        // Heavy "lock-in" thud when the wheel stops
-        const osc = ctx.createOscillator();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(220, when);
-        osc.frequency.exponentialRampToValueAtTime(80, when + 0.18);
-        const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.0001, when);
-        gain.gain.exponentialRampToValueAtTime(0.32, when + 0.01);
-        gain.gain.exponentialRampToValueAtTime(0.0001, when + 0.32);
-        osc.connect(gain).connect(dest);
-        osc.start(when);
-        osc.stop(when + 0.36);
+    _noiseBuffer(ctx, dur, shape) {
+        const len = Math.max(1, Math.floor(ctx.sampleRate * dur));
+        const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < len; i++) {
+            const t = i / len;
+            const env = shape ? shape(t) : (1 - t);
+            data[i] = (Math.random() * 2 - 1) * env;
+        }
+        return buf;
     },
-    scheduleReveal(ctx, dest, when) {
-        // Ascending arpeggio C5 → E5 → G5 → C6 then sustained chord
-        const arpeggio = [523.25, 659.25, 783.99, 1046.50];
-        arpeggio.forEach((freq, i) => {
-            const t = when + i * 0.075;
-            const osc = ctx.createOscillator();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(freq, t);
-            const gain = ctx.createGain();
-            gain.gain.setValueAtTime(0.0001, t);
-            gain.gain.exponentialRampToValueAtTime(0.18, t + 0.02);
-            gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
-            osc.connect(gain).connect(dest);
-            osc.start(t); osc.stop(t + 0.5);
-        });
-        // Sustained celebration chord (C major) starting just after arpeggio
-        const chordTime = when + 0.30;
-        [523.25, 659.25, 783.99].forEach(freq => {
-            const osc = ctx.createOscillator();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(freq, chordTime);
-            const gain = ctx.createGain();
-            gain.gain.setValueAtTime(0.0001, chordTime);
-            gain.gain.exponentialRampToValueAtTime(0.13, chordTime + 0.05);
-            gain.gain.exponentialRampToValueAtTime(0.0001, chordTime + 1.4);
-            osc.connect(gain).connect(dest);
-            osc.start(chordTime); osc.stop(chordTime + 1.5);
-        });
+
+    /* ===== Profiles: per-theme sound design ===== */
+    profiles: {
+        /* --- Corporate: clean digital chime (kept as the original feel) --- */
+        corporate: {
+            tick(ctx, dest, when, idx, total) {
+                const ratio = total ? idx / total : 0;
+                const f = 1750 - ratio * 350;
+                ReplayAudio._envOsc(ctx, dest, 'square', f, when, 0.06, 0.07, f * 0.55);
+            },
+            lock(ctx, dest, when) {
+                ReplayAudio._envOsc(ctx, dest, 'sawtooth', 220, when, 0.32, 0.32, 80);
+            },
+            reveal(ctx, dest, when) {
+                const arp = [523.25, 659.25, 783.99, 1046.50];
+                arp.forEach((f, i) => ReplayAudio._envOsc(ctx, dest, 'triangle', f, when + i*0.075, 0.45, 0.18));
+                const chord = when + 0.30;
+                [523.25, 659.25, 783.99].forEach(f => ReplayAudio._envOsc(ctx, dest, 'sine', f, chord, 1.4, 0.13));
+            }
+        },
+
+        /* --- Casino: coin tings + ka-ching jackpot --- */
+        casino: {
+            tick(ctx, dest, when, idx, total) {
+                // Bright metallic "ting" — coin clink
+                const ratio = total ? idx / total : 0;
+                const f = 2200 - ratio * 600;
+                ReplayAudio._envOsc(ctx, dest, 'sine', f, when, 0.08, 0.10);
+                // Subtle harmonic shimmer
+                ReplayAudio._envOsc(ctx, dest, 'triangle', f * 1.5, when, 0.05, 0.04);
+            },
+            lock(ctx, dest, when) {
+                // Heavy slot-reel lock + low thump
+                ReplayAudio._envOsc(ctx, dest, 'square', 180, when, 0.18, 0.30, 60);
+                ReplayAudio._envOsc(ctx, dest, 'sine', 90, when, 0.30, 0.25);
+            },
+            reveal(ctx, dest, when) {
+                // Ka-ching: A major chord cascade with metallic harmonics
+                const notes = [880, 1108.73, 1318.51, 1760];
+                notes.forEach((f, i) => {
+                    const t = when + i * 0.05;
+                    ReplayAudio._envOsc(ctx, dest, 'sine', f, t, 0.85, 0.18);
+                    ReplayAudio._envOsc(ctx, dest, 'triangle', f * 2.7, t, 0.45, 0.06);
+                });
+                // Coin shower noise tail
+                const noise = ctx.createBufferSource();
+                noise.buffer = ReplayAudio._noiseBuffer(ctx, 0.7, t => Math.pow(1 - t, 2.2));
+                const filt = ctx.createBiquadFilter();
+                filt.type = 'highpass'; filt.frequency.value = 3500;
+                const ng = ctx.createGain();
+                ng.gain.setValueAtTime(0.0001, when + 0.18);
+                ng.gain.exponentialRampToValueAtTime(0.12, when + 0.24);
+                ng.gain.exponentialRampToValueAtTime(0.0001, when + 0.85);
+                noise.connect(filt).connect(ng).connect(dest);
+                noise.start(when + 0.18); noise.stop(when + 0.95);
+                // Sustained low brass-ish chord under the cascade
+                [220, 277.18, 329.63].forEach(f => ReplayAudio._envOsc(ctx, dest, 'sawtooth', f, when + 0.25, 1.4, 0.05));
+            }
+        },
+
+        /* --- TV Show: snare ticks + applause + cheer --- */
+        tvshow: {
+            tick(ctx, dest, when, idx, total) {
+                // Short snare-like noise pop with a tonal core
+                const buf = ReplayAudio._noiseBuffer(ctx, 0.04, t => Math.pow(1 - t, 4));
+                const noise = ctx.createBufferSource();
+                noise.buffer = buf;
+                const filt = ctx.createBiquadFilter();
+                filt.type = 'highpass'; filt.frequency.value = 2200;
+                const g = ctx.createGain();
+                g.gain.setValueAtTime(0.0001, when);
+                g.gain.exponentialRampToValueAtTime(0.10, when + 0.003);
+                g.gain.exponentialRampToValueAtTime(0.0001, when + 0.04);
+                noise.connect(filt).connect(g).connect(dest);
+                noise.start(when); noise.stop(when + 0.05);
+                ReplayAudio._envOsc(ctx, dest, 'triangle', 1400, when, 0.03, 0.04);
+            },
+            lock(ctx, dest, when) {
+                // Drum hit + cymbal sizzle
+                ReplayAudio._envOsc(ctx, dest, 'sine', 110, when, 0.25, 0.32, 50);
+                const buf = ReplayAudio._noiseBuffer(ctx, 0.5, t => Math.pow(1 - t, 1.8));
+                const noise = ctx.createBufferSource();
+                noise.buffer = buf;
+                const filt = ctx.createBiquadFilter();
+                filt.type = 'highpass'; filt.frequency.value = 6000;
+                const g = ctx.createGain();
+                g.gain.setValueAtTime(0.0001, when);
+                g.gain.exponentialRampToValueAtTime(0.12, when + 0.005);
+                g.gain.exponentialRampToValueAtTime(0.0001, when + 0.5);
+                noise.connect(filt).connect(g).connect(dest);
+                noise.start(when); noise.stop(when + 0.55);
+            },
+            reveal(ctx, dest, when) {
+                // Modulated applause noise (~clap rate) + cheering whoops
+                const buf = ctx.createBuffer(1, ctx.sampleRate * 1.6, ctx.sampleRate);
+                const data = buf.getChannelData(0);
+                for (let i = 0; i < data.length; i++) {
+                    const t = i / ctx.sampleRate;
+                    const claps = Math.abs(Math.sin(t * 38 + Math.random() * 6)) * 0.7 + 0.3;
+                    data[i] = (Math.random() * 2 - 1) * claps;
+                }
+                const noise = ctx.createBufferSource();
+                noise.buffer = buf;
+                const filt = ctx.createBiquadFilter();
+                filt.type = 'bandpass'; filt.frequency.value = 2400; filt.Q.value = 0.6;
+                const g = ctx.createGain();
+                g.gain.setValueAtTime(0.0001, when);
+                g.gain.exponentialRampToValueAtTime(0.22, when + 0.18);
+                g.gain.linearRampToValueAtTime(0.20, when + 1.05);
+                g.gain.exponentialRampToValueAtTime(0.0001, when + 1.55);
+                noise.connect(filt).connect(g).connect(dest);
+                noise.start(when); noise.stop(when + 1.6);
+                // Cheer whoops
+                [800, 1050, 950].forEach((f, i) => {
+                    const t = when + 0.1 + i * 0.18;
+                    const osc = ctx.createOscillator();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(f, t);
+                    osc.frequency.exponentialRampToValueAtTime(f * 1.4, t + 0.1);
+                    const og = ctx.createGain();
+                    og.gain.setValueAtTime(0.0001, t);
+                    og.gain.exponentialRampToValueAtTime(0.07, t + 0.03);
+                    og.gain.exponentialRampToValueAtTime(0.0001, t + 0.27);
+                    osc.connect(og).connect(dest);
+                    osc.start(t); osc.stop(t + 0.32);
+                });
+            }
+        },
+
+        /* --- Redline: engine ticks + V8 rev --- */
+        redline: {
+            tick(ctx, dest, when, idx, total) {
+                // Short engine "blat" — low sawtooth pluck
+                const ratio = total ? idx / total : 0;
+                const f = 130 - ratio * 30;
+                ReplayAudio._envOsc(ctx, dest, 'sawtooth', f, when, 0.07, 0.16, f * 0.6);
+                // High harmonic click for engine bite
+                ReplayAudio._envOsc(ctx, dest, 'square', f * 6, when, 0.025, 0.04);
+            },
+            lock(ctx, dest, when) {
+                // Tire screech + engine cut
+                const noise = ctx.createBufferSource();
+                noise.buffer = ReplayAudio._noiseBuffer(ctx, 0.4, t => Math.sin(t * Math.PI) * (1 - t));
+                const filt = ctx.createBiquadFilter();
+                filt.type = 'bandpass'; filt.frequency.value = 3500; filt.Q.value = 4;
+                const g = ctx.createGain();
+                g.gain.setValueAtTime(0.0001, when);
+                g.gain.exponentialRampToValueAtTime(0.18, when + 0.05);
+                g.gain.exponentialRampToValueAtTime(0.0001, when + 0.4);
+                noise.connect(filt).connect(g).connect(dest);
+                noise.start(when); noise.stop(when + 0.45);
+                ReplayAudio._envOsc(ctx, dest, 'sawtooth', 90, when, 0.3, 0.28, 60);
+            },
+            reveal(ctx, dest, when) {
+                // V8 rev: bass thump + revving sawtooth + sustained idle
+                const bass = ctx.createOscillator();
+                bass.type = 'sawtooth';
+                bass.frequency.setValueAtTime(80, when);
+                bass.frequency.linearRampToValueAtTime(125, when + 0.25);
+                bass.frequency.linearRampToValueAtTime(85, when + 0.7);
+                bass.frequency.linearRampToValueAtTime(95, when + 1.6);
+                const bf = ctx.createBiquadFilter();
+                bf.type = 'lowpass'; bf.frequency.value = 280; bf.Q.value = 4;
+                const bg = ctx.createGain();
+                bg.gain.setValueAtTime(0.0001, when);
+                bg.gain.exponentialRampToValueAtTime(0.40, when + 0.05);
+                bg.gain.linearRampToValueAtTime(0.30, when + 1.0);
+                bg.gain.exponentialRampToValueAtTime(0.0001, when + 1.7);
+                bass.connect(bf).connect(bg).connect(dest);
+                bass.start(when); bass.stop(when + 1.75);
+                // Mid rev layer
+                const rev = ctx.createOscillator();
+                rev.type = 'sawtooth';
+                rev.frequency.setValueAtTime(180, when + 0.05);
+                rev.frequency.exponentialRampToValueAtTime(420, when + 0.4);
+                rev.frequency.exponentialRampToValueAtTime(220, when + 1.2);
+                const rf = ctx.createBiquadFilter();
+                rf.type = 'lowpass'; rf.frequency.value = 900; rf.Q.value = 2;
+                const rg = ctx.createGain();
+                rg.gain.setValueAtTime(0.0001, when);
+                rg.gain.exponentialRampToValueAtTime(0.18, when + 0.12);
+                rg.gain.exponentialRampToValueAtTime(0.0001, when + 1.5);
+                rev.connect(rf).connect(rg).connect(dest);
+                rev.start(when); rev.stop(when + 1.55);
+            }
+        }
     },
+
     /**
      * Schedule the full soundtrack relative to `audioStart` (audioCtx clock).
-     * Phase durations are in ms, totalSpinSteps = number of items the wheel scrolls past.
+     * profileSlug picks a theme-specific sound design. Falls back to corporate.
      */
-    scheduleSoundtrack(ctx, dest, T_INTRO, T_SPIN, totalSpinSteps, audioStart) {
+    scheduleSoundtrack(ctx, dest, T_INTRO, T_SPIN, totalSpinSteps, audioStart, profileSlug) {
+        const profile = this.profiles[profileSlug] || this.profiles.corporate;
         const total = Math.max(1, totalSpinSteps);
-        // Tick at every integer step boundary; uses inverse easeOut so ticks slow with the wheel
         for (let k = 1; k <= total; k++) {
             const targetEased = k / total;
             const pt = 1 - Math.pow(1 - targetEased, 1/5);
             const tMs = T_INTRO + pt * T_SPIN;
-            this.scheduleTick(ctx, dest, audioStart + tMs / 1000, k, total);
+            profile.tick(ctx, dest, audioStart + tMs / 1000, k, total);
         }
-        // Lock-in thud at the moment wheel stops
-        this.scheduleLockClunk(ctx, dest, audioStart + (T_INTRO + T_SPIN) / 1000);
-        // Reveal chord just after the lock-in
-        this.scheduleReveal(ctx, dest, audioStart + (T_INTRO + T_SPIN + 80) / 1000);
+        profile.lock(ctx, dest, audioStart + (T_INTRO + T_SPIN) / 1000);
+        profile.reveal(ctx, dest, audioStart + (T_INTRO + T_SPIN + 80) / 1000);
     }
 };
 
@@ -335,7 +490,8 @@ class ReplayRecorder {
             ReplayAudio.scheduleSoundtrack(
                 audioCtx, audioDest,
                 T_INTRO, T_SPIN, totalSpinSteps,
-                audioCtx.currentTime + 0.05
+                audioCtx.currentTime + 0.05,
+                this.theme.slug
             );
         }
 
@@ -894,14 +1050,15 @@ async function showReplayModal(theme, participants, winner, prize) {
     };
 
     modal.querySelector('.replay-share').onclick = async () => {
-        const file = new File([blob], filename, { type: mime });
+        // Strip codec parameters from the MIME (Android share intents reject types like "video/webm;codecs=vp9")
+        const baseMime = (mime || '').split(';')[0] || 'video/webm';
+        const file = new File([blob], filename, { type: baseMime });
         const hasPrize = prize && String(prize).trim().length > 0;
         let shareText;
         if (hasPrize) {
             const prizeStr = String(prize).trim();
-            // Build a clean #PascalCase hashtag from the prize name
             const prizeTag = prizeStr
-                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')   // strip accents
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
                 .replace(/[^a-zA-Z0-9 ]/g, ' ')
                 .split(/\s+/).filter(Boolean)
                 .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
@@ -913,14 +1070,36 @@ async function showReplayModal(theme, participants, winner, prize) {
         } else {
             shareText = dict.shareText.replace('{winner}', winner);
         }
-        const shareData = { files: [file], title: 'Spinfinity', text: shareText };
 
-        if (navigator.canShare && navigator.canShare(shareData)) {
-            try { await navigator.share(shareData); }
-            catch (e) { if (e.name !== 'AbortError') alert(dict.shareFail); }
-        } else {
-            alert(dict.shareFail);
+        const filesShareData = { files: [file], title: 'Spinfinity', text: shareText };
+        const textShareData  = { title: 'Spinfinity', text: shareText, url: location.href };
+
+        // 1) Try sharing the actual video file
+        if (navigator.canShare && navigator.canShare(filesShareData)) {
+            try {
+                await navigator.share(filesShareData);
+                return;
+            } catch (e) {
+                if (e.name === 'AbortError') return;
+                // fall through to text share
+            }
         }
+        // 2) File share unsupported (common with WebM on Android Chrome) → auto-download then share text/link
+        try {
+            const a = document.createElement('a');
+            a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click(); a.remove();
+        } catch (e) {}
+        if (navigator.share) {
+            try {
+                await navigator.share(textShareData);
+                return;
+            } catch (e) {
+                if (e.name === 'AbortError') return;
+            }
+        }
+        // 3) Last-resort message — vidéo déjà téléchargée, l'utilisateur peut la partager depuis sa galerie
+        alert(dict.shareFail);
     };
 
     const close = () => {

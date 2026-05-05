@@ -850,7 +850,8 @@ applyLanguage(detectLanguage());
         const audioStartOffset = Math.max(0, -frameTime / 1000); // 0 at cycle start
         const audioStart = ctx.currentTime + audioStartOffset + 0.02;
         window.SpinfinityReplay.ReplayAudio.scheduleSoundtrack(
-            ctx, ctx.destination, T_INTRO, T_SPIN, totalSpinSteps, audioStart
+            ctx, ctx.destination, T_INTRO, T_SPIN, totalSpinSteps, audioStart,
+            THEMES[themeIdx].slug
         );
         cycleSoundScheduled = true;
     }

@@ -239,12 +239,132 @@ class ReplayRecorder {
     buildSequence(participants, winner, count) {
         const others = (participants || []).filter(p => p && p !== winner);
         const pool = others.length ? others : [winner];
-        const seq = [];
-        for (let i = 0; i < count; i++) {
-            seq.push(pool[Math.floor(Math.random() * pool.length)]);
+        const PAD = 8;
+        const items = [];
+        // Top padding (visible above first spin item at intro)
+        for (let i = 0; i < PAD; i++) items.push(pool[Math.floor(Math.random() * pool.length)]);
+        // Main spin sequence (random names from the pool)
+        for (let i = 0; i < count - 1; i++) items.push(pool[Math.floor(Math.random() * pool.length)]);
+        // Winner at the end of the spin
+        items.push(winner);
+        const winnerIdx = items.length - 1;
+        // Bottom padding (visible below winner during reveal)
+        for (let i = 0; i < PAD; i++) items.push(pool[Math.floor(Math.random() * pool.length)]);
+        return { items, startIdx: PAD, winnerIdx };
+    }
+
+    drawSlot(seq, phase, pt) {
+        const { items, startIdx: spinStart, winnerIdx } = seq;
+        const ctx = this.ctx, { W, theme } = this;
+        const SX = 60, SY = 220, SW = 600, SH = 700;
+        const ITEM_H = 110;
+        const CENTER = SY + SH/2;
+        const R = (SH - 60) / 2; // cylinder radius
+
+        let scrollIdx;
+        if (phase === 'intro') scrollIdx = spinStart;
+        else if (phase === 'spin') {
+            const eased = 1 - Math.pow(1 - pt, 5);
+            scrollIdx = spinStart + eased * (winnerIdx - spinStart);
+        } else scrollIdx = winnerIdx;
+
+        // Frame background
+        ctx.save();
+        ctx.fillStyle = this.shade(theme.bg, -0.5);
+        this.roundRect(ctx, SX, SY, SW, SH, 18);
+        ctx.fill();
+        ctx.restore();
+
+        // Inner clip + items rendered with cylinder projection
+        ctx.save();
+        this.roundRect(ctx, SX+10, SY+10, SW-20, SH-20, 12);
+        ctx.clip();
+
+        // Subtle vertical gradient inside the drum (top darker, middle lit, bottom darker)
+        const drumG = ctx.createLinearGradient(0, SY+10, 0, SY+SH-10);
+        drumG.addColorStop(0,   this.shade(theme.bg, -0.7));
+        drumG.addColorStop(0.5, this.shade(theme.bg, -0.45));
+        drumG.addColorStop(1,   this.shade(theme.bg, -0.7));
+        ctx.fillStyle = drumG;
+        ctx.fillRect(SX+10, SY+10, SW-20, SH-20);
+
+        const isWinnerRevealed = phase === 'reveal' || phase === 'outro';
+        const range = 9;
+        const startI = Math.max(0, Math.floor(scrollIdx) - range);
+        const endI = Math.min(items.length - 1, Math.floor(scrollIdx) + range);
+
+        // Render each visible item with cylindrical projection
+        for (let i = startI; i <= endI; i++) {
+            const dy = (i - scrollIdx) * ITEM_H;
+            const theta = dy / R; // angle around the drum axis
+            const cosT = Math.cos(theta);
+            if (cosT <= 0.04) continue; // behind the drum
+            const projY = CENTER + R * Math.sin(theta);
+            const scale = Math.max(0.42, cosT);
+            const alpha = Math.pow(cosT, 1.35);
+            const isThisTheWinner = (i === winnerIdx) && isWinnerRevealed;
+
+            const fontSize = Math.round(56 * scale);
+            ctx.font = `700 ${fontSize}px ` + theme.font;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            if (isThisTheWinner) {
+                ctx.fillStyle = theme.accent_text;
+                ctx.shadowColor = theme.accent_text;
+                ctx.shadowBlur = 30;
+            } else {
+                ctx.fillStyle = theme.text;
+                ctx.shadowBlur = 0;
+            }
+            const name = items[i] || '';
+            ctx.fillText(this.truncate(ctx, name, SW - 60), SX + SW/2, projY);
+            ctx.restore();
         }
-        seq[seq.length - 1] = winner;
-        return seq;
+        ctx.restore();
+
+        // Highlight band (always at the geometric center)
+        ctx.save();
+        const hY = CENTER - ITEM_H/2;
+        const accent = isWinnerRevealed ? theme.accent_text : theme.accent1;
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = 3;
+        ctx.shadowColor = accent;
+        ctx.shadowBlur = isWinnerRevealed ? 22 : 12;
+        ctx.beginPath();
+        ctx.moveTo(SX+12, hY);
+        ctx.lineTo(SX+SW-12, hY);
+        ctx.moveTo(SX+12, hY + ITEM_H);
+        ctx.lineTo(SX+SW-12, hY + ITEM_H);
+        ctx.stroke();
+        ctx.restore();
+
+        // Outer frame
+        ctx.save();
+        ctx.strokeStyle = isWinnerRevealed ? theme.accent_text : this.toRGBA(theme.accent1, 0.5);
+        ctx.lineWidth = 4;
+        ctx.shadowColor = isWinnerRevealed ? theme.accent_text : theme.accent1;
+        ctx.shadowBlur = isWinnerRevealed ? 30 : 14;
+        this.roundRect(ctx, SX, SY, SW, SH, 18);
+        ctx.stroke();
+        ctx.restore();
+
+        // Top/bottom fade overlays (sell the cylinder illusion)
+        ctx.save();
+        const topG = ctx.createLinearGradient(0, SY+10, 0, SY+130);
+        topG.addColorStop(0, this.shade(theme.bg, -0.7));
+        topG.addColorStop(1, 'transparent');
+        ctx.fillStyle = topG;
+        ctx.fillRect(SX+10, SY+10, SW-20, 120);
+
+        const botG = ctx.createLinearGradient(0, SY+SH-130, 0, SY+SH-10);
+        botG.addColorStop(0, 'transparent');
+        botG.addColorStop(1, this.shade(theme.bg, -0.7));
+        ctx.fillStyle = botG;
+        ctx.fillRect(SX+10, SY+SH-130, SW-20, 120);
+        ctx.restore();
     }
 
     renderFrame(t, T_INTRO, T_SPIN, T_REVEAL, T_OUTRO, seq, winner, prize) {
@@ -293,113 +413,48 @@ class ReplayRecorder {
         ctx.save();
         ctx.globalAlpha = alpha;
 
-        // Brand
-        ctx.font = '800 38px "Manrope", system-ui, sans-serif';
+        // 1) "Spinfinity" brand — smaller, mixed-case, landing-page gradient (white → purple → pink)
+        const BRAND_Y = 72;
+        ctx.font = '800 34px "Manrope", system-ui, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillStyle = '#ffffff';
-        ctx.fillText('SPINFINITY', W/2, 100);
+        ctx.textBaseline = 'alphabetic';
+        const brandText = 'Spinfinity';
+        const bw = ctx.measureText(brandText).width;
+        const bg = ctx.createLinearGradient(W/2 - bw/2, BRAND_Y - 30, W/2 + bw/2, BRAND_Y + 6);
+        bg.addColorStop(0,    '#ffffff');
+        bg.addColorStop(0.55, '#a855f7');
+        bg.addColorStop(1,    '#ec4899');
+        ctx.fillStyle = bg;
+        ctx.fillText(brandText, W/2, BRAND_Y);
 
-        // Theme name
-        ctx.font = '600 22px "Manrope", system-ui, sans-serif';
-        ctx.fillStyle = theme.accent1;
-        ctx.letterSpacing = '0.2em';
-        ctx.fillText(theme.display.toUpperCase(), W/2, 140);
-
-        ctx.restore();
-    }
-
-    drawSlot(seq, phase, pt) {
-        const ctx = this.ctx, { W, theme } = this;
-        const SX = 60, SY = 220, SW = 600, SH = 700;
-        const ITEM_H = 110;
-        const CENTER = SY + SH/2;
-
-        let scrollIdx;
-        if (phase === 'intro') scrollIdx = 0;
-        else if (phase === 'spin') {
-            const eased = 1 - Math.pow(1 - pt, 5);
-            scrollIdx = eased * (seq.length - 1);
-        } else scrollIdx = seq.length - 1;
-
-        // Frame background
-        ctx.save();
-        ctx.fillStyle = this.shade(theme.bg, -0.5);
-        this.roundRect(ctx, SX, SY, SW, SH, 18);
-        ctx.fill();
-        ctx.restore();
-
-        // Inner clip + names
-        ctx.save();
-        this.roundRect(ctx, SX+10, SY+10, SW-20, SH-20, 12);
-        ctx.clip();
-
-        const offsetY = -scrollIdx * ITEM_H;
-        const startIdx = Math.max(0, Math.floor(scrollIdx) - 4);
-        const endIdx = Math.min(seq.length - 1, Math.floor(scrollIdx) + 4);
-        const isWinnerVisible = phase === 'reveal' || phase === 'outro';
-
-        for (let i = startIdx; i <= endIdx; i++) {
-            const y = CENTER + (i * ITEM_H + offsetY);
-            const isThisTheWinner = i === seq.length - 1 && isWinnerVisible;
-
-            ctx.font = '700 56px ' + theme.font;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-
-            if (isThisTheWinner) {
-                ctx.fillStyle = theme.accent_text;
-                ctx.shadowColor = theme.accent_text;
-                ctx.shadowBlur = 30;
-            } else {
-                ctx.fillStyle = theme.text;
-                ctx.shadowBlur = 0;
-            }
-
-            const name = seq[i] || '';
-            ctx.fillText(this.truncate(ctx, name, SW - 60), SX + SW/2, y);
-            ctx.shadowBlur = 0;
+        // 2) Theme title — BIG, theme font, themed gradient + glow
+        const TITLE_Y = 138;
+        const titleSize = 62;
+        ctx.font = `800 ${titleSize}px ` + theme.font;
+        ctx.shadowColor = theme.titleShadow || theme.accent1;
+        ctx.shadowBlur = 26;
+        const display = (theme.display || '').toString();
+        if (theme.titleGradient && theme.titleGradient.length >= 2) {
+            const tw = ctx.measureText(display).width;
+            const tg = ctx.createLinearGradient(W/2 - tw/2, TITLE_Y - 50, W/2 + tw/2, TITLE_Y + 8);
+            const stops = theme.titleGradient;
+            stops.forEach((c, i) => tg.addColorStop(i / (stops.length - 1), c));
+            ctx.fillStyle = tg;
+        } else {
+            ctx.fillStyle = '#ffffff';
         }
-        ctx.restore();
+        ctx.fillText(display, W/2, TITLE_Y);
 
-        // Highlight band
-        ctx.save();
-        const hY = CENTER - ITEM_H/2;
-        const accent = isWinnerVisible ? theme.accent_text : theme.accent1;
-        ctx.strokeStyle = accent;
-        ctx.lineWidth = 3;
-        ctx.shadowColor = accent;
-        ctx.shadowBlur = isWinnerVisible ? 22 : 12;
-        ctx.beginPath();
-        ctx.moveTo(SX+12, hY);
-        ctx.lineTo(SX+SW-12, hY);
-        ctx.moveTo(SX+12, hY + ITEM_H);
-        ctx.lineTo(SX+SW-12, hY + ITEM_H);
-        ctx.stroke();
-        ctx.restore();
+        // 3) Subtitle — single or two lines, soft text color
+        ctx.shadowBlur = 0;
+        if (theme.subtitle) {
+            ctx.font = '500 19px "Manrope", system-ui, sans-serif';
+            ctx.fillStyle = this.toRGBA(theme.text, 0.7);
+            const lines = this.wrapText(ctx, theme.subtitle, W - 100, 2);
+            const baseY = 175;
+            lines.forEach((ln, i) => ctx.fillText(ln, W/2, baseY + i * 24));
+        }
 
-        // Outer frame
-        ctx.save();
-        ctx.strokeStyle = isWinnerVisible ? theme.accent_text : this.toRGBA(theme.accent1, 0.5);
-        ctx.lineWidth = 4;
-        ctx.shadowColor = isWinnerVisible ? theme.accent_text : theme.accent1;
-        ctx.shadowBlur = isWinnerVisible ? 30 : 14;
-        this.roundRect(ctx, SX, SY, SW, SH, 18);
-        ctx.stroke();
-        ctx.restore();
-
-        // Top/bottom fade overlays
-        ctx.save();
-        const topG = ctx.createLinearGradient(0, SY+10, 0, SY+90);
-        topG.addColorStop(0, this.shade(theme.bg, -0.5));
-        topG.addColorStop(1, 'transparent');
-        ctx.fillStyle = topG;
-        ctx.fillRect(SX+10, SY+10, SW-20, 80);
-
-        const botG = ctx.createLinearGradient(0, SY+SH-90, 0, SY+SH-10);
-        botG.addColorStop(0, 'transparent');
-        botG.addColorStop(1, this.shade(theme.bg, -0.5));
-        ctx.fillStyle = botG;
-        ctx.fillRect(SX+10, SY+SH-90, SW-20, 80);
         ctx.restore();
     }
 
@@ -599,6 +654,36 @@ class ReplayRecorder {
         let s = text;
         while (s.length > 1 && ctx.measureText(s + '…').width > maxWidth) s = s.slice(0, -1);
         return s + '…';
+    }
+    wrapText(ctx, text, maxWidth, maxLines) {
+        const max = maxLines || 2;
+        const words = String(text).split(/\s+/).filter(Boolean);
+        const lines = [];
+        let line = '';
+        let i = 0;
+        while (i < words.length && lines.length < max) {
+            const w = words[i];
+            const test = line ? line + ' ' + w : w;
+            if (ctx.measureText(test).width <= maxWidth) {
+                line = test;
+                i++;
+            } else if (line) {
+                lines.push(line);
+                line = '';
+            } else {
+                // single word too long → force-truncate
+                lines.push(this.truncate(ctx, w, maxWidth));
+                line = '';
+                i++;
+            }
+        }
+        if (line && lines.length < max) lines.push(line);
+        // If words remain, force them into the last line with truncation
+        if (i < words.length && lines.length > 0) {
+            const tail = lines[lines.length - 1] + ' ' + words.slice(i).join(' ');
+            lines[lines.length - 1] = this.truncate(ctx, tail, maxWidth);
+        }
+        return lines;
     }
     toRGBA(hex, alpha) {
         const c = hex.replace('#', '');

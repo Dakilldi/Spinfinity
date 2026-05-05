@@ -20,7 +20,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&family=Manrope:wght@500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&family=Manrope:wght@500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script defer src="../_shared/replay.js"></script>
 
 <style>
@@ -904,12 +904,15 @@ let lastDrawSnapshot = null;
 const THEME_CONFIG = {
     slug: 'tvshow',
     display: 'Prime Time',
+    subtitle: 'Studio télé, spots lumière et grand spectacle.',
     bg: '#1a0a2e',
     accent1: '#a855f7',
     accent2: '#ec4899',
     text: '#faf5ff',
     accent_text: '#fde047',
-    font: '"Bebas Neue", sans-serif'
+    font: '"Bebas Neue", sans-serif',
+    titleShadow: '#a855f7',
+    titleGradient: ['#fde047', '#ec4899', '#a855f7']
 };
 function showReplayButton() { document.getElementById('replayBtn')?.classList.add('visible'); }
 function hideReplayButton() { document.getElementById('replayBtn')?.classList.remove('visible'); }

@@ -20,7 +20,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Manrope:wght@500;600;700&family=Playfair+Display:wght@700;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Manrope:wght@500;600;700;800&family=Playfair+Display:wght@700;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
 <script defer src="../_shared/replay.js"></script>
 
 <style>
@@ -830,12 +830,15 @@ let lastDrawSnapshot = null;
 const THEME_CONFIG = {
     slug: 'casino',
     display: 'Casino Royale',
+    subtitle: 'Place your bets — le jackpot va tomber.',
     bg: '#180808',
     accent1: '#fbbf24',
     accent2: '#dc2626',
     text: '#fef3c7',
     accent_text: '#ffd54f',
-    font: '"Bungee", cursive'
+    font: '"Bungee", cursive',
+    titleShadow: '#fbbf24',
+    titleGradient: ['#ffd54f', '#fbbf24', '#d97706']
 };
 function showReplayButton() { document.getElementById('replayBtn')?.classList.add('visible'); }
 function hideReplayButton() { document.getElementById('replayBtn')?.classList.remove('visible'); }

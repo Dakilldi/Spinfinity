@@ -60,6 +60,8 @@ Two pages already coded (Main + Redline). Task: create the 3 missing themes (Cor
 - ✅ **Dynamic prize hashtag in share text** — share text becomes "Et le gagnant du {prize} est {winner}! 🎉 #Spinfinity #PrizeName" (Feb 2026)
 - ✅ **"Keep winners in the pool" checkbox** — under the names input, persisted to localStorage per theme. When enabled, winners stay in the participants list (draw with replacement, useful for repeating draws like games / icebreakers) (Feb 2026)
 - ✅ **Multi-win counter badge** — when the same person wins multiple times (keep-pool mode), each subsequent entry shows a `×N 🏆` badge in theme accent color in the Winners list (Feb 2026)
+- ✅ **3D cylinder slot effect in replay** — items are now projected on a virtual rotating drum: padding above first/below winner, perspective scaling + alpha falloff, vertical gradient inside drum (Feb 2026)
+- ✅ **Replay header rebrand** — "Spinfinity" matches the landing-page mixed-case gradient (white → purple → pink), theme title is bigger with theme-specific gradient + glow, theme subtitle line added for visual coherence with each theme page (Feb 2026)
 - ✅ Editable Corporate theme title (localStorage persisted)
 - ✅ "Audio loaded" log hidden across all themes
 

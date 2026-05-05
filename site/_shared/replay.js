@@ -159,13 +159,19 @@ function getLang() {
 
 /* ---------- Recorder ---------- */
 class ReplayRecorder {
-    constructor(theme) {
+    constructor(theme, externalCanvas) {
         this.theme = theme;
-        this.W = 720;
-        this.H = 1280;
-        this.canvas = document.createElement('canvas');
-        this.canvas.width = this.W;
-        this.canvas.height = this.H;
+        if (externalCanvas) {
+            this.canvas = externalCanvas;
+            this.W = externalCanvas.width;
+            this.H = externalCanvas.height;
+        } else {
+            this.W = 720;
+            this.H = 1280;
+            this.canvas = document.createElement('canvas');
+            this.canvas.width = this.W;
+            this.canvas.height = this.H;
+        }
         this.ctx = this.canvas.getContext('2d');
         this.confetti = [];
         this.lang = getLang();

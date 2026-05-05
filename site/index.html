@@ -33,7 +33,7 @@
 <!-- Google Fonts: Manrope -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Audiowide&family=Bungee&family=Bebas+Neue&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root {
@@ -171,6 +171,92 @@ main {
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- PREVIEW ---------- */
+.preview-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    margin: 0 auto 70px;
+    animation: fadeInUp 1s ease-out 0.2s both;
+}
+.preview-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    color: var(--text-faded);
+    text-transform: uppercase;
+}
+.preview-title {
+    font-size: clamp(20px, 3vw, 26px);
+    font-weight: 700;
+    color: var(--text);
+    text-align: center;
+    margin: 0;
+    letter-spacing: -0.01em;
+    max-width: 600px;
+    line-height: 1.3;
+}
+.preview-title .accent {
+    background: linear-gradient(135deg, #fff, #a855f7, #ec4899);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.preview-frame {
+    position: relative;
+    width: clamp(220px, 38vw, 300px);
+    aspect-ratio: 9/16;
+    border-radius: 26px;
+    padding: 10px;
+    background: linear-gradient(135deg, rgba(168,85,247,0.35), rgba(236,72,153,0.25), rgba(255,255,255,0.05));
+    box-shadow: 0 30px 70px rgba(168,85,247,0.25), 0 0 0 1px rgba(255,255,255,0.06);
+}
+.preview-frame::after {
+    content: '';
+    position: absolute; inset: -2px;
+    border-radius: 28px;
+    background: linear-gradient(135deg, transparent 30%, rgba(168,85,247,0.5), rgba(236,72,153,0.5), transparent 70%);
+    z-index: -1;
+    filter: blur(20px);
+    opacity: 0.7;
+    animation: previewGlow 6s ease-in-out infinite;
+}
+@keyframes previewGlow {
+    0%,100% { opacity: 0.4; transform: scale(1); }
+    50%     { opacity: 0.85; transform: scale(1.04); }
+}
+.preview-canvas {
+    width: 100%; height: 100%;
+    border-radius: 18px;
+    display: block;
+    background: #0a0a14;
+}
+.preview-dots {
+    display: flex; gap: 8px;
+    margin-top: 4px;
+}
+.preview-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    transition: background 0.3s, transform 0.3s;
+}
+.preview-dot.active {
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    transform: scale(1.4);
+}
+.preview-cta {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 4px;
+    font-size: 13px; color: var(--text-dim);
+}
+.preview-cta b { color: var(--text); }
+@media (max-width: 640px) {
+    .preview-frame { width: clamp(200px, 70vw, 280px); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .preview-frame::after { animation: none; }
 }
 
 .hero-brand {
@@ -454,6 +540,19 @@ footer {
         </p>
     </section>
 
+    <section class="preview-section" aria-label="Replay preview">
+        <span class="preview-eyebrow" data-i18n="preview.eyebrow">Replay vidéo intégré</span>
+        <h2 class="preview-title">
+            <span data-i18n="preview.title.start">Une vidéo verticale prête pour</span>
+            <span class="accent" data-i18n="preview.title.accent">TikTok, Reels & Stories</span>
+        </h2>
+        <div class="preview-frame" data-testid="landing-preview">
+            <canvas class="preview-canvas" id="previewCanvas" width="540" height="960" aria-hidden="true"></canvas>
+        </div>
+        <div class="preview-dots" id="previewDots" aria-hidden="true"></div>
+        <p class="preview-cta" data-i18n="preview.cta">Choisis un thème, tire au sort, partage en 1 clic.</p>
+    </section>
+
     <p class="themes-label" data-i18n="themes.label">Choisis ton univers</p>
 
     <section class="themes-grid">
@@ -530,6 +629,10 @@ const I18N = {
         'meta.description':    'Le tirage au sort qui transforme chaque pick en moment mémorable. 4 thèmes immersifs : Casino, TV Show, Redline, Corporate.',
         'hero.tag':            'Choisis ton style, tourne la roue.',
         'themes.label':        'Choisis ton univers',
+        'preview.eyebrow':     'Replay vidéo intégré',
+        'preview.title.start': 'Une vidéo verticale prête pour',
+        'preview.title.accent':'TikTok, Reels & Stories',
+        'preview.cta':         'Choisis un thème, tire au sort, partage en 1 clic.',
         'theme.casino.desc':   'Ambiance Las Vegas, néons dorés et jackpots.',
         'theme.tvshow.desc':   'Studio télé, spots lumière et grand spectacle.',
         'theme.redline.desc':  'Burn de drift, garage japonais et moteur V8.',
@@ -544,6 +647,10 @@ const I18N = {
         'meta.description':    'The random picker that turns every draw into a memorable moment. 4 immersive themes: Casino, TV Show, Redline, Corporate.',
         'hero.tag':            'Pick your style, spin the wheel.',
         'themes.label':        'Choose your universe',
+        'preview.eyebrow':     'Built-in video replay',
+        'preview.title.start': 'A vertical video ready for',
+        'preview.title.accent':'TikTok, Reels & Stories',
+        'preview.cta':         'Pick a theme, draw a winner, share in 1 click.',
         'theme.casino.desc':   'Las Vegas vibes, golden neon and jackpots.',
         'theme.tvshow.desc':   'TV studio, spotlights and big show energy.',
         'theme.redline.desc':  'Drift burnouts, Japanese garage and V8 engine.',
@@ -596,6 +703,144 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
 document.getElementById('year').textContent = new Date().getFullYear();
 
 applyLanguage(detectLanguage());
+</script>
+
+<!-- Replay engine (used by the animated preview) -->
+<script src="./_shared/replay.js"></script>
+<script>
+/* =========================================================
+   Landing — animated replay preview (cycles 4 themes)
+========================================================= */
+(function() {
+    const canvas = document.getElementById('previewCanvas');
+    if (!canvas || !window.SpinfinityReplay) return;
+    const dotsEl = document.getElementById('previewDots');
+
+    const THEMES = [
+        { slug: 'casino',
+          display: 'Casino Royale',
+          subtitle: 'Place your bets — le jackpot va tomber.',
+          bg: '#180808', accent1: '#fbbf24', accent2: '#dc2626',
+          text: '#fef3c7', accent_text: '#ffd54f',
+          font: '"Bungee", cursive',
+          titleShadow: '#fbbf24',
+          titleGradient: ['#ffd54f', '#fbbf24', '#d97706'] },
+        { slug: 'tvshow',
+          display: 'Prime Time',
+          subtitle: 'Studio télé, spots lumière et grand spectacle.',
+          bg: '#1a0a2e', accent1: '#a855f7', accent2: '#ec4899',
+          text: '#faf5ff', accent_text: '#fde047',
+          font: '"Bebas Neue", sans-serif',
+          titleShadow: '#a855f7',
+          titleGradient: ['#fde047', '#ec4899', '#a855f7'] },
+        { slug: 'redline',
+          display: 'Redline Roulette',
+          subtitle: 'Burn de drift, garage japonais et moteur V8.',
+          bg: '#0a0e1a', accent1: '#ff2e63', accent2: '#00f0ff',
+          text: '#ffffff', accent_text: '#ffe600',
+          font: '"Audiowide", sans-serif',
+          titleShadow: '#ff2e63',
+          titleGradient: null },
+        { slug: 'corporate',
+          display: 'Corporate Draw',
+          subtitle: '',
+          bg: '#0f172a', accent1: '#3b82f6', accent2: '#60a5fa',
+          text: '#e2e8f0', accent_text: '#fbbf24',
+          font: '"Space Grotesk", sans-serif',
+          titleShadow: '#3b82f6',
+          titleGradient: ['#60a5fa', '#3b82f6'] }
+    ];
+
+    const PARTICIPANTS = ['Alice', 'Bob', 'Charlie', 'Dana', 'Eli', 'Fred', 'Gina', 'Hugo'];
+    const WINNER = 'Charlie';
+    const PRIZES_BY_SLUG = {
+        casino:    'Jackpot 1000€',
+        tvshow:    'Voyage à Hollywood',
+        redline:   'GT-R Edition',
+        corporate: ''
+    };
+
+    const T_INTRO = 700, T_SPIN = 3200, T_REVEAL = 1300, T_OUTRO = 900;
+    const TOTAL = T_INTRO + T_SPIN + T_REVEAL + T_OUTRO;
+    const PAUSE_BETWEEN = 900; // ms
+
+    // Build dots
+    THEMES.forEach((_, i) => {
+        const d = document.createElement('span');
+        d.className = 'preview-dot' + (i === 0 ? ' active' : '');
+        d.dataset.idx = i;
+        dotsEl.appendChild(d);
+    });
+    function setActiveDot(idx) {
+        dotsEl.querySelectorAll('.preview-dot').forEach((d, i) => {
+            d.classList.toggle('active', i === idx);
+        });
+    }
+
+    let stopped = false;
+    let visible = true;
+    let frameTime = 0; // accumulated time within current cycle (ms)
+    let lastNow = 0;
+    let pauseUntil = 0;
+    let themeIdx = 0;
+    let recorder = new window.SpinfinityReplay.ReplayRecorder(THEMES[themeIdx], canvas);
+    let seq = recorder.buildSequence(PARTICIPANTS, WINNER, 50);
+    recorder.confetti = [];
+
+    function nextTheme() {
+        themeIdx = (themeIdx + 1) % THEMES.length;
+        recorder = new window.SpinfinityReplay.ReplayRecorder(THEMES[themeIdx], canvas);
+        seq = recorder.buildSequence(PARTICIPANTS, WINNER, 50);
+        recorder.confetti = [];
+        setActiveDot(themeIdx);
+    }
+
+    function tick(now) {
+        if (stopped) return;
+        if (!visible) {
+            // Pause loop while off-screen but keep rAF cheap
+            lastNow = now;
+            requestAnimationFrame(tick);
+            return;
+        }
+        const dt = lastNow ? Math.min(50, now - lastNow) : 16;
+        lastNow = now;
+
+        if (now < pauseUntil) {
+            // Hold the final reveal frame during the inter-theme pause
+            recorder.renderFrame(TOTAL - 1, T_INTRO, T_SPIN, T_REVEAL, T_OUTRO,
+                seq, WINNER, PRIZES_BY_SLUG[THEMES[themeIdx].slug]);
+            requestAnimationFrame(tick);
+            return;
+        }
+
+        frameTime += dt;
+        if (frameTime >= TOTAL) {
+            // End of cycle → pause briefly then switch theme
+            pauseUntil = now + PAUSE_BETWEEN;
+            frameTime = 0;
+            // schedule theme switch after pause
+            setTimeout(() => { if (!stopped) nextTheme(); }, PAUSE_BETWEEN);
+        }
+        recorder.renderFrame(frameTime, T_INTRO, T_SPIN, T_REVEAL, T_OUTRO,
+            seq, WINNER, PRIZES_BY_SLUG[THEMES[themeIdx].slug]);
+        requestAnimationFrame(tick);
+    }
+
+    // Pause when not visible (perf + battery)
+    if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => { visible = e.isIntersecting; });
+        }, { threshold: 0.1 });
+        io.observe(canvas);
+    }
+    // Pause on tab hidden
+    document.addEventListener('visibilitychange', () => {
+        visible = !document.hidden;
+    });
+
+    document.fonts.ready.then(() => requestAnimationFrame(tick));
+})();
 </script>
 
 </body>

@@ -62,6 +62,8 @@ Two pages already coded (Main + Redline). Task: create the 3 missing themes (Cor
 - ✅ **Multi-win counter badge** — when the same person wins multiple times (keep-pool mode), each subsequent entry shows a `×N 🏆` badge in theme accent color in the Winners list (Feb 2026)
 - ✅ **3D cylinder slot effect in replay** — items are now projected on a virtual rotating drum: padding above first/below winner, perspective scaling + alpha falloff, vertical gradient inside drum (Feb 2026)
 - ✅ **Replay header rebrand** — "Spinfinity" matches the landing-page mixed-case gradient (white → purple → pink), theme title is bigger with theme-specific gradient + glow, theme subtitle line added for visual coherence with each theme page (Feb 2026)
+- ✅ **Animated replay preview on landing page** — small 9:16 canvas above the themes grid plays a real-time replay loop and cycles through all 4 themes (Casino → Prime Time → Redline → Corporate) with active dots indicator. Pauses when off-screen for perf. Same render engine as the actual replay → 100% visual coherence. (Feb 2026)
+- ✅ **Corporate theme**: subtitle removed from replay header (matches the page which has no subtitle) (Feb 2026)
 - ✅ Editable Corporate theme title (localStorage persisted)
 - ✅ "Audio loaded" log hidden across all themes
 

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /_shared/
+
+Sitemap: https://spinfinity.app/sitemap.xml

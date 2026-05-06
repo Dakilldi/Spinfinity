@@ -9,6 +9,10 @@
 <title data-i18n="meta.title">Spinfinity — Le tirage au sort avec style</title>
 <meta name="description" data-i18n-attr="content" data-i18n="meta.description"
       content="Le tirage au sort qui transforme chaque pick en moment mémorable. 4 thèmes immersifs : Casino, TV Show, Redline, Corporate.">
+<meta name="keywords" content="tirage au sort, random picker, roue de la fortune, wheel picker, gagnant, tombola, raffle, tirage gratuit, spinfinity">
+<meta name="author" content="Spinfinity">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://spinfinity.app/">
 
 <!-- i18n hreflang -->
 <link rel="alternate" hreflang="fr" href="https://spinfinity.app/">
@@ -27,6 +31,31 @@
 <meta name="twitter:title" data-i18n-attr="content" data-i18n="meta.title" content="Spinfinity">
 <meta name="twitter:description" data-i18n-attr="content" data-i18n="meta.description" content="">
 
+<!-- Structured data (schema.org) for Google rich results -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Spinfinity",
+  "url": "https://spinfinity.app/",
+  "description": "Tirage au sort en ligne avec 4 thèmes animés (Casino, TV Show, Redline, Corporate) et génération automatique d'une vidéo replay 9:16 prête à partager sur TikTok, Reels et Stories.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "browserRequirements": "Requires HTML5, JavaScript and a modern browser supporting MediaRecorder API",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "EUR"
+  },
+  "inLanguage": ["fr", "en"],
+  "isAccessibleForFree": true,
+  "creator": {
+    "@type": "Organization",
+    "name": "Spinfinity",
+    "url": "https://spinfinity.app/"
+  }
+}
+</script>
 <!-- Favicon SVG -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%23a855f7'/%3E%3Cstop offset='1' stop-color='%23ec4899'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='30' fill='%230a0a0f'/%3E%3Cpath d='M 18 32 C 18 26, 22 22, 28 22 S 38 32, 44 32 S 54 22, 54 28 S 50 38, 44 38 S 34 28, 28 28 S 18 38, 18 32 Z' fill='none' stroke='url(%23g)' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
 
@@ -821,8 +850,8 @@ applyLanguage(detectLanguage());
           titleShadow: '#a855f7',
           titleGradient: ['#fde047', '#ec4899', '#a855f7'],
           labels: {
-              fr: { revealLabel: '', prizeLabel: '🎉 Félicitations ! Tu as gagné' },
-              en: { revealLabel: '', prizeLabel: '🎉 Congratulations! You won' }
+              fr: { prizeLabel: '' },
+              en: { prizeLabel: '' }
           } },
         { slug: 'redline',
           display: 'Redline Roulette',

@@ -593,8 +593,9 @@ class ReplayRecorder {
         const dict = I18N[this.lang];
         const themeLabels = theme.labels && theme.labels[this.lang];
         const labelText = themeLabels && 'revealLabel' in themeLabels ? themeLabels.revealLabel : dict.revealLabel;
-        const prizeLabelText = (themeLabels && themeLabels.prizeLabel) || dict.prizeLabel;
+        const prizeLabelText = themeLabels && 'prizeLabel' in themeLabels ? themeLabels.prizeLabel : dict.prizeLabel;
         const showLabel = !!labelText;
+        const showPrizeLabel = !!prizeLabelText;
         // Tighter layout when there's a prize line, default otherwise; lift the name when no top label
         const labelY = hasPrize ? 945 : 990;
         const nameY = (hasPrize ? 1015 : 1080) - (showLabel ? 0 : 30);
@@ -633,13 +634,15 @@ class ReplayRecorder {
                 ctx.save();
                 ctx.globalAlpha = prizeAlpha;
 
-                // "WINS" label (or theme override, e.g. TV Show: "Félicitations, tu as gagné")
-                ctx.font = '700 18px "Manrope", system-ui, sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillStyle = theme.text;
-                ctx.fillText(prizeLabelText, W/2, 1075);
+                // "WINS" label (or theme override, e.g. TV Show: "🎉 Félicitations ! Tu as gagné")
+                if (showPrizeLabel) {
+                    ctx.font = '700 18px "Manrope", system-ui, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = theme.text;
+                    ctx.fillText(prizeLabelText, W/2, 1075);
+                }
 
-                // Prize pill
+                // Prize pill — lift it up when the label is hidden, to fill the gap
                 ctx.font = '700 28px ' + theme.font;
                 const prizeStr = String(prize).trim();
                 const truncPrize = this.truncate(ctx, prizeStr, W - 120);
@@ -648,7 +651,7 @@ class ReplayRecorder {
                 const pillH = 46;
                 const pillW = Math.min(W - 80, tw + pillPad * 2);
                 const pillX = W/2 - pillW/2;
-                const pillY = 1095;
+                const pillY = showPrizeLabel ? 1095 : 1075;
 
                 ctx.fillStyle = this.toRGBA(theme.accent1, 0.18);
                 this.roundRect(ctx, pillX, pillY, pillW, pillH, pillH/2);

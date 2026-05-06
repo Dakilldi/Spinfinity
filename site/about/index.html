@@ -3,15 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title data-i18n="meta.title">Spinfinity — À propos (bientôt)</title>
-<meta name="description" content="Page À propos de Spinfinity — bientôt disponible." data-i18n-attr="content" data-i18n="meta.description">
+<title data-i18n="meta.title">À propos — Spinfinity</title>
+<meta name="description" content="Spinfinity, c'est l'histoire d'un tirage au sort gratuit, 100% local et stylé. Découvre la philosophie du projet et ce qui le rend différent." data-i18n-attr="content" data-i18n="meta.description">
 <meta name="theme-color" content="#0a0a14">
-<meta name="robots" content="noindex, follow">
+<meta name="robots" content="index, follow">
 <link rel="canonical" href="https://spinfinity.app/about/">
+<link rel="alternate" hreflang="fr" href="https://spinfinity.app/about/">
+<link rel="alternate" hreflang="en" href="https://spinfinity.app/about/?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://spinfinity.app/about/">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 *, *::before, *::after { box-sizing: border-box; }
@@ -25,6 +28,7 @@ html, body { margin: 0; padding: 0; }
     --pink: #ec4899;
     --gold: #fde047;
     --cyan: #00f0ff;
+    --green: #22c55e;
     --border-glass: rgba(255,255,255,0.08);
     --bg-glass: rgba(255,255,255,0.04);
 }
@@ -33,8 +37,9 @@ body {
     color: var(--text);
     background: var(--bg-1);
     min-height: 100vh;
-    display: flex; flex-direction: column;
+    line-height: 1.65;
     -webkit-font-smoothing: antialiased;
+    display: flex; flex-direction: column;
 }
 body::before {
     content: ''; position: fixed; inset: 0;
@@ -47,6 +52,7 @@ body::before {
     pointer-events: none;
 }
 .top-bar {
+    position: sticky; top: 0; z-index: 50;
     display: flex; justify-content: space-between; align-items: center;
     padding: 14px 24px;
     backdrop-filter: blur(14px);
@@ -75,82 +81,128 @@ body::before {
 }
 .lang-switch { display: flex; gap: 4px; }
 .lang-btn {
-    padding: 6px 12px;
-    border-radius: 8px;
-    background: transparent;
-    border: 1px solid var(--border-glass);
+    padding: 6px 12px; border-radius: 8px;
+    background: transparent; border: 1px solid var(--border-glass);
     color: var(--text-faded);
     font-size: 12px; font-weight: 600;
-    cursor: pointer;
-    text-transform: uppercase; letter-spacing: 0.06em;
+    cursor: pointer; text-transform: uppercase; letter-spacing: 0.06em;
     transition: background .2s, color .2s;
 }
 .lang-btn.active { background: var(--text); color: var(--bg-1); border-color: var(--text); }
 
-main {
-    flex: 1;
-    display: flex;
-    align-items: center; justify-content: center;
-    padding: 60px 24px;
+main { flex: 1; }
+
+.hero {
+    text-align: center;
+    padding: 70px 24px 30px;
+    max-width: 800px; margin: 0 auto;
+    animation: fadeInUp 0.7s ease-out both;
 }
-.soon {
-    max-width: 540px; text-align: center;
-    animation: rise 0.7s ease-out both;
-}
-.soon-icon {
-    width: 86px; height: 86px;
-    margin: 0 auto 26px;
-    border-radius: 22px;
-    background: linear-gradient(135deg, rgba(168,85,247,0.20), rgba(236,72,153,0.20));
-    border: 1px solid rgba(168,85,247,0.45);
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 18px 48px rgba(168,85,247,0.25);
-    position: relative;
-    overflow: hidden;
-}
-.soon-icon svg { width: 42px; height: 42px; color: var(--purple); }
-.soon-icon::after {
-    content: ''; position: absolute; inset: -2px;
-    border-radius: 22px;
-    background: conic-gradient(from 0deg, transparent 0deg, rgba(168,85,247,0.6) 80deg, transparent 160deg);
-    animation: spin 4s linear infinite;
-    z-index: -1;
-}
-.soon-eyebrow {
+.hero-eyebrow {
     display: inline-block;
-    padding: 6px 14px;
-    border-radius: 999px;
-    background: rgba(253,224,71,0.10);
-    border: 1px solid rgba(253,224,71,0.35);
-    color: var(--gold);
+    padding: 6px 14px; border-radius: 999px;
+    background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.35);
+    color: var(--purple);
     font-size: 11px; font-weight: 700;
-    letter-spacing: 0.18em; text-transform: uppercase;
+    letter-spacing: 0.16em; text-transform: uppercase;
     margin-bottom: 18px;
 }
-h1 {
-    font-size: clamp(34px, 6vw, 52px);
-    font-weight: 800;
-    margin: 0 0 16px;
-    letter-spacing: -0.025em;
-    line-height: 1.1;
+.hero h1 {
+    font-size: clamp(34px, 5.2vw, 54px);
+    font-weight: 800; margin: 0 0 16px;
+    letter-spacing: -0.025em; line-height: 1.1;
 }
-h1 .accent {
+.hero h1 .accent {
     background: linear-gradient(135deg, var(--gold), var(--pink), var(--purple));
     -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-.soon p {
+.hero p {
     color: var(--text-dim);
-    font-size: 16px;
-    margin: 0 0 32px;
-    line-height: 1.65;
+    font-size: clamp(15px, 2vw, 18px);
+    max-width: 620px; margin: 0 auto;
 }
-.cta-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+
+.section {
+    max-width: 900px; margin: 0 auto;
+    padding: 40px 24px;
+}
+.section h2 {
+    font-size: clamp(22px, 2.8vw, 28px);
+    font-weight: 800; margin: 0 0 14px;
+    letter-spacing: -0.015em;
+}
+.section p {
+    color: var(--text-dim);
+    font-size: 15px;
+    margin: 8px 0;
+}
+.section strong { color: var(--text); font-weight: 700; }
+
+.story-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 24px;
+}
+@media (min-width: 720px) { .story-grid { grid-template-columns: 1fr 1fr; } }
+.story-card {
+    padding: 22px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    border: 1px solid var(--border-glass);
+    transition: transform .25s, border-color .25s, box-shadow .25s;
+}
+.story-card:hover { transform: translateY(-3px); border-color: var(--card-accent, var(--purple)); box-shadow: 0 14px 40px rgba(168,85,247,0.18); }
+.story-card.c1 { --card-accent: var(--cyan); }
+.story-card.c2 { --card-accent: var(--gold); }
+.story-card.c3 { --card-accent: var(--pink); }
+.story-card.c4 { --card-accent: var(--green); }
+.story-card .num {
+    display: inline-block;
+    font-size: 12px; font-weight: 700;
+    color: var(--card-accent);
+    letter-spacing: 0.18em; text-transform: uppercase;
+    margin-bottom: 8px;
+}
+.story-card h3 { font-size: 17px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.01em; }
+.story-card p { font-size: 14.5px; line-height: 1.6; }
+
+.values {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 18px;
+}
+@media (min-width: 720px) { .values { grid-template-columns: 1fr 1fr; } }
+.value-row {
+    display: flex; gap: 14px;
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+}
+.value-icon {
+    flex-shrink: 0;
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: rgba(168,85,247,0.18);
+    color: var(--purple);
+    display: flex; align-items: center; justify-content: center;
+}
+.value-icon svg { width: 20px; height: 20px; }
+.value-row h4 { margin: 0 0 4px; font-size: 14.5px; font-weight: 700; }
+.value-row p { margin: 0; color: var(--text-dim); font-size: 13.5px; line-height: 1.55; }
+
+.cta-row {
+    display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;
+    margin-top: 30px;
+}
 .cta {
     display: inline-flex; align-items: center; gap: 8px;
-    padding: 13px 24px;
+    padding: 13px 26px;
     border-radius: 999px;
     text-decoration: none;
-    font-weight: 700; font-size: 14px;
+    font-weight: 700; font-size: 14.5px;
     transition: transform .15s, box-shadow .25s, background .2s;
 }
 .cta.primary {
@@ -167,22 +219,13 @@ h1 .accent {
 .cta.ghost:hover { background: rgba(168,85,247,0.18); color: var(--text); transform: translateY(-2px); }
 .cta svg { width: 16px; height: 16px; }
 
-footer {
-    padding: 30px 24px;
-    text-align: center;
-    color: var(--text-faded);
-    font-size: 12.5px;
-    border-top: 1px solid var(--border-glass);
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
-footer .links { display: flex; justify-content: center; gap: 18px; margin-top: 8px; flex-wrap: wrap; }
-footer a { color: var(--text-faded); text-decoration: none; transition: color .2s; }
-footer a:hover { color: var(--text); }
-
-@keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) {
-    .soon { animation: none; }
-    .soon-icon::after { animation: none; }
+    .hero { animation: none; }
+    .story-card:hover, .cta:hover { transform: none; }
 }
 </style>
 
@@ -190,12 +233,18 @@ footer a:hover { color: var(--text); }
   <defs>
     <symbol id="ic-back" viewBox="0 0 24 24"><path d="M14 6 L8 12 L14 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="ic-arrow" viewBox="0 0 24 24"><path d="M5 12 L19 12 M13 6 L19 12 L13 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-    <symbol id="ic-cone" viewBox="0 0 24 24">
-      <path d="M12 3 L21 19 L3 19 Z" fill="currentColor" opacity="0.15"/>
-      <path d="M12 3 L21 19 L3 19 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-      <line x1="7" y1="11" x2="17" y2="11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      <line x1="6" y1="15" x2="18" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      <circle cx="12" cy="9" r="1" fill="currentColor"/>
+    <symbol id="ic-shield" viewBox="0 0 24 24">
+      <path d="M12 3 L20 6 V12 C20 17 16 20 12 21 C8 20 4 17 4 12 V6 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M9 12 L11 14 L15 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </symbol>
+    <symbol id="ic-sparkle" viewBox="0 0 24 24">
+      <path d="M12 3 L13.5 9.5 L20 11 L13.5 12.5 L12 19 L10.5 12.5 L4 11 L10.5 9.5 Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="ic-bolt" viewBox="0 0 24 24">
+      <path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="ic-heart" viewBox="0 0 24 24">
+      <path d="M12 21 C 7 17, 3 13, 3 9 A 4 4 0 0 1 12 7 A 4 4 0 0 1 21 9 C 21 13, 17 17, 12 21 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
     </symbol>
   </defs>
 </svg>
@@ -215,58 +264,172 @@ footer a:hover { color: var(--text); }
 </header>
 
 <main>
-    <div class="soon">
-        <div class="soon-icon"><svg><use href="#ic-cone"/></svg></div>
-        <span class="soon-eyebrow" data-i18n="eyebrow">Bientôt</span>
-        <h1><span data-i18n="title.start">Page</span> <span class="accent" data-i18n="title.accent">en construction</span></h1>
-        <p data-i18n="lead">Cette page sera bientôt disponible. En attendant, lance un tirage ou consulte le guide d'utilisation.</p>
-        <div class="cta-row">
-            <a href="../" class="cta primary" data-testid="cta-home">
-                <span data-i18n="cta.home">Lancer un tirage</span>
-                <svg><use href="#ic-arrow"/></svg>
-            </a>
-            <a href="../help/" class="cta ghost" data-testid="cta-help">
-                <span data-i18n="cta.help">Comment ça marche ?</span>
-            </a>
+
+<section class="hero">
+    <span class="hero-eyebrow" data-i18n="hero.eyebrow">À propos</span>
+    <h1>
+        <span data-i18n="hero.title.start">Le tirage au sort,</span>
+        <span class="accent" data-i18n="hero.title.accent">pensé autrement</span>
+    </h1>
+    <p data-i18n="hero.lead">Spinfinity est né d'une frustration simple : les outils de tirage au sort sur le web sont moches, lents, ou demandent un compte pour fonctionner. On voulait un truc beau, instantané et qui respecte ta vie privée. Voilà l'histoire.</p>
+</section>
+
+<section class="section">
+    <h2 data-i18n="story.title">Ce qu'on a voulu construire</h2>
+    <div class="story-grid">
+        <article class="story-card c1">
+            <span class="num" data-i18n="story.1.num">Le pitch</span>
+            <h3 data-i18n="story.1.title">Un tirage au sort spectaculaire</h3>
+            <p data-i18n="story.1.desc">Quatre univers visuels totalement différents, chacun avec sa propre mécanique d'animation, ses sons et son ambiance. Le tirage devient un mini-événement à partager.</p>
+        </article>
+        <article class="story-card c2">
+            <span class="num" data-i18n="story.2.num">La promesse</span>
+            <h3 data-i18n="story.2.title">100% gratuit, 0% compte</h3>
+            <p data-i18n="story.2.desc">Pas d'inscription, pas d'email demandé, pas de paywall caché. Tu arrives, tu colles tes noms, tu tires, tu partages. Point.</p>
+        </article>
+        <article class="story-card c3">
+            <span class="num" data-i18n="story.3.num">Le détail qui change tout</span>
+            <h3 data-i18n="story.3.title">Une vidéo prête à partager</h3>
+            <p data-i18n="story.3.desc">Chaque tirage génère automatiquement une vidéo verticale 9:16 (TikTok, Reels, Stories) avec ton thème, le gagnant et son lot. Téléchargeable ou partage en 1 clic.</p>
+        </article>
+        <article class="story-card c4">
+            <span class="num" data-i18n="story.4.num">L'engagement</span>
+            <h3 data-i18n="story.4.title">Tes données restent chez toi</h3>
+            <p data-i18n="story.4.desc">Aucune liste de noms n'est envoyée sur nos serveurs. Tout — saisie, tirage, animation, génération vidéo — tourne dans ton navigateur. Zéro tracking de noms.</p>
+        </article>
+    </div>
+</section>
+
+<section class="section">
+    <h2 data-i18n="values.title">Ce qui nous tient à cœur</h2>
+    <p data-i18n="values.lead">Quatre principes qui guident chaque ligne de code.</p>
+    <div class="values">
+        <div class="value-row">
+            <div class="value-icon"><svg><use href="#ic-shield"/></svg></div>
+            <div>
+                <h4 data-i18n="value.privacy.title">Vie privée par défaut</h4>
+                <p data-i18n="value.privacy.desc">Pas de cookie de tracking, pas de profilage, pas de revente de données. Le code est volontairement statique pour éliminer toute tentation.</p>
+            </div>
+        </div>
+        <div class="value-row">
+            <div class="value-icon"><svg><use href="#ic-sparkle"/></svg></div>
+            <div>
+                <h4 data-i18n="value.craft.title">Le détail visuel compte</h4>
+                <p data-i18n="value.craft.desc">Animations fluides, polices choisies, glows précis, transitions douces. On veut que chaque thème ait sa signature visuelle forte.</p>
+            </div>
+        </div>
+        <div class="value-row">
+            <div class="value-icon"><svg><use href="#ic-bolt"/></svg></div>
+            <div>
+                <h4 data-i18n="value.fast.title">Rapide partout</h4>
+                <p data-i18n="value.fast.desc">Le site est 100% statique, hébergé sur un CDN global. Il charge en moins d'une seconde, même sur une connexion mobile médiocre.</p>
+            </div>
+        </div>
+        <div class="value-row">
+            <div class="value-icon"><svg><use href="#ic-heart"/></svg></div>
+            <div>
+                <h4 data-i18n="value.free.title">Gratuit, durablement</h4>
+                <p data-i18n="value.free.desc">Le service est financé par des publicités discrètes (Google AdSense). Aucun "premium" caché, aucune limitation cachée.</p>
+            </div>
         </div>
     </div>
-</main>
+</section>
 
-<script src="../_shared/footer.js" defer></script>
+<section class="section">
+    <h2 data-i18n="who.title">Qui est derrière Spinfinity ?</h2>
+    <p data-i18n="who.p1">Spinfinity est un projet indépendant développé par un passionné de design web et d'expériences interactives. L'objectif : prouver qu'on peut créer un outil utile, beau et respectueux de la vie privée — sans backend, sans tracker et sans abonnement.</p>
+    <p data-i18n="who.p2">Si tu trouves le projet sympa, le meilleur moyen de le soutenir est de le partager sur tes réseaux ou de garder l'onglet ouvert pendant un tirage 😉.</p>
+    <div class="cta-row">
+        <a href="../" class="cta primary" data-testid="cta-home">
+            <span data-i18n="cta.home">Lancer un tirage</span>
+            <svg><use href="#ic-arrow"/></svg>
+        </a>
+        <a href="../help/" class="cta ghost" data-testid="cta-help">
+            <span data-i18n="cta.help">Comment ça marche ?</span>
+        </a>
+    </div>
+</section>
+
+</main>
 
 <script>
 const I18N = {
     fr: {
-        'meta.title':       'Spinfinity — À propos (bientôt)',
-        'meta.description': 'Page À propos de Spinfinity — bientôt disponible.',
+        'meta.title':       'À propos — Spinfinity',
+        'meta.description': "Spinfinity, c'est l'histoire d'un tirage au sort gratuit, 100% local et stylé. Découvre la philosophie du projet et ce qui le rend différent.",
         'nav.home':         'Accueil',
-        'eyebrow':          'Bientôt',
-        'title.start':      'Page',
-        'title.accent':     'en construction',
-        'lead':             "Cette page sera bientôt disponible. En attendant, lance un tirage ou consulte le guide d'utilisation.",
+        'hero.eyebrow':     'À propos',
+        'hero.title.start': 'Le tirage au sort,',
+        'hero.title.accent':'pensé autrement',
+        'hero.lead':        "Spinfinity est né d'une frustration simple : les outils de tirage au sort sur le web sont moches, lents, ou demandent un compte pour fonctionner. On voulait un truc beau, instantané et qui respecte ta vie privée. Voilà l'histoire.",
+        'story.title':      "Ce qu'on a voulu construire",
+        'story.1.num':      'Le pitch',
+        'story.1.title':    'Un tirage au sort spectaculaire',
+        'story.1.desc':     "Quatre univers visuels totalement différents, chacun avec sa propre mécanique d'animation, ses sons et son ambiance. Le tirage devient un mini-événement à partager.",
+        'story.2.num':      'La promesse',
+        'story.2.title':    '100% gratuit, 0% compte',
+        'story.2.desc':     "Pas d'inscription, pas d'email demandé, pas de paywall caché. Tu arrives, tu colles tes noms, tu tires, tu partages. Point.",
+        'story.3.num':      'Le détail qui change tout',
+        'story.3.title':    'Une vidéo prête à partager',
+        'story.3.desc':     'Chaque tirage génère automatiquement une vidéo verticale 9:16 (TikTok, Reels, Stories) avec ton thème, le gagnant et son lot. Téléchargeable ou partage en 1 clic.',
+        'story.4.num':      "L'engagement",
+        'story.4.title':    'Tes données restent chez toi',
+        'story.4.desc':     "Aucune liste de noms n'est envoyée sur nos serveurs. Tout — saisie, tirage, animation, génération vidéo — tourne dans ton navigateur. Zéro tracking de noms.",
+        'values.title':     'Ce qui nous tient à cœur',
+        'values.lead':      'Quatre principes qui guident chaque ligne de code.',
+        'value.privacy.title':'Vie privée par défaut',
+        'value.privacy.desc':'Pas de cookie de tracking, pas de profilage, pas de revente de données. Le code est volontairement statique pour éliminer toute tentation.',
+        'value.craft.title':'Le détail visuel compte',
+        'value.craft.desc': 'Animations fluides, polices choisies, glows précis, transitions douces. On veut que chaque thème ait sa signature visuelle forte.',
+        'value.fast.title': 'Rapide partout',
+        'value.fast.desc':  'Le site est 100% statique, hébergé sur un CDN global. Il charge en moins d\'une seconde, même sur une connexion mobile médiocre.',
+        'value.free.title': 'Gratuit, durablement',
+        'value.free.desc':  'Le service est financé par des publicités discrètes (Google AdSense). Aucun "premium" caché, aucune limitation cachée.',
+        'who.title':        'Qui est derrière Spinfinity ?',
+        'who.p1':           "Spinfinity est un projet indépendant développé par un passionné de design web et d'expériences interactives. L'objectif : prouver qu'on peut créer un outil utile, beau et respectueux de la vie privée — sans backend, sans tracker et sans abonnement.",
+        'who.p2':           "Si tu trouves le projet sympa, le meilleur moyen de le soutenir est de le partager sur tes réseaux ou de garder l'onglet ouvert pendant un tirage 😉.",
         'cta.home':         'Lancer un tirage',
-        'cta.help':         'Comment ça marche ?',
-        'footer.copy':      '© 2026 Spinfinity — Tirage au sort avec style',
-        'footer.about':     'À propos',
-        'footer.legal':     'Mentions légales',
-        'footer.contact':   'Contact'
+        'cta.help':         'Comment ça marche ?'
     },
     en: {
-        'meta.title':       'Spinfinity — About (soon)',
-        'meta.description': 'Spinfinity About page — coming soon.',
+        'meta.title':       'About — Spinfinity',
+        'meta.description': "Spinfinity is a free, fully local, beautifully styled random draw tool. Discover the project's philosophy and what makes it different.",
         'nav.home':         'Home',
-        'eyebrow':          'Soon',
-        'title.start':      'Page',
-        'title.accent':     'under construction',
-        'lead':             "This page will be available shortly. In the meantime, run a draw or check the user guide.",
+        'hero.eyebrow':     'About',
+        'hero.title.start': 'Random draw,',
+        'hero.title.accent':'reimagined',
+        'hero.lead':        "Spinfinity was born from a simple frustration: random draw tools on the web are ugly, slow, or require an account. We wanted something beautiful, instant and respectful of your privacy. Here's the story.",
+        'story.title':      'What we set out to build',
+        'story.1.num':      'The pitch',
+        'story.1.title':    'A spectacular random draw',
+        'story.1.desc':     'Four totally different visual worlds, each with its own animation mechanic, sounds and vibe. The draw becomes a mini-event worth sharing.',
+        'story.2.num':      'The promise',
+        'story.2.title':    '100% free, 0% account',
+        'story.2.desc':     'No signup, no email required, no hidden paywall. You arrive, paste names, spin, share. Done.',
+        'story.3.num':      'The little detail that changes everything',
+        'story.3.title':    'A video ready to share',
+        'story.3.desc':     'Each draw auto-generates a 9:16 vertical video (TikTok, Reels, Stories) with your theme, the winner and the prize. Download or share in one click.',
+        'story.4.num':      'The commitment',
+        'story.4.title':    'Your data stays with you',
+        'story.4.desc':     'No name list is ever sent to our servers. Everything — input, draw, animation, video generation — runs in your browser. Zero name tracking.',
+        'values.title':     'What we care about',
+        'values.lead':      'Four principles guiding every line of code.',
+        'value.privacy.title':'Privacy by default',
+        'value.privacy.desc':'No tracking cookies, no profiling, no data resale. The codebase is intentionally static to eliminate any temptation.',
+        'value.craft.title':'Visual craft matters',
+        'value.craft.desc': 'Smooth animations, picked typography, precise glows, soft transitions. Each theme has its own strong visual signature.',
+        'value.fast.title': 'Fast everywhere',
+        'value.fast.desc':  'The site is 100% static, hosted on a global CDN. It loads in under a second, even on weak mobile connections.',
+        'value.free.title': 'Free, sustainably',
+        'value.free.desc':  'The service is funded by discreet ads (Google AdSense). No hidden "premium" tier, no hidden limitations.',
+        'who.title':        'Who is behind Spinfinity?',
+        'who.p1':           "Spinfinity is an independent project developed by a passionate web designer and interactive-experience builder. The goal: to prove you can create a useful, beautiful, privacy-respecting tool — without a backend, without trackers, and without a subscription.",
+        'who.p2':           'If you like the project, the best way to support it is to share it on your socials or keep the tab open during a draw 😉.',
         'cta.home':         'Run a draw',
-        'cta.help':         'How does it work?',
-        'footer.copy':      '© 2026 Spinfinity — Random draws with style',
-        'footer.about':     'About',
-        'footer.legal':     'Legal notice',
-        'footer.contact':   'Contact'
+        'cta.help':         'How does it work?'
     }
 };
+
 function detectLanguage() {
     const url = new URLSearchParams(location.search).get('lang');
     if (url === 'fr' || url === 'en') return url;
@@ -295,5 +458,6 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
 });
 applyLanguage(detectLanguage());
 </script>
+<script src="../_shared/footer.js" defer></script>
 </body>
 </html>

@@ -694,7 +694,7 @@ h1 .star.right { animation-delay: 1s; }
     </div>
 
     <div id="prize-banner" class="prize-banner">
-        <div class="prize-label" data-i18n="prize.label">🎉 ET LE GAGNANT EST</div>
+        <div class="prize-label" data-i18n="prize.label">🎉 Félicitations ! Tu as gagné</div>
         <div class="prize-name" id="prizeName"></div>
     </div>
 
@@ -789,7 +789,7 @@ const I18N = {
         'ready':              'READY',
         'running':            'APPLAUSE!',
         'winner':             'WINNER!',
-        'prize.label':        '🎉 ET LE GAGNANT EST',
+        'prize.label':        '🎉 Félicitations ! Tu as gagné',
         'audio.loading':      '🔊 Chargement applaudissements...',
         'audio.none':         'AUCUN APPLAUDISSEMENT',
         'audio.loaded':       'APPLAUDISSEMENT(S) CHARGÉ(S)',
@@ -824,7 +824,7 @@ const I18N = {
         'ready':              'READY',
         'running':            'APPLAUSE!',
         'winner':             'WINNER!',
-        'prize.label':        '🎉 AND THE WINNER IS',
+        'prize.label':        '🎉 Congratulations! You won',
         'audio.loading':      '🔊 Loading applause...',
         'audio.none':         'NO APPLAUSE SOUND',
         'audio.loaded':       'APPLAUSE(S) LOADED',
@@ -1492,6 +1492,8 @@ if (names.length > 0) startIdleFresh();
 else showReadyEmpty();
 setMeter(0);
 </script>
+
+<script src="../_shared/footer.js" defer></script>
 
 </body>
 </html>

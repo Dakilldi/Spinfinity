@@ -42,7 +42,18 @@
             'btn.extract':    '🔍 Extraire les noms',
             'fb.intro':       'Connectez-vous avec Facebook pour récupérer automatiquement les noms des personnes ayant commenté un post. La connexion se fait directement avec Facebook : Spinfinity ne reçoit ni ne stocke vos identifiants ou votre jeton d\'accès.',
             'fb.scopes':      'Accès demandé (lecture seule) : vos Pages Facebook, leurs publications et commentaires, ainsi que les comptes Instagram Business/Creator liés.',
-            'fb.btn.login':   '🔐 Se connecter à Facebook',
+            'fb.btn.login':   'Continuer avec Facebook',
+            'fb.perms.title': 'Permissions demandées (lecture seule)',
+            'fb.perms.1':     'Lister vos Pages Facebook',
+            'fb.perms.2':     'Lire les commentaires de vos posts',
+            'fb.perms.3':     'Accéder au compte Instagram Business lié',
+            'fb.perms.4':     'Lire les commentaires Instagram',
+            'fb.nostore.title':'Ce que nous ne stockons pas',
+            'fb.nostore.1':   'Aucun jeton d\'accès',
+            'fb.nostore.2':   'Aucun UID Facebook / Instagram',
+            'fb.nostore.3':   'Aucun nom ou commentaire après fermeture de l\'onglet',
+            'fb.nostore.4':   'Aucun cookie Spinfinity lié à Meta',
+            'fb.privacy':     'En continuant, vous acceptez la <a href="{privacyUrl}" target="_blank" rel="noopener">politique de confidentialité</a> de Spinfinity.',
             'fb.btn.logout':  'Déconnexion',
             'fb.loading':     'Chargement du SDK Facebook…',
             'fb.loggedAs':    'Connecté en tant que {name}',
@@ -91,7 +102,18 @@
             'btn.extract':    '🔍 Extract names',
             'fb.intro':       'Log in with Facebook to automatically fetch commenter names from your posts. Login happens directly with Facebook — Spinfinity never receives or stores your credentials or access token.',
             'fb.scopes':      'Read-only access: your Facebook Pages, their posts and comments, and linked Instagram Business/Creator accounts.',
-            'fb.btn.login':   '🔐 Log in with Facebook',
+            'fb.btn.login':   'Continue with Facebook',
+            'fb.perms.title': 'Permissions requested (read-only)',
+            'fb.perms.1':     'List your Facebook Pages',
+            'fb.perms.2':     'Read comments on your posts',
+            'fb.perms.3':     'Access linked Instagram Business account',
+            'fb.perms.4':     'Read Instagram comments',
+            'fb.nostore.title':'What we do NOT store',
+            'fb.nostore.1':   'No access token',
+            'fb.nostore.2':   'No Facebook / Instagram UID',
+            'fb.nostore.3':   'No names or comments after tab close',
+            'fb.nostore.4':   'No Spinfinity cookie related to Meta',
+            'fb.privacy':     'By continuing, you accept Spinfinity\'s <a href="{privacyUrl}" target="_blank" rel="noopener">privacy policy</a>.',
             'fb.btn.logout':  'Log out',
             'fb.loading':     'Loading Facebook SDK…',
             'fb.loggedAs':    'Logged in as {name}',
@@ -438,8 +460,45 @@
         .sfi-btn-primary:hover:not([disabled]) { filter: brightness(1.08); }
         .sfi-btn-success { background: linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%); color: #fff; }
         .sfi-btn-success:hover:not([disabled]) { filter: brightness(1.08); }
-        .sfi-btn-fb { background: #1877F2; color: #fff; }
+        .sfi-btn-fb {
+            background: #1877F2; color: #fff;
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 10px 18px;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 14px; font-weight: 700;
+            letter-spacing: 0.01em;
+        }
         .sfi-btn-fb:hover:not([disabled]) { filter: brightness(1.08); }
+        .sfi-fb-logo { flex-shrink: 0; }
+        .sfi-perm-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 6px 0 14px;
+        }
+        .sfi-perm-col {
+            border-radius: 10px; padding: 12px 14px;
+            font-size: 12.5px; line-height: 1.5;
+        }
+        .sfi-perm-col ul { margin: 6px 0 0; padding-left: 18px; }
+        .sfi-perm-col li { margin-bottom: 2px; color: #c8ccd4; }
+        .sfi-perm-head {
+            font-weight: 700; font-size: 12px; text-transform: uppercase;
+            letter-spacing: 0.04em; margin-bottom: 4px;
+        }
+        .sfi-perm-allow {
+            background: rgba(34,197,94,0.06);
+            border: 1px solid rgba(34,197,94,0.25);
+        }
+        .sfi-perm-allow .sfi-perm-head { color: #4ade80; }
+        .sfi-perm-deny {
+            background: rgba(239,68,68,0.05);
+            border: 1px solid rgba(239,68,68,0.20);
+        }
+        .sfi-perm-deny .sfi-perm-head { color: #fca5a5; }
+        @media (max-width: 520px) {
+            .sfi-perm-grid { grid-template-columns: 1fr; }
+        }
         .sfi-btn-ghost { background: rgba(255,255,255,.04); color: #c8ccd4; border: 1px solid rgba(255,255,255,.10); }
         .sfi-btn-ghost:hover { background: rgba(255,255,255,.08); }
         .sfi-toast {
@@ -499,6 +558,10 @@
 
         injectStyles();
 
+        // Resolve the path to /legal/ from any depth (mirrors footer.js logic).
+        const __parts = location.pathname.replace(/\/[^/]*$/, '/').split('/').filter(Boolean);
+        const privacyUrl = (__parts.length ? '../'.repeat(__parts.length) : '') + 'legal/';
+
         const overlay = document.createElement('div');
         overlay.className = 'sfi-overlay';
         overlay.setAttribute('role', 'dialog');
@@ -535,7 +598,27 @@
 
                     <div class="sfi-pane" data-pane="connect" hidden>
                         <p class="sfi-intro">${escapeHtml(t('fb.intro'))}</p>
-                        <p class="sfi-legal" style="margin: 0 0 12px;">${escapeHtml(t('fb.scopes'))}</p>
+
+                        <div class="sfi-perm-grid">
+                            <div class="sfi-perm-col sfi-perm-allow">
+                                <div class="sfi-perm-head">✓ ${escapeHtml(t('fb.perms.title'))}</div>
+                                <ul>
+                                    <li>${escapeHtml(t('fb.perms.1'))}</li>
+                                    <li>${escapeHtml(t('fb.perms.2'))}</li>
+                                    <li>${escapeHtml(t('fb.perms.3'))}</li>
+                                    <li>${escapeHtml(t('fb.perms.4'))}</li>
+                                </ul>
+                            </div>
+                            <div class="sfi-perm-col sfi-perm-deny">
+                                <div class="sfi-perm-head">✗ ${escapeHtml(t('fb.nostore.title'))}</div>
+                                <ul>
+                                    <li>${escapeHtml(t('fb.nostore.1'))}</li>
+                                    <li>${escapeHtml(t('fb.nostore.2'))}</li>
+                                    <li>${escapeHtml(t('fb.nostore.3'))}</li>
+                                    <li>${escapeHtml(t('fb.nostore.4'))}</li>
+                                </ul>
+                            </div>
+                        </div>
 
                         <div data-fb-setup ${FB_APP_ID ? 'hidden' : ''}>
                             <div class="sfi-setup-box">
@@ -545,7 +628,11 @@
                         </div>
 
                         <div data-fb-login-section ${FB_APP_ID ? '' : 'hidden'}>
-                            <button class="sfi-btn sfi-btn-fb" data-fb-login>${escapeHtml(t('fb.btn.login'))}</button>
+                            <button class="sfi-btn sfi-btn-fb sfi-fb-cta" data-fb-login>
+                                <svg class="sfi-fb-logo" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 12.073c0-6.627-5.373-12-12-12S0 5.446 0 12.073C0 18.062 4.388 23.027 10.125 23.927v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                                <span>${escapeHtml(t('fb.btn.login'))}</span>
+                            </button>
+                            <p class="sfi-legal" style="margin-top:10px;">${t('fb.privacy', { privacyUrl: privacyUrl })}</p>
                             <div class="sfi-fb-status" data-fb-status></div>
                             <div class="sfi-fb-error" data-fb-error hidden></div>
                         </div>

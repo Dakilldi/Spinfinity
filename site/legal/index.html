@@ -322,9 +322,10 @@ body::before {
         <a href="#privacy"><span class="toc-num">03</span> <span data-i18n="toc.privacy">Données personnelles</span></a>
         <a href="#cookies"><span class="toc-num">04</span> <span data-i18n="toc.cookies">Cookies</span></a>
         <a href="#adsense"><span class="toc-num">05</span> <span data-i18n="toc.adsense">Publicité Google</span></a>
-        <a href="#rights"><span class="toc-num">06</span> <span data-i18n="toc.rights">Tes droits RGPD</span></a>
-        <a href="#ip"><span class="toc-num">07</span> <span data-i18n="toc.ip">Propriété intellectuelle</span></a>
-        <a href="#contact"><span class="toc-num">08</span> <span data-i18n="toc.contact">Contact</span></a>
+        <a href="#meta"><span class="toc-num">06</span> <span data-i18n="toc.meta">Connexion Facebook & Instagram</span></a>
+        <a href="#rights"><span class="toc-num">07</span> <span data-i18n="toc.rights">Tes droits RGPD</span></a>
+        <a href="#ip"><span class="toc-num">08</span> <span data-i18n="toc.ip">Propriété intellectuelle</span></a>
+        <a href="#contact"><span class="toc-num">09</span> <span data-i18n="toc.contact">Contact</span></a>
     </div>
 </nav>
 
@@ -408,37 +409,91 @@ body::before {
     <p data-i18n="s5.p4"><strong>Spinfinity ne partage avec Google AdSense aucune liste de noms, aucun lot saisi, aucune vidéo générée.</strong> Seuls les paramètres techniques standards (page visitée, contexte, langue) sont transmis pour la diffusion des annonces.</p>
 </section>
 
-<!-- 6. Rights -->
-<section class="legal-section" id="rights">
-    <h2><span class="section-num">6</span> <span data-i18n="s6.title">Tes droits (RGPD)</span></h2>
-    <p class="lead" data-i18n="s6.lead">Conformément au Règlement Général sur la Protection des Données (UE 2016/679).</p>
-    <p data-i18n="s6.intro">Étant donné que Spinfinity ne collecte aucune donnée personnelle sur ses serveurs, la plupart de ces droits sont déjà respectés par défaut. Tu disposes néanmoins des droits suivants :</p>
+<!-- 6. Meta (Facebook / Instagram) -->
+<section class="legal-section" id="meta">
+    <h2><span class="section-num">6</span> <span data-i18n="s6.title">Connexion Facebook & Instagram (Meta)</span></h2>
+    <p class="lead" data-i18n="s6.lead">Comment Spinfinity utilise — ou plutôt n'utilise pas — vos données Meta.</p>
+
+    <p data-i18n="s6.intro">Spinfinity propose une fonctionnalité optionnelle « Se connecter à Facebook » qui permet d'importer automatiquement les noms des personnes ayant commenté un de <strong>vos</strong> posts Facebook (Pages que vous administrez) ou Instagram (compte Business/Creator lié). Cette fonctionnalité est strictement opt-in : tant que vous ne cliquez pas sur le bouton de connexion, Spinfinity n'effectue aucun appel vers Meta.</p>
+
+    <h3 data-i18n="s6.flow.title">Comment circulent les données</h3>
+    <p data-i18n="s6.flow.desc">Le flux est entièrement en client (votre navigateur) :</p>
+    <ol>
+        <li data-i18n="s6.flow.li1">Vous cliquez sur « Se connecter à Facebook » dans la fenêtre d'import.</li>
+        <li data-i18n="s6.flow.li2">Votre navigateur charge le SDK JavaScript officiel de Meta (depuis <code>connect.facebook.net</code>) et ouvre une fenêtre d'authentification sur <code>facebook.com</code>.</li>
+        <li data-i18n="s6.flow.li3">Vous autorisez (ou non) l'application Spinfinity. Vos identifiants Facebook sont saisis chez Meta, jamais sur Spinfinity.</li>
+        <li data-i18n="s6.flow.li4">Meta renvoie un <strong>jeton d'accès</strong> directement à votre navigateur. Ce jeton reste dans la mémoire de l'onglet uniquement, jamais transmis à Spinfinity.</li>
+        <li data-i18n="s6.flow.li5">Votre navigateur interroge directement <code>graph.facebook.com</code> avec ce jeton pour obtenir la liste de vos Pages, vos posts, et les commentaires.</li>
+        <li data-i18n="s6.flow.li6">Les noms des commentateurs sont injectés dans la liste des participants, en mémoire dans l'onglet. À la fermeture, tout disparaît.</li>
+    </ol>
+
+    <h3 data-i18n="s6.perms.title">Permissions demandées et pourquoi</h3>
     <ul>
-        <li data-i18n="s6.li1"><strong>Droit d'accès</strong> : aucune donnée à fournir, puisqu'aucune n'est stockée côté serveur.</li>
-        <li data-i18n="s6.li2"><strong>Droit de rectification</strong> : sans objet.</li>
-        <li data-i18n="s6.li3"><strong>Droit à l'effacement</strong> : vide le localStorage de ton navigateur pour supprimer les préférences locales.</li>
-        <li data-i18n="s6.li4"><strong>Droit d'opposition</strong> : tu peux désactiver les cookies tiers (Google AdSense) via les liens fournis section 4.</li>
-        <li data-i18n="s6.li5"><strong>Droit à la portabilité</strong> : tes listes restent dans ton navigateur, donc déjà entre tes mains.</li>
-        <li data-i18n="s6.li6"><strong>Droit de plainte</strong> : tu peux contacter la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>) ou l'autorité de protection des données de ton pays.</li>
+        <li data-i18n="s6.perms.li1"><code>pages_show_list</code> — lister les Pages Facebook que vous administrez, pour vous laisser choisir celle dont vous voulez importer les commentaires.</li>
+        <li data-i18n="s6.perms.li2"><code>pages_read_engagement</code> — lire les commentaires sur les posts de vos Pages.</li>
+        <li data-i18n="s6.perms.li3"><code>instagram_basic</code> — accéder au compte Instagram Business/Creator lié à votre Page, si vous choisissez l'option Instagram.</li>
+        <li data-i18n="s6.perms.li4"><code>instagram_manage_comments</code> — lire les commentaires des publications Instagram du compte ci-dessus.</li>
+    </ul>
+    <p data-i18n="s6.perms.note"><strong>Lecture seule.</strong> Aucune permission de publication, de modification ou de suppression n'est demandée. Spinfinity ne peut rien publier, ni modifier, ni supprimer sur votre compte Meta.</p>
+
+    <h3 data-i18n="s6.stored.title">Ce que Spinfinity stocke</h3>
+    <div class="info-card">
+        <div class="row"><div class="label" data-i18n="s6.stored.token">Jeton d'accès Meta</div><div class="value" data-i18n="s6.stored.token.value"><strong>Jamais</strong> — vit en mémoire de l'onglet, supprimé à sa fermeture.</div></div>
+        <div class="row"><div class="label" data-i18n="s6.stored.names">Noms importés</div><div class="value" data-i18n="s6.stored.names.value"><strong>Jamais</strong> — restent dans la liste de participants de l'onglet courant.</div></div>
+        <div class="row"><div class="label" data-i18n="s6.stored.uid">UID Facebook / Instagram</div><div class="value" data-i18n="s6.stored.uid.value"><strong>Jamais</strong> — non collecté, non stocké, non transmis.</div></div>
+        <div class="row"><div class="label" data-i18n="s6.stored.profile">Photo de profil / email</div><div class="value" data-i18n="s6.stored.profile.value"><strong>Jamais</strong> — non demandé dans les permissions.</div></div>
+        <div class="row"><div class="label" data-i18n="s6.stored.cookies">Cookies Meta sur spinfinity.app</div><div class="value" data-i18n="s6.stored.cookies.value"><strong>Aucun</strong> — le SDK est initialisé avec <code>cookie:false</code>. Meta peut en revanche poser ses propres cookies sur le domaine <code>facebook.com</code> au moment de l'authentification — c'est régi par la politique Meta.</div></div>
+    </div>
+
+    <h3 data-i18n="s6.limits.title">Limites imposées par Meta</h3>
+    <ul>
+        <li data-i18n="s6.limits.li1">L'accès n'est possible que sur des Pages dont vous êtes administrateur. Aucun moyen d'extraire des commentaires d'une Page tierce.</li>
+        <li data-i18n="s6.limits.li2">Instagram : compte <strong>Business</strong> ou <strong>Creator</strong> uniquement, lié à une Page Facebook. Les comptes personnels n'ont pas d'API.</li>
+        <li data-i18n="s6.limits.li3">Depuis 2021, Meta restreint la visibilité du nom de certains commentateurs (motifs RGPD). Ces commentaires apparaîtront anonymisés et seront ignorés par Spinfinity.</li>
+    </ul>
+
+    <h3 data-i18n="s6.revoke.title">Révoquer l'accès</h3>
+    <p data-i18n="s6.revoke.desc">Vous pouvez retirer l'autorisation accordée à Spinfinity à tout moment depuis les paramètres Facebook : <a href="https://www.facebook.com/settings?tab=applications" target="_blank" rel="noopener">facebook.com/settings?tab=applications</a> → trouver « Spinfinity » → Supprimer. Voir la page dédiée <a href="data-deletion/" data-i18n="s6.revoke.link">Suppression de vos données</a> pour un guide pas à pas.</p>
+
+    <h3 data-i18n="s6.policy.title">Documents Meta de référence</h3>
+    <ul>
+        <li><a href="https://www.facebook.com/policy.php" target="_blank" rel="noopener" data-i18n="s6.policy.li1">Politique de confidentialité Meta</a></li>
+        <li><a href="https://developers.facebook.com/terms" target="_blank" rel="noopener" data-i18n="s6.policy.li2">Meta Platform Terms (CGU plateforme)</a></li>
+        <li><a href="https://developers.facebook.com/devpolicy" target="_blank" rel="noopener" data-i18n="s6.policy.li3">Politique des développeurs Meta</a></li>
+    </ul>
+</section>
+
+<!-- 7. Rights -->
+<section class="legal-section" id="rights">
+    <h2><span class="section-num">7</span> <span data-i18n="s7.title">Tes droits (RGPD)</span></h2>
+    <p class="lead" data-i18n="s7.lead">Conformément au Règlement Général sur la Protection des Données (UE 2016/679).</p>
+    <p data-i18n="s7.intro">Étant donné que Spinfinity ne collecte aucune donnée personnelle sur ses serveurs, la plupart de ces droits sont déjà respectés par défaut. Tu disposes néanmoins des droits suivants :</p>
+    <ul>
+        <li data-i18n="s7.li1"><strong>Droit d'accès</strong> : aucune donnée à fournir, puisqu'aucune n'est stockée côté serveur.</li>
+        <li data-i18n="s7.li2"><strong>Droit de rectification</strong> : sans objet.</li>
+        <li data-i18n="s7.li3"><strong>Droit à l'effacement</strong> : vide le localStorage de ton navigateur pour supprimer les préférences locales.</li>
+        <li data-i18n="s7.li4"><strong>Droit d'opposition</strong> : tu peux désactiver les cookies tiers (Google AdSense) via les liens fournis section 4.</li>
+        <li data-i18n="s7.li5"><strong>Droit à la portabilité</strong> : tes listes restent dans ton navigateur, donc déjà entre tes mains.</li>
+        <li data-i18n="s7.li6"><strong>Droit de plainte</strong> : tu peux contacter la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>) ou l'autorité de protection des données de ton pays.</li>
     </ul>
 </section>
 
 <!-- 7. IP -->
 <section class="legal-section" id="ip">
-    <h2><span class="section-num">7</span> <span data-i18n="s7.title">Propriété intellectuelle</span></h2>
-    <p class="lead" data-i18n="s7.lead">Qui possède quoi.</p>
-    <p data-i18n="s7.p1">L'ensemble du contenu de spinfinity.app (design, code, illustrations, animations, textes, identité visuelle Spinfinity) est protégé par le droit d'auteur et reste la propriété exclusive de l'éditeur. Toute reproduction, diffusion ou exploitation non autorisée est interdite.</p>
-    <p data-i18n="s7.p2">Les marques tierces mentionnées (TikTok, Instagram, Facebook, Google, Vercel, etc.) appartiennent à leurs propriétaires respectifs et ne sont citées qu'à titre informatif.</p>
-    <p data-i18n="s7.p3">Les listes de participants et lots que tu saisis dans Spinfinity restent <strong>ta propriété exclusive</strong> ; aucun droit n'est cédé à Spinfinity sur ces données.</p>
+    <h2><span class="section-num">8</span> <span data-i18n="s8.title">Propriété intellectuelle</span></h2>
+    <p class="lead" data-i18n="s8.lead">Qui possède quoi.</p>
+    <p data-i18n="s8.p1">L'ensemble du contenu de spinfinity.app (design, code, illustrations, animations, textes, identité visuelle Spinfinity) est protégé par le droit d'auteur et reste la propriété exclusive de l'éditeur. Toute reproduction, diffusion ou exploitation non autorisée est interdite.</p>
+    <p data-i18n="s8.p2">Les marques tierces mentionnées (TikTok, Instagram, Facebook, Google, Vercel, etc.) appartiennent à leurs propriétaires respectifs et ne sont citées qu'à titre informatif.</p>
+    <p data-i18n="s8.p3">Les listes de participants et lots que tu saisis dans Spinfinity restent <strong>ta propriété exclusive</strong> ; aucun droit n'est cédé à Spinfinity sur ces données.</p>
 </section>
 
 <!-- 8. Contact -->
 <section class="legal-section" id="contact">
-    <h2><span class="section-num">8</span> <span data-i18n="s8.title">Contact</span></h2>
-    <p class="lead" data-i18n="s8.lead">Pour toute question juridique, RGPD ou bug critique.</p>
+    <h2><span class="section-num">9</span> <span data-i18n="s9.title">Contact</span></h2>
+    <p class="lead" data-i18n="s9.lead">Pour toute question juridique, RGPD ou bug critique.</p>
     <div class="info-card">
-        <div class="row"><div class="label" data-i18n="s8.k.email">Email</div><div class="value placeholder">[email@spinfinity.app]</div></div>
-        <div class="row"><div class="label" data-i18n="s8.k.delay">Délai de réponse</div><div class="value" data-i18n="s8.k.delay.value">Sous 30 jours pour les demandes RGPD.</div></div>
+        <div class="row"><div class="label" data-i18n="s9.k.email">Email</div><div class="value placeholder">[email@spinfinity.app]</div></div>
+        <div class="row"><div class="label" data-i18n="s9.k.delay">Délai de réponse</div><div class="value" data-i18n="s9.k.delay.value">Sous 30 jours pour les demandes RGPD.</div></div>
     </div>
 </section>
 
@@ -465,6 +520,7 @@ const I18N = {
         'toc.privacy':      'Données personnelles',
         'toc.cookies':      'Cookies',
         'toc.adsense':      'Publicité Google',
+        'toc.meta':         'Connexion Facebook & Instagram',
         'toc.rights':       'Tes droits RGPD',
         'toc.ip':           'Propriété intellectuelle',
         'toc.contact':      'Contact',
@@ -515,25 +571,64 @@ const I18N = {
         's5.p3':            'Tu peux choisir de désactiver l\'utilisation du cookie DART en consultant la <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">politique de confidentialité Google relative aux annonces</a>.',
         's5.policy.link':   'politique de confidentialité Google relative aux annonces',
         's5.p4':            "<strong>Spinfinity ne partage avec Google AdSense aucune liste de noms, aucun lot saisi, aucune vidéo générée.</strong> Seuls les paramètres techniques standards (page visitée, contexte, langue) sont transmis pour la diffusion des annonces.",
-        's6.title':         'Tes droits (RGPD)',
-        's6.lead':          'Conformément au Règlement Général sur la Protection des Données (UE 2016/679).',
-        's6.intro':         "Étant donné que Spinfinity ne collecte aucune donnée personnelle sur ses serveurs, la plupart de ces droits sont déjà respectés par défaut. Tu disposes néanmoins des droits suivants :",
-        's6.li1':           "<strong>Droit d'accès</strong> : aucune donnée à fournir, puisqu'aucune n'est stockée côté serveur.",
-        's6.li2':           "<strong>Droit de rectification</strong> : sans objet.",
-        's6.li3':           "<strong>Droit à l'effacement</strong> : vide le localStorage de ton navigateur pour supprimer les préférences locales.",
-        's6.li4':           "<strong>Droit d'opposition</strong> : tu peux désactiver les cookies tiers (Google AdSense) via les liens fournis section 4.",
-        's6.li5':           "<strong>Droit à la portabilité</strong> : tes listes restent dans ton navigateur, donc déjà entre tes mains.",
-        's6.li6':           '<strong>Droit de plainte</strong> : tu peux contacter la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>) ou l\'autorité de protection des données de ton pays.',
-        's7.title':         'Propriété intellectuelle',
-        's7.lead':          'Qui possède quoi.',
-        's7.p1':            "L'ensemble du contenu de spinfinity.app (design, code, illustrations, animations, textes, identité visuelle Spinfinity) est protégé par le droit d'auteur et reste la propriété exclusive de l'éditeur. Toute reproduction, diffusion ou exploitation non autorisée est interdite.",
-        's7.p2':            "Les marques tierces mentionnées (TikTok, Instagram, Facebook, Google, Vercel, etc.) appartiennent à leurs propriétaires respectifs et ne sont citées qu'à titre informatif.",
-        's7.p3':            "Les listes de participants et lots que tu saisis dans Spinfinity restent <strong>ta propriété exclusive</strong> ; aucun droit n'est cédé à Spinfinity sur ces données.",
-        's8.title':         'Contact',
-        's8.lead':          'Pour toute question juridique, RGPD ou bug critique.',
-        's8.k.email':       'Email',
-        's8.k.delay':       'Délai de réponse',
-        's8.k.delay.value': 'Sous 30 jours pour les demandes RGPD.',
+        's6.title':         'Connexion Facebook & Instagram (Meta)',
+        's6.lead':          "Comment Spinfinity utilise — ou plutôt n'utilise pas — vos données Meta.",
+        's6.intro':         "Spinfinity propose une fonctionnalité optionnelle « Se connecter à Facebook » qui permet d'importer automatiquement les noms des personnes ayant commenté un de <strong>vos</strong> posts Facebook (Pages que vous administrez) ou Instagram (compte Business/Creator lié). Cette fonctionnalité est strictement opt-in : tant que vous ne cliquez pas sur le bouton de connexion, Spinfinity n'effectue aucun appel vers Meta.",
+        's6.flow.title':    'Comment circulent les données',
+        's6.flow.desc':     'Le flux est entièrement en client (votre navigateur) :',
+        's6.flow.li1':      "Vous cliquez sur « Se connecter à Facebook » dans la fenêtre d'import.",
+        's6.flow.li2':      "Votre navigateur charge le SDK JavaScript officiel de Meta (depuis <code>connect.facebook.net</code>) et ouvre une fenêtre d'authentification sur <code>facebook.com</code>.",
+        's6.flow.li3':      "Vous autorisez (ou non) l'application Spinfinity. Vos identifiants Facebook sont saisis chez Meta, jamais sur Spinfinity.",
+        's6.flow.li4':      "Meta renvoie un <strong>jeton d'accès</strong> directement à votre navigateur. Ce jeton reste dans la mémoire de l'onglet uniquement, jamais transmis à Spinfinity.",
+        's6.flow.li5':      "Votre navigateur interroge directement <code>graph.facebook.com</code> avec ce jeton pour obtenir la liste de vos Pages, vos posts, et les commentaires.",
+        's6.flow.li6':      "Les noms des commentateurs sont injectés dans la liste des participants, en mémoire dans l'onglet. À la fermeture, tout disparaît.",
+        's6.perms.title':   'Permissions demandées et pourquoi',
+        's6.perms.li1':     '<code>pages_show_list</code> — lister les Pages Facebook que vous administrez, pour vous laisser choisir celle dont vous voulez importer les commentaires.',
+        's6.perms.li2':     '<code>pages_read_engagement</code> — lire les commentaires sur les posts de vos Pages.',
+        's6.perms.li3':     '<code>instagram_basic</code> — accéder au compte Instagram Business/Creator lié à votre Page, si vous choisissez l\'option Instagram.',
+        's6.perms.li4':     '<code>instagram_manage_comments</code> — lire les commentaires des publications Instagram du compte ci-dessus.',
+        's6.perms.note':    '<strong>Lecture seule.</strong> Aucune permission de publication, de modification ou de suppression n\'est demandée. Spinfinity ne peut rien publier, ni modifier, ni supprimer sur votre compte Meta.',
+        's6.stored.title':  'Ce que Spinfinity stocke',
+        's6.stored.token':  "Jeton d'accès Meta",
+        's6.stored.token.value':  "<strong>Jamais</strong> — vit en mémoire de l'onglet, supprimé à sa fermeture.",
+        's6.stored.names':  'Noms importés',
+        's6.stored.names.value':  "<strong>Jamais</strong> — restent dans la liste de participants de l'onglet courant.",
+        's6.stored.uid':    'UID Facebook / Instagram',
+        's6.stored.uid.value':    "<strong>Jamais</strong> — non collecté, non stocké, non transmis.",
+        's6.stored.profile':      'Photo de profil / email',
+        's6.stored.profile.value':'<strong>Jamais</strong> — non demandé dans les permissions.',
+        's6.stored.cookies':      'Cookies Meta sur spinfinity.app',
+        's6.stored.cookies.value':"<strong>Aucun</strong> — le SDK est initialisé avec <code>cookie:false</code>. Meta peut en revanche poser ses propres cookies sur le domaine <code>facebook.com</code> au moment de l'authentification — c'est régi par la politique Meta.",
+        's6.limits.title':  'Limites imposées par Meta',
+        's6.limits.li1':    "L'accès n'est possible que sur des Pages dont vous êtes administrateur. Aucun moyen d'extraire des commentaires d'une Page tierce.",
+        's6.limits.li2':    'Instagram : compte <strong>Business</strong> ou <strong>Creator</strong> uniquement, lié à une Page Facebook. Les comptes personnels n\'ont pas d\'API.',
+        's6.limits.li3':    'Depuis 2021, Meta restreint la visibilité du nom de certains commentateurs (motifs RGPD). Ces commentaires apparaîtront anonymisés et seront ignorés par Spinfinity.',
+        's6.revoke.title':  "Révoquer l'accès",
+        's6.revoke.desc':   "Vous pouvez retirer l'autorisation accordée à Spinfinity à tout moment depuis les paramètres Facebook : <a href=\"https://www.facebook.com/settings?tab=applications\" target=\"_blank\" rel=\"noopener\">facebook.com/settings?tab=applications</a> → trouver « Spinfinity » → Supprimer. Voir la page dédiée <a href=\"data-deletion/\">Suppression de vos données</a> pour un guide pas à pas.",
+        's6.revoke.link':   'Suppression de vos données',
+        's6.policy.title':  'Documents Meta de référence',
+        's6.policy.li1':    'Politique de confidentialité Meta',
+        's6.policy.li2':    'Meta Platform Terms (CGU plateforme)',
+        's6.policy.li3':    'Politique des développeurs Meta',
+        's7.title':         'Tes droits (RGPD)',
+        's7.lead':          'Conformément au Règlement Général sur la Protection des Données (UE 2016/679).',
+        's7.intro':         "Étant donné que Spinfinity ne collecte aucune donnée personnelle sur ses serveurs, la plupart de ces droits sont déjà respectés par défaut. Tu disposes néanmoins des droits suivants :",
+        's7.li1':           "<strong>Droit d'accès</strong> : aucune donnée à fournir, puisqu'aucune n'est stockée côté serveur.",
+        's7.li2':           "<strong>Droit de rectification</strong> : sans objet.",
+        's7.li3':           "<strong>Droit à l'effacement</strong> : vide le localStorage de ton navigateur pour supprimer les préférences locales.",
+        's7.li4':           "<strong>Droit d'opposition</strong> : tu peux désactiver les cookies tiers (Google AdSense) via les liens fournis section 4.",
+        's7.li5':           "<strong>Droit à la portabilité</strong> : tes listes restent dans ton navigateur, donc déjà entre tes mains.",
+        's7.li6':           '<strong>Droit de plainte</strong> : tu peux contacter la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>) ou l\'autorité de protection des données de ton pays.',
+        's8.title':         'Propriété intellectuelle',
+        's8.lead':          'Qui possède quoi.',
+        's8.p1':            "L'ensemble du contenu de spinfinity.app (design, code, illustrations, animations, textes, identité visuelle Spinfinity) est protégé par le droit d'auteur et reste la propriété exclusive de l'éditeur. Toute reproduction, diffusion ou exploitation non autorisée est interdite.",
+        's8.p2':            "Les marques tierces mentionnées (TikTok, Instagram, Facebook, Google, Vercel, etc.) appartiennent à leurs propriétaires respectifs et ne sont citées qu'à titre informatif.",
+        's8.p3':            "Les listes de participants et lots que tu saisis dans Spinfinity restent <strong>ta propriété exclusive</strong> ; aucun droit n'est cédé à Spinfinity sur ces données.",
+        's9.title':         'Contact',
+        's9.lead':          'Pour toute question juridique, RGPD ou bug critique.',
+        's9.k.email':       'Email',
+        's9.k.delay':       'Délai de réponse',
+        's9.k.delay.value': 'Sous 30 jours pour les demandes RGPD.',
         'cta.back':         "Retour à l'accueil"
     },
     en: {
@@ -550,6 +645,7 @@ const I18N = {
         'toc.privacy':      'Personal data',
         'toc.cookies':      'Cookies',
         'toc.adsense':      'Google ads',
+        'toc.meta':         'Facebook & Instagram login',
         'toc.rights':       'Your GDPR rights',
         'toc.ip':           'Intellectual property',
         'toc.contact':      'Contact',
@@ -600,25 +696,64 @@ const I18N = {
         's5.p3':            'You may opt out of the use of the DART cookie by visiting the <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">Google ad and content network privacy policy</a>.',
         's5.policy.link':   'Google ad and content network privacy policy',
         's5.p4':            "<strong>Spinfinity does not share any name list, any prize, or any generated video with Google AdSense.</strong> Only standard technical parameters (page visited, context, language) are transmitted for ad serving.",
-        's6.title':         'Your rights (GDPR)',
-        's6.lead':          'In accordance with the General Data Protection Regulation (EU 2016/679).',
-        's6.intro':         "Since Spinfinity does not collect any personal data on its servers, most of these rights are already respected by default. You nonetheless have the following rights:",
-        's6.li1':           "<strong>Right of access</strong>: no data to provide, since none is stored server-side.",
-        's6.li2':           "<strong>Right of rectification</strong>: not applicable.",
-        's6.li3':           "<strong>Right to erasure</strong>: clear your browser's localStorage to remove local preferences.",
-        's6.li4':           "<strong>Right to object</strong>: you can disable third-party cookies (Google AdSense) via the links provided in section 4.",
-        's6.li5':           "<strong>Right to portability</strong>: your lists stay in your browser, so they are already in your hands.",
-        's6.li6':           '<strong>Right to lodge a complaint</strong>: you may contact the CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>) or the data protection authority of your country.',
-        's7.title':         'Intellectual property',
-        's7.lead':          'Who owns what.',
-        's7.p1':            "All content on spinfinity.app (design, code, illustrations, animations, copy, Spinfinity visual identity) is protected by copyright and remains the exclusive property of the publisher. Any unauthorized reproduction, distribution or exploitation is forbidden.",
-        's7.p2':            "Third-party trademarks mentioned (TikTok, Instagram, Facebook, Google, Vercel, etc.) belong to their respective owners and are cited for informational purposes only.",
-        's7.p3':            "The participant lists and prizes you input in Spinfinity remain <strong>your exclusive property</strong>; no rights are transferred to Spinfinity over this data.",
-        's8.title':         'Contact',
-        's8.lead':          'For any legal, GDPR or critical-bug question.',
-        's8.k.email':       'Email',
-        's8.k.delay':       'Response time',
-        's8.k.delay.value': 'Within 30 days for GDPR requests.',
+        's6.title':         'Facebook & Instagram login (Meta)',
+        's6.lead':          'How Spinfinity uses — or rather does not use — your Meta data.',
+        's6.intro':         "Spinfinity offers an optional \"Log in with Facebook\" feature that lets you automatically import the names of people who commented on one of <strong>your</strong> Facebook posts (Pages you administer) or Instagram (linked Business/Creator account). This feature is strictly opt-in: until you click the login button, Spinfinity makes no calls to Meta.",
+        's6.flow.title':    'How data flows',
+        's6.flow.desc':     'The flow is entirely client-side (your browser):',
+        's6.flow.li1':      'You click "Log in with Facebook" in the import window.',
+        's6.flow.li2':      "Your browser loads Meta's official JavaScript SDK (from <code>connect.facebook.net</code>) and opens an authentication window on <code>facebook.com</code>.",
+        's6.flow.li3':      "You authorize (or not) the Spinfinity app. Your Facebook credentials are entered at Meta, never on Spinfinity.",
+        's6.flow.li4':      "Meta returns an <strong>access token</strong> directly to your browser. This token stays in the tab's memory only, never transmitted to Spinfinity.",
+        's6.flow.li5':      'Your browser queries <code>graph.facebook.com</code> directly with this token to obtain the list of your Pages, posts, and comments.',
+        's6.flow.li6':      "Commenter names are injected into the participants list, in the tab's memory. On close, everything disappears.",
+        's6.perms.title':   'Permissions requested and why',
+        's6.perms.li1':     '<code>pages_show_list</code> — list the Facebook Pages you administer, so you can choose which one to import comments from.',
+        's6.perms.li2':     '<code>pages_read_engagement</code> — read comments on your Pages\' posts.',
+        's6.perms.li3':     '<code>instagram_basic</code> — access the Instagram Business/Creator account linked to your Page, if you choose the Instagram option.',
+        's6.perms.li4':     '<code>instagram_manage_comments</code> — read comments on the Instagram posts of the above account.',
+        's6.perms.note':    '<strong>Read-only.</strong> No publishing, modification or deletion permission is requested. Spinfinity cannot publish, modify or delete anything on your Meta account.',
+        's6.stored.title':  'What Spinfinity stores',
+        's6.stored.token':  'Meta access token',
+        's6.stored.token.value':  "<strong>Never</strong> — lives in the tab's memory, deleted on tab close.",
+        's6.stored.names':  'Imported names',
+        's6.stored.names.value':  '<strong>Never</strong> — remain in the current tab\'s participants list.',
+        's6.stored.uid':    'Facebook / Instagram UID',
+        's6.stored.uid.value':    '<strong>Never</strong> — not collected, not stored, not transmitted.',
+        's6.stored.profile':      'Profile photo / email',
+        's6.stored.profile.value':'<strong>Never</strong> — not requested in the permissions.',
+        's6.stored.cookies':      'Meta cookies on spinfinity.app',
+        's6.stored.cookies.value':'<strong>None</strong> — the SDK is initialized with <code>cookie:false</code>. Meta may however set its own cookies on the <code>facebook.com</code> domain at authentication time — this is governed by Meta policy.',
+        's6.limits.title':  'Limits imposed by Meta',
+        's6.limits.li1':    "Access is only possible on Pages you administer. There's no way to extract comments from a third-party Page.",
+        's6.limits.li2':    'Instagram: <strong>Business</strong> or <strong>Creator</strong> account only, linked to a Facebook Page. Personal accounts have no API access.',
+        's6.limits.li3':    'Since 2021, Meta restricts the visibility of some commenters\' names (GDPR-like reasons). These comments will appear anonymized and will be ignored by Spinfinity.',
+        's6.revoke.title':  'Revoke access',
+        's6.revoke.desc':   "You can withdraw the authorization granted to Spinfinity at any time from Facebook settings: <a href=\"https://www.facebook.com/settings?tab=applications\" target=\"_blank\" rel=\"noopener\">facebook.com/settings?tab=applications</a> → find \"Spinfinity\" → Remove. See the dedicated <a href=\"data-deletion/\">Data deletion</a> page for a step-by-step guide.",
+        's6.revoke.link':   'Data deletion',
+        's6.policy.title':  'Meta reference documents',
+        's6.policy.li1':    'Meta privacy policy',
+        's6.policy.li2':    'Meta Platform Terms',
+        's6.policy.li3':    'Meta developer policy',
+        's7.title':         'Your rights (GDPR)',
+        's7.lead':          'In accordance with the General Data Protection Regulation (EU 2016/679).',
+        's7.intro':         "Since Spinfinity does not collect any personal data on its servers, most of these rights are already respected by default. You nonetheless have the following rights:",
+        's7.li1':           "<strong>Right of access</strong>: no data to provide, since none is stored server-side.",
+        's7.li2':           "<strong>Right of rectification</strong>: not applicable.",
+        's7.li3':           "<strong>Right to erasure</strong>: clear your browser's localStorage to remove local preferences.",
+        's7.li4':           "<strong>Right to object</strong>: you can disable third-party cookies (Google AdSense) via the links provided in section 4.",
+        's7.li5':           "<strong>Right to portability</strong>: your lists stay in your browser, so they are already in your hands.",
+        's7.li6':           '<strong>Right to lodge a complaint</strong>: you may contact the CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>) or the data protection authority of your country.',
+        's8.title':         'Intellectual property',
+        's8.lead':          'Who owns what.',
+        's8.p1':            "All content on spinfinity.app (design, code, illustrations, animations, copy, Spinfinity visual identity) is protected by copyright and remains the exclusive property of the publisher. Any unauthorized reproduction, distribution or exploitation is forbidden.",
+        's8.p2':            "Third-party trademarks mentioned (TikTok, Instagram, Facebook, Google, Vercel, etc.) belong to their respective owners and are cited for informational purposes only.",
+        's8.p3':            "The participant lists and prizes you input in Spinfinity remain <strong>your exclusive property</strong>; no rights are transferred to Spinfinity over this data.",
+        's9.title':         'Contact',
+        's9.lead':          'For any legal, GDPR or critical-bug question.',
+        's9.k.email':       'Email',
+        's9.k.delay':       'Response time',
+        's9.k.delay.value': 'Within 30 days for GDPR requests.',
         'cta.back':         'Back to home'
     }
 };

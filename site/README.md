@@ -136,3 +136,57 @@ Pour permettre à n'importe quel utilisateur (et pas seulement les Testeurs de l
 - L'API ne renvoie que les commentaires des Pages que l'utilisateur connecté **administre**. Aucun moyen d'accéder à des Pages tierces.
 - Instagram : compte **Business** ou **Creator** uniquement (les comptes Personal n'ont aucun accès API).
 - Depuis 2021, Meta restreint la visibilité des noms de certains commentateurs (RGPD-like) — ils peuvent apparaître anonymisés. Le mode "Coller du texte" reste un bon fallback dans ce cas.
+
+## Checklist App Review Meta (à fournir lors de la soumission)
+
+Le site Spinfinity est déjà préparé pour passer la revue Meta. Au moment de soumettre l'App pour passer en mode Public, voici ce que tu dois fournir dans le dashboard Meta Developer :
+
+### URL obligatoires (déjà en place sur le site)
+- **Privacy Policy URL** : `https://spinfinity.app/legal/` — la section 6 "Connexion Facebook & Instagram (Meta)" décrit en détail le flux de données et l'absence de stockage.
+- **Terms of Service URL** : `https://spinfinity.app/legal/` — la même page sert de mentions légales et de conditions d'utilisation (acceptable pour Meta).
+- **Data Deletion Instructions URL** : `https://spinfinity.app/legal/data-deletion/` — page dédiée listant les étapes pour révoquer l'accès et supprimer toute donnée locale.
+
+### Champs à renseigner dans le dashboard Meta
+- **App Domain** : `spinfinity.app`
+- **Site URL** : `https://spinfinity.app/`
+- **OAuth Redirect URIs valides** : `https://spinfinity.app/` (et chaque URL de roue si nécessaire)
+- **App Icon** : 1024×1024 PNG (à uploader directement chez Meta — non versionné dans le repo)
+- **Catégorie** : Utilities ou Productivity
+- **Contact Email** : ton adresse de support
+
+### Vérification de domaine
+Meta peut demander de vérifier la propriété du domaine. Trois méthodes possibles, par ordre de simplicité :
+1. **Meta-tag HTML** : Meta te donnera un code à coller dans le `<head>` de chaque page sous la forme :
+   ```html
+   <meta name="facebook-domain-verification" content="CODE_FOURNI_PAR_META" />
+   ```
+   Le plus simple : ajouter cette balise dans `_shared/spinfinity-config.js` qui peut écrire dynamiquement la balise dans le head, ou directement dans chaque `index.html`.
+2. **DNS TXT record** : ajouter un enregistrement TXT chez ton registrar de domaine.
+3. **Upload de fichier HTML** : Meta te donne un fichier à placer à la racine du site.
+
+### Soumission de la revue (Permissions)
+Pour chaque permission demandée, Meta exige une **justification d'usage** et une **vidéo de démonstration** :
+
+| Permission | Justification courte (à reformuler dans la soumission) |
+|---|---|
+| `pages_show_list` | « Afficher à l'utilisateur la liste de ses Pages Facebook pour qu'il choisisse celle dont il veut importer les commentaires dans son tirage au sort. » |
+| `pages_read_engagement` | « Récupérer les noms des personnes ayant commenté un post de la Page choisie par l'utilisateur, pour les ajouter automatiquement à la liste des participants de son tirage. Aucun stockage côté Spinfinity, traitement uniquement local dans le navigateur. » |
+| `instagram_basic` | « Identifier le compte Instagram Business/Creator lié à la Page Facebook sélectionnée. » |
+| `instagram_manage_comments` | « Récupérer les noms (handles) des personnes ayant commenté une publication Instagram du compte lié, dans le même but que `pages_read_engagement`. » |
+
+### Vidéo de démo (~2 min) — script suggéré
+1. Connexion Facebook depuis le modal d'import (montrer le popup OAuth).
+2. Sélection de la Page → sélection d'un post → clic sur "Récupérer les commentaires".
+3. Affichage des noms dans la prévisualisation éditable.
+4. Validation → ajout des participants → tirage.
+5. Montrer la déconnexion + la page `/legal/data-deletion/` qui explique comment révoquer.
+6. Montrer la console réseau (F12 → Network) : prouver que les appels vont vers `graph.facebook.com` directement, jamais vers spinfinity.app.
+
+### Points qui rassurent le reviewer Meta
+- ✅ Pas de backend → impossible de stocker quoi que ce soit côté serveur.
+- ✅ SDK initialisé avec `cookie:false` (pas de cookie sur spinfinity.app).
+- ✅ Permissions strictement en lecture seule.
+- ✅ Page Data Deletion publique et détaillée.
+- ✅ Privacy Policy avec section dédiée Meta (section 6 de `/legal/`).
+- ✅ Le bouton de connexion respecte la marque Meta (libellé "Continuer avec Facebook" / "Continue with Facebook", couleur `#1877F2`, logo "f" officiel en SVG).
+- ✅ Affichage explicite des permissions demandées et des données NON stockées avant le clic de connexion.

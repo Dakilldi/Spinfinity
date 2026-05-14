@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title data-i18n="meta.title">Spinfinity — Suppression de vos données</title>
+<meta name="description" content="Instructions pour supprimer toute donnée associée à Spinfinity et révoquer l'accès de l'application Facebook/Instagram." data-i18n-attr="content" data-i18n="meta.description">
+<meta name="theme-color" content="#0a0a14">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://spinfinity.app/legal/data-deletion/">
+<link rel="alternate" hreflang="fr" href="https://spinfinity.app/legal/data-deletion/">
+<link rel="alternate" hreflang="en" href="https://spinfinity.app/legal/data-deletion/?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://spinfinity.app/legal/data-deletion/">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+:root {
+    --bg-1: #0a0a14;
+    --text: #ffffff;
+    --text-dim: #d4cce0;
+    --text-faded: #8a809f;
+    --purple: #a855f7;
+    --pink: #ec4899;
+    --gold: #fde047;
+    --cyan: #00f0ff;
+    --green: #22c55e;
+    --red: #ef4444;
+    --border-glass: rgba(255,255,255,0.08);
+    --bg-glass: rgba(255,255,255,0.04);
+}
+body {
+    font-family: 'Manrope', system-ui, sans-serif;
+    color: var(--text);
+    background: var(--bg-1);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+}
+body::before {
+    content: ''; position: fixed; inset: 0;
+    background:
+        radial-gradient(circle at 12% 8%, rgba(168,85,247,0.20) 0%, transparent 45%),
+        radial-gradient(circle at 88% 25%, rgba(236,72,153,0.16) 0%, transparent 50%),
+        radial-gradient(circle at 50% 90%, rgba(0,240,255,0.12) 0%, transparent 55%),
+        var(--bg-1);
+    z-index: -1;
+}
+.top-bar {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    background: rgba(10,10,20,0.6);
+    border-bottom: 1px solid var(--border-glass);
+}
+.back-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--text-dim); text-decoration: none; font-weight: 600; font-size: 14px;
+    padding: 6px 12px; border-radius: 8px;
+    transition: background .2s, color .2s;
+}
+.back-link:hover { background: var(--bg-glass); color: var(--text); }
+.back-link svg { width: 16px; height: 16px; }
+.brand { font-weight: 800; letter-spacing: 0.04em; font-size: 16px; }
+.lang-switch { display: flex; gap: 4px; }
+.lang-btn {
+    background: transparent; border: 1px solid var(--border-glass);
+    color: var(--text-faded); padding: 5px 10px; border-radius: 6px;
+    cursor: pointer; font: inherit; font-size: 12px; font-weight: 700;
+    transition: all .2s;
+}
+.lang-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+.lang-btn.active { background: var(--purple); color: #fff; border-color: var(--purple); }
+
+.container {
+    max-width: 820px; margin: 0 auto;
+    padding: 40px 24px 60px;
+}
+.hero { text-align: center; padding: 24px 0 32px; }
+.hero-eyebrow {
+    display: inline-block;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    font-size: 11px; font-weight: 700;
+    color: var(--cyan);
+    padding: 4px 12px;
+    background: rgba(0,240,255,0.08);
+    border: 1px solid rgba(0,240,255,0.25);
+    border-radius: 999px;
+    margin-bottom: 16px;
+}
+.hero h1 {
+    font-size: clamp(28px, 5vw, 40px);
+    line-height: 1.15;
+    margin: 0 0 14px;
+    font-weight: 800;
+}
+.hero h1 .accent {
+    background: linear-gradient(90deg, var(--purple), var(--pink));
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent;
+}
+.hero p { color: var(--text-dim); font-size: 15.5px; max-width: 600px; margin: 0 auto; }
+
+section {
+    border-radius: 16px;
+    padding: 24px 26px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-glass);
+    margin: 18px 0;
+}
+section h2 {
+    font-size: 20px; font-weight: 700; margin: 0 0 12px;
+    display: flex; align-items: center; gap: 10px;
+}
+section h2 .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    font-size: 13px; font-weight: 800; color: #fff;
+}
+section h3 { font-size: 15.5px; font-weight: 700; margin: 18px 0 6px; }
+section p, section ol, section ul {
+    color: var(--text-dim); font-size: 14.5px; line-height: 1.65; margin: 8px 0;
+}
+section ol, section ul { padding-left: 22px; }
+section li { margin-bottom: 6px; }
+section strong { color: var(--text); font-weight: 700; }
+section a { color: var(--cyan); text-decoration: none; border-bottom: 1px dashed rgba(0,240,255,0.4); transition: color .2s, border-color .2s; }
+section a:hover { color: var(--text); border-color: var(--text); }
+section code {
+    background: rgba(0,240,255,0.08);
+    border: 1px solid rgba(0,240,255,0.18);
+    padding: 1px 6px; border-radius: 4px;
+    font-family: ui-monospace, SF Mono, monospace;
+    font-size: 13px; color: var(--cyan);
+}
+
+.callout {
+    background: linear-gradient(135deg, rgba(34,197,94,0.12), rgba(34,197,94,0.04));
+    border: 1px solid rgba(34,197,94,0.35);
+    border-radius: 12px;
+    padding: 16px 20px; margin: 14px 0;
+    font-size: 14.5px; color: var(--text);
+}
+.callout strong { color: #4ade80; }
+
+.steps {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--border-glass);
+    border-radius: 12px;
+    padding: 18px 22px 18px 42px;
+    margin: 12px 0;
+}
+.steps li { margin-bottom: 10px; }
+
+.contact-card {
+    background: linear-gradient(135deg, rgba(168,85,247,0.10), rgba(236,72,153,0.05));
+    border: 1px solid rgba(168,85,247,0.30);
+    border-radius: 12px;
+    padding: 16px 20px;
+}
+
+.cta {
+    text-align: center; margin: 36px 0 0;
+}
+.cta a {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    color: var(--text-dim); text-decoration: none;
+    font-weight: 600; font-size: 14px;
+    transition: all .2s;
+}
+.cta a:hover { background: rgba(168,85,247,0.18); color: var(--text); }
+</style>
+</head>
+<body>
+
+<header class="top-bar">
+    <a href="../" class="back-link" data-testid="back-legal">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M14 6 L8 12 L14 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span data-i18n="nav.back">Mentions légales</span>
+    </a>
+    <div class="brand">Spinfinity</div>
+    <div class="lang-switch">
+        <button class="lang-btn" data-lang="fr" data-testid="lang-fr">FR</button>
+        <button class="lang-btn" data-lang="en" data-testid="lang-en">EN</button>
+    </div>
+</header>
+
+<div class="container">
+
+<section class="hero" style="background:none;border:none;padding:24px 0 32px;">
+    <span class="hero-eyebrow" data-i18n="hero.eyebrow">RGPD · Meta Platform Policy</span>
+    <h1>
+        <span data-i18n="hero.title.start">Suppression de</span>
+        <span class="accent" data-i18n="hero.title.accent">vos données</span>
+    </h1>
+    <p data-i18n="hero.lead">Comment supprimer toute trace associée à Spinfinity et révoquer l'accès de l'application Facebook/Instagram à votre compte.</p>
+</section>
+
+<section id="summary">
+    <h2><span class="num">1</span> <span data-i18n="s1.title">L'essentiel en une phrase</span></h2>
+    <div class="callout">
+        <strong data-i18n="s1.callout.strong">Spinfinity ne stocke aucune donnée personnelle sur ses serveurs.</strong>
+        <span data-i18n="s1.callout.text"> Il n'y a donc rien à supprimer côté serveur — il n'y a tout simplement rien.</span>
+    </div>
+    <p data-i18n="s1.p1">Toutes les listes de participants, les noms importés depuis Facebook ou Instagram, les lots saisis et les vidéos replay sont traités <strong>localement dans votre navigateur</strong>. Ils sont effacés automatiquement à la fermeture de l'onglet. Aucune copie n'existe en dehors de votre appareil.</p>
+</section>
+
+<section id="local">
+    <h2><span class="num">2</span> <span data-i18n="s2.title">Supprimer les données locales (votre navigateur)</span></h2>
+    <p data-i18n="s2.p1">Pour supprimer les rares préférences que Spinfinity enregistre dans le <code>localStorage</code> de votre navigateur (langue choisie, titre Corporate personnalisé, état de la case « Garder les gagnants ») :</p>
+    <ol class="steps">
+        <li data-i18n="s2.step1"><strong>Sur ordinateur</strong> : ouvrez les Outils de développement de votre navigateur (F12), allez dans l'onglet <em>Application</em> ou <em>Storage</em>, sélectionnez <code>spinfinity.app</code> sous <em>Local Storage</em>, puis cliquez sur <em>Tout effacer</em>.</li>
+        <li data-i18n="s2.step2"><strong>Sur mobile</strong> : dans les paramètres de votre navigateur, allez dans <em>Confidentialité</em> → <em>Effacer les données de navigation</em> → cochez « cookies et données de sites », et confirmez. Vous pouvez aussi limiter cette suppression à <code>spinfinity.app</code>.</li>
+        <li data-i18n="s2.step3"><strong>Méthode rapide</strong> : effacer le cache et les données du site depuis l'icône « cadenas » à gauche de la barre d'adresse, puis <em>Réinitialiser les autorisations</em>.</li>
+    </ol>
+</section>
+
+<section id="facebook">
+    <h2><span class="num">3</span> <span data-i18n="s3.title">Révoquer l'accès de Spinfinity à votre compte Facebook</span></h2>
+    <p data-i18n="s3.p1">Si vous avez utilisé la fonctionnalité « Se connecter à Facebook » pour importer des commentaires, vous avez autorisé Spinfinity à lire (en lecture seule) les commentaires de vos Pages Facebook et de votre compte Instagram Business lié. Cette autorisation reste active tant que vous ne la révoquez pas.</p>
+    <p data-i18n="s3.p2"><strong>Important :</strong> Spinfinity ne stocke <strong>aucun jeton d'accès</strong> sur ses serveurs. Le jeton délivré par Meta vit uniquement dans la mémoire de l'onglet et disparaît à sa fermeture. Mais Facebook conserve la liste des applications autorisées dans votre compte. Pour la nettoyer :</p>
+    <h3 data-i18n="s3.fb.title">Sur Facebook (depuis un navigateur)</h3>
+    <ol class="steps">
+        <li data-i18n="s3.fb.step1">Connectez-vous à <a href="https://www.facebook.com" target="_blank" rel="noopener">facebook.com</a>.</li>
+        <li data-i18n="s3.fb.step2">Cliquez sur votre photo de profil en haut à droite → <em>Paramètres et confidentialité</em> → <em>Paramètres</em>.</li>
+        <li data-i18n="s3.fb.step3">Dans le menu de gauche, sélectionnez <em>Applications et sites Web</em> (raccourci direct : <a href="https://www.facebook.com/settings?tab=applications" target="_blank" rel="noopener">facebook.com/settings?tab=applications</a>).</li>
+        <li data-i18n="s3.fb.step4">Trouvez <strong>Spinfinity</strong> dans la liste des applications « actives ».</li>
+        <li data-i18n="s3.fb.step5">Cliquez sur <em>Supprimer</em>, puis confirmez. Cochez également « Supprimer toutes les publications, photos et vidéos sur Facebook que Spinfinity aurait pu publier » par sécurité (Spinfinity ne publie jamais rien, mais cette case ne nuit pas).</li>
+    </ol>
+    <h3 data-i18n="s3.ig.title">Sur Instagram</h3>
+    <p data-i18n="s3.ig.p1">L'accès Instagram passe par votre compte Facebook (les comptes IG Business/Creator sont liés à des Pages FB). Révoquer l'accès Facebook ci-dessus suffit donc à couper aussi l'accès Instagram.</p>
+</section>
+
+<section id="adsense">
+    <h2><span class="num">4</span> <span data-i18n="s4.title">Cookies publicitaires Google AdSense</span></h2>
+    <p data-i18n="s4.p1">Spinfinity affiche des publicités via Google AdSense. Pour gérer ou désactiver les cookies publicitaires posés par Google :</p>
+    <ul>
+        <li data-i18n="s4.li1"><a href="https://adssettings.google.com" target="_blank" rel="noopener">adssettings.google.com</a> — Préférences publicitaires Google</li>
+        <li data-i18n="s4.li2"><a href="https://www.youronlinechoices.com/" target="_blank" rel="noopener">youronlinechoices.com</a> (Europe) — Désinscription multi-régies</li>
+        <li data-i18n="s4.li3"><a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener">aboutads.info/choices</a> (US) — Idem côté américain</li>
+    </ul>
+</section>
+
+<section id="request">
+    <h2><span class="num">5</span> <span data-i18n="s5.title">Demande explicite de suppression</span></h2>
+    <p data-i18n="s5.p1">Même si Spinfinity ne stocke rien, vous pouvez nous envoyer une demande formelle de suppression. Nous répondrons sous <strong>30 jours</strong> (délai imposé par le RGPD) pour confirmer qu'aucune donnée vous concernant n'est traitée par Spinfinity.</p>
+    <div class="contact-card">
+        <p style="margin:4px 0;"><strong data-i18n="s5.contact.label">Email :</strong> <span class="placeholder" style="color:var(--gold);font-style:italic;" data-i18n="s5.contact.value">[email@spinfinity.app]</span></p>
+        <p style="margin:4px 0;font-size:13px;color:var(--text-faded);" data-i18n="s5.contact.subject">Objet recommandé : « Demande de suppression RGPD – [votre nom Facebook ou identifiant Meta] »</p>
+    </div>
+    <p data-i18n="s5.p2">Pour les utilisateurs de l'Union européenne, vous avez également le droit de saisir l'autorité de protection des données de votre pays (en France : <a href="https://www.cnil.fr" target="_blank" rel="noopener">CNIL</a>).</p>
+</section>
+
+<section id="meta-policy">
+    <h2><span class="num">6</span> <span data-i18n="s6.title">Conformité Meta Platform Terms</span></h2>
+    <p data-i18n="s6.p1">Cette page sert également de <strong>Data Deletion Instructions URL</strong> au sens des <a href="https://developers.facebook.com/terms" target="_blank" rel="noopener">Meta Platform Terms</a>. Spinfinity respecte les exigences suivantes :</p>
+    <ul>
+        <li data-i18n="s6.li1">Aucune donnée Meta n'est partagée avec un tiers.</li>
+        <li data-i18n="s6.li2">Aucun identifiant utilisateur (UID Facebook, ID Instagram, jeton d'accès) n'est stocké.</li>
+        <li data-i18n="s6.li3">Les noms de commentateurs sont uniquement affichés dans la session active de l'utilisateur et utilisés pour le tirage en cours.</li>
+        <li data-i18n="s6.li4">Aucun profilage, aucune publicité, aucun croisement avec d'autres jeux de données.</li>
+        <li data-i18n="s6.li5">Lecture seule : Spinfinity ne publie rien, ne modifie rien, ne supprime rien sur votre compte Meta.</li>
+    </ul>
+</section>
+
+<div class="cta">
+    <a href="../"><span data-i18n="cta.back">← Retour aux mentions légales</span></a>
+</div>
+
+</div>
+
+<script>
+const I18N = {
+    fr: {
+        'meta.title': 'Spinfinity — Suppression de vos données',
+        'meta.description': "Instructions pour supprimer toute donnée associée à Spinfinity et révoquer l'accès de l'application Facebook/Instagram.",
+        'nav.back': 'Mentions légales',
+        'hero.eyebrow': 'RGPD · Meta Platform Policy',
+        'hero.title.start': 'Suppression de',
+        'hero.title.accent': 'vos données',
+        'hero.lead': "Comment supprimer toute trace associée à Spinfinity et révoquer l'accès de l'application Facebook/Instagram à votre compte.",
+        's1.title': "L'essentiel en une phrase",
+        's1.callout.strong': 'Spinfinity ne stocke aucune donnée personnelle sur ses serveurs.',
+        's1.callout.text': " Il n'y a donc rien à supprimer côté serveur — il n'y a tout simplement rien.",
+        's1.p1': "Toutes les listes de participants, les noms importés depuis Facebook ou Instagram, les lots saisis et les vidéos replay sont traités <strong>localement dans votre navigateur</strong>. Ils sont effacés automatiquement à la fermeture de l'onglet. Aucune copie n'existe en dehors de votre appareil.",
+        's2.title': 'Supprimer les données locales (votre navigateur)',
+        's2.p1': "Pour supprimer les rares préférences que Spinfinity enregistre dans le <code>localStorage</code> de votre navigateur (langue choisie, titre Corporate personnalisé, état de la case « Garder les gagnants ») :",
+        's2.step1': "<strong>Sur ordinateur</strong> : ouvrez les Outils de développement de votre navigateur (F12), allez dans l'onglet <em>Application</em> ou <em>Storage</em>, sélectionnez <code>spinfinity.app</code> sous <em>Local Storage</em>, puis cliquez sur <em>Tout effacer</em>.",
+        's2.step2': "<strong>Sur mobile</strong> : dans les paramètres de votre navigateur, allez dans <em>Confidentialité</em> → <em>Effacer les données de navigation</em> → cochez « cookies et données de sites », et confirmez. Vous pouvez aussi limiter cette suppression à <code>spinfinity.app</code>.",
+        's2.step3': "<strong>Méthode rapide</strong> : effacer le cache et les données du site depuis l'icône « cadenas » à gauche de la barre d'adresse, puis <em>Réinitialiser les autorisations</em>.",
+        's3.title': "Révoquer l'accès de Spinfinity à votre compte Facebook",
+        's3.p1': "Si vous avez utilisé la fonctionnalité « Se connecter à Facebook » pour importer des commentaires, vous avez autorisé Spinfinity à lire (en lecture seule) les commentaires de vos Pages Facebook et de votre compte Instagram Business lié. Cette autorisation reste active tant que vous ne la révoquez pas.",
+        's3.p2': "<strong>Important :</strong> Spinfinity ne stocke <strong>aucun jeton d'accès</strong> sur ses serveurs. Le jeton délivré par Meta vit uniquement dans la mémoire de l'onglet et disparaît à sa fermeture. Mais Facebook conserve la liste des applications autorisées dans votre compte. Pour la nettoyer :",
+        's3.fb.title': 'Sur Facebook (depuis un navigateur)',
+        's3.fb.step1': "Connectez-vous à <a href=\"https://www.facebook.com\" target=\"_blank\" rel=\"noopener\">facebook.com</a>.",
+        's3.fb.step2': "Cliquez sur votre photo de profil en haut à droite → <em>Paramètres et confidentialité</em> → <em>Paramètres</em>.",
+        's3.fb.step3': "Dans le menu de gauche, sélectionnez <em>Applications et sites Web</em> (raccourci direct : <a href=\"https://www.facebook.com/settings?tab=applications\" target=\"_blank\" rel=\"noopener\">facebook.com/settings?tab=applications</a>).",
+        's3.fb.step4': "Trouvez <strong>Spinfinity</strong> dans la liste des applications « actives ».",
+        's3.fb.step5': "Cliquez sur <em>Supprimer</em>, puis confirmez. Cochez également « Supprimer toutes les publications, photos et vidéos sur Facebook que Spinfinity aurait pu publier » par sécurité (Spinfinity ne publie jamais rien, mais cette case ne nuit pas).",
+        's3.ig.title': 'Sur Instagram',
+        's3.ig.p1': "L'accès Instagram passe par votre compte Facebook (les comptes IG Business/Creator sont liés à des Pages FB). Révoquer l'accès Facebook ci-dessus suffit donc à couper aussi l'accès Instagram.",
+        's4.title': 'Cookies publicitaires Google AdSense',
+        's4.p1': 'Spinfinity affiche des publicités via Google AdSense. Pour gérer ou désactiver les cookies publicitaires posés par Google :',
+        's4.li1': '<a href="https://adssettings.google.com" target="_blank" rel="noopener">adssettings.google.com</a> — Préférences publicitaires Google',
+        's4.li2': '<a href="https://www.youronlinechoices.com/" target="_blank" rel="noopener">youronlinechoices.com</a> (Europe) — Désinscription multi-régies',
+        's4.li3': '<a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener">aboutads.info/choices</a> (US) — Idem côté américain',
+        's5.title': 'Demande explicite de suppression',
+        's5.p1': "Même si Spinfinity ne stocke rien, vous pouvez nous envoyer une demande formelle de suppression. Nous répondrons sous <strong>30 jours</strong> (délai imposé par le RGPD) pour confirmer qu'aucune donnée vous concernant n'est traitée par Spinfinity.",
+        's5.contact.label': 'Email :',
+        's5.contact.value': '[email@spinfinity.app]',
+        's5.contact.subject': "Objet recommandé : « Demande de suppression RGPD – [votre nom Facebook ou identifiant Meta] »",
+        's5.p2': "Pour les utilisateurs de l'Union européenne, vous avez également le droit de saisir l'autorité de protection des données de votre pays (en France : <a href=\"https://www.cnil.fr\" target=\"_blank\" rel=\"noopener\">CNIL</a>).",
+        's6.title': 'Conformité Meta Platform Terms',
+        's6.p1': "Cette page sert également de <strong>Data Deletion Instructions URL</strong> au sens des <a href=\"https://developers.facebook.com/terms\" target=\"_blank\" rel=\"noopener\">Meta Platform Terms</a>. Spinfinity respecte les exigences suivantes :",
+        's6.li1': "Aucune donnée Meta n'est partagée avec un tiers.",
+        's6.li2': "Aucun identifiant utilisateur (UID Facebook, ID Instagram, jeton d'accès) n'est stocké.",
+        's6.li3': "Les noms de commentateurs sont uniquement affichés dans la session active de l'utilisateur et utilisés pour le tirage en cours.",
+        's6.li4': 'Aucun profilage, aucune publicité, aucun croisement avec d\'autres jeux de données.',
+        's6.li5': 'Lecture seule : Spinfinity ne publie rien, ne modifie rien, ne supprime rien sur votre compte Meta.',
+        'cta.back': '← Retour aux mentions légales'
+    },
+    en: {
+        'meta.title': 'Spinfinity — Data Deletion Instructions',
+        'meta.description': "Instructions to delete any data associated with Spinfinity and revoke the Facebook/Instagram app's access to your account.",
+        'nav.back': 'Legal notice',
+        'hero.eyebrow': 'GDPR · Meta Platform Policy',
+        'hero.title.start': 'Delete',
+        'hero.title.accent': 'your data',
+        'hero.lead': "How to delete any trace associated with Spinfinity and revoke the Facebook/Instagram app's access to your account.",
+        's1.title': 'The essential in one sentence',
+        's1.callout.strong': 'Spinfinity stores no personal data on its servers.',
+        's1.callout.text': ' There is therefore nothing to delete on our side — there is simply nothing.',
+        's1.p1': 'All participant lists, names imported from Facebook or Instagram, prizes entered and replay videos are processed <strong>locally in your browser</strong>. They are automatically erased when the tab is closed. No copy exists outside your device.',
+        's2.title': 'Delete local data (your browser)',
+        's2.p1': 'To remove the few preferences Spinfinity stores in your browser <code>localStorage</code> (chosen language, custom Corporate title, "Keep winners" checkbox state):',
+        's2.step1': "<strong>On desktop</strong>: open your browser's Developer Tools (F12), go to the <em>Application</em> or <em>Storage</em> tab, select <code>spinfinity.app</code> under <em>Local Storage</em>, then click <em>Clear All</em>.",
+        's2.step2': '<strong>On mobile</strong>: in your browser settings, go to <em>Privacy</em> → <em>Clear browsing data</em> → check "cookies and site data", and confirm. You can also limit this deletion to <code>spinfinity.app</code>.',
+        's2.step3': '<strong>Quick method</strong>: clear cache and site data from the "lock" icon at the left of the address bar, then <em>Reset permissions</em>.',
+        's3.title': 'Revoke Spinfinity\'s access to your Facebook account',
+        's3.p1': 'If you used the "Log in with Facebook" feature to import comments, you authorized Spinfinity to read (read-only) comments on your Facebook Pages and your linked Instagram Business account. This authorization remains active until you revoke it.',
+        's3.p2': '<strong>Important:</strong> Spinfinity stores <strong>no access token</strong> on its servers. The token issued by Meta lives only in the tab\'s memory and disappears when it closes. But Facebook keeps the list of authorized apps in your account. To clean it up:',
+        's3.fb.title': 'On Facebook (from a browser)',
+        's3.fb.step1': 'Log in to <a href="https://www.facebook.com" target="_blank" rel="noopener">facebook.com</a>.',
+        's3.fb.step2': 'Click your profile photo at the top right → <em>Settings & privacy</em> → <em>Settings</em>.',
+        's3.fb.step3': 'In the left menu, select <em>Apps and websites</em> (direct shortcut: <a href="https://www.facebook.com/settings?tab=applications" target="_blank" rel="noopener">facebook.com/settings?tab=applications</a>).',
+        's3.fb.step4': 'Find <strong>Spinfinity</strong> in the list of "active" apps.',
+        's3.fb.step5': 'Click <em>Remove</em>, then confirm. Also check "Delete all posts, photos and videos on Facebook that Spinfinity may have published" as a safety (Spinfinity never publishes anything, but this box won\'t hurt).',
+        's3.ig.title': 'On Instagram',
+        's3.ig.p1': 'Instagram access goes through your Facebook account (Business/Creator IG accounts are linked to FB Pages). Revoking Facebook access above is therefore enough to also cut Instagram access.',
+        's4.title': 'Google AdSense advertising cookies',
+        's4.p1': 'Spinfinity displays ads via Google AdSense. To manage or disable Google\'s advertising cookies:',
+        's4.li1': '<a href="https://adssettings.google.com" target="_blank" rel="noopener">adssettings.google.com</a> — Google ad preferences',
+        's4.li2': '<a href="https://www.youronlinechoices.com/" target="_blank" rel="noopener">youronlinechoices.com</a> (Europe) — Multi-network opt-out',
+        's4.li3': '<a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener">aboutads.info/choices</a> (US) — US equivalent',
+        's5.title': 'Explicit deletion request',
+        's5.p1': "Even if Spinfinity stores nothing, you can send us a formal deletion request. We'll respond within <strong>30 days</strong> (GDPR-mandated delay) to confirm that no data concerning you is processed by Spinfinity.",
+        's5.contact.label': 'Email:',
+        's5.contact.value': '[email@spinfinity.app]',
+        's5.contact.subject': 'Recommended subject: "GDPR deletion request – [your Facebook name or Meta identifier]"',
+        's5.p2': "For European Union users, you also have the right to contact the data protection authority of your country (in France: <a href=\"https://www.cnil.fr\" target=\"_blank\" rel=\"noopener\">CNIL</a>).",
+        's6.title': 'Meta Platform Terms compliance',
+        's6.p1': 'This page also serves as the <strong>Data Deletion Instructions URL</strong> as required by the <a href="https://developers.facebook.com/terms" target="_blank" rel="noopener">Meta Platform Terms</a>. Spinfinity meets the following requirements:',
+        's6.li1': 'No Meta data is shared with a third party.',
+        's6.li2': 'No user identifier (Facebook UID, Instagram ID, access token) is stored.',
+        's6.li3': "Commenter names are only displayed in the user's active session and used for the current draw.",
+        's6.li4': 'No profiling, no advertising, no cross-referencing with other datasets.',
+        's6.li5': 'Read-only: Spinfinity never publishes, modifies, or deletes anything on your Meta account.',
+        'cta.back': '← Back to legal notice'
+    }
+};
+
+function detectLanguage() {
+    try {
+        const url = new URLSearchParams(location.search).get('lang');
+        if (url === 'en' || url === 'fr') return url;
+        const stored = (localStorage.getItem('spinfinity-lang') || '').toLowerCase();
+        if (stored === 'fr' || stored === 'en') return stored;
+        return (navigator.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
+    } catch (e) { return 'fr'; }
+}
+
+function applyLanguage(lang) {
+    document.documentElement.lang = lang;
+    try { localStorage.setItem('spinfinity-lang', lang); } catch (e) {}
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        const val = I18N[lang][key];
+        if (val != null) el.innerHTML = val;
+    });
+    document.querySelectorAll('[data-i18n-attr]').forEach(el => {
+        const attr = el.dataset.i18nAttr;
+        const key = el.dataset.i18n;
+        const val = I18N[lang][key];
+        if (val != null) el.setAttribute(attr, val);
+    });
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+        btn.addEventListener('click', () => applyLanguage(btn.dataset.lang), { once: true });
+    });
+}
+
+applyLanguage(detectLanguage());
+</script>
+
+<script src="../../_shared/footer.js" defer></script>
+</body>
+</html>

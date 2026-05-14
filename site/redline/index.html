@@ -22,6 +22,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Manrope:wght@500;600;700;800&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <script defer src="../_shared/replay.js"></script>
+<script defer src="../_shared/social-import.js"></script>
 
 <style>
 :root {
@@ -550,6 +551,7 @@ h1 .flag.right { animation-delay: 1.1s; }
         <textarea id="input" data-i18n-attr="placeholder" data-i18n="ph.names" placeholder="Colle les noms ici (un par ligne ou séparés par des virgules)" data-testid="names-input"></textarea>
         <div class="input-buttons">
             <button class="btn" onclick="importNames()" data-i18n="btn.import" data-testid="import-names-btn">📥 Import</button>
+            <button class="btn ghost" onclick="openSocialImport()" data-testid="social-import-btn" type="button">📘 Facebook / Instagram</button>
             <button class="btn ghost" onclick="resetAll()" data-i18n="btn.reset" data-testid="reset-btn">♻️ Reset</button>
         </div>
     </div>
@@ -1141,6 +1143,19 @@ function importNames() {
     document.getElementById("input").value = "";
     renderLists();
     if (!spinning && !slot.classList.contains("winner-glow") && !idleRunning) startIdleFresh();
+}
+function openSocialImport() {
+    if (!window.SpinfinitySocialImport) return;
+    window.SpinfinitySocialImport.openModal({
+        lang: currentLang,
+        existingNames: names,
+        onImport: (incoming) => {
+            if (!incoming || incoming.length === 0) return;
+            names = names.concat(incoming);
+            renderLists();
+            if (!spinning && !slot.classList.contains("winner-glow") && !idleRunning) startIdleFresh();
+        }
+    });
 }
 function resetAll() {
     if (spinning) return;

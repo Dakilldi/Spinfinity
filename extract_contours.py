@@ -9,23 +9,17 @@ img = cv2.imread(IMG_PATH)
 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 H, W = img.shape[:2]
 
-# Red detection
+# ── Red mask (same as v1) ───────────────────────────────────────────────────
 r = img_rgb[:,:,0].astype(int)
 g = img_rgb[:,:,1].astype(int)
 b = img_rgb[:,:,2].astype(int)
 red_mask = ((r > 150) & (g < 80) & (b < 80)).astype(np.uint8) * 255
 
-# Morphological cleanup
 k5 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
 red_mask = cv2.morphologyEx(red_mask, cv2.MORPH_CLOSE, k5)
 red_mask = cv2.morphologyEx(red_mask, cv2.MORPH_OPEN, k5)
 
-# ── Smooth edges with Gaussian blur then re-threshold ──────────────────────────
-blurred = cv2.GaussianBlur(red_mask.astype(np.float32), (21, 21), 0)
-smooth_mask = (blurred > 60).astype(np.uint8) * 255
-
-# Contour detection on smoothed mask
-contours, hierarchy = cv2.findContours(smooth_mask, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)
+contours, hierarchy = cv2.findContours(red_mask, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_TC89_KCOS)
 
 MIN_AREA = 3000
 track_outer = None
@@ -46,48 +40,44 @@ print(f"Outer: area={track_outer[2]:.0f}, raw pts={len(track_outer[1])}")
 for idx, cnt, area in track_holes:
     print(f"  Hole {idx}: area={area:.0f}, pts={len(cnt)}")
 
-# ── Catmull-Rom → Cubic Bézier conversion ──────────────────────────────────────
-def catmull_rom_to_bezier(pts, tension=0.5):
-    """Convert Catmull-Rom spline points to SVG cubic bezier path (closed)."""
-    n = len(pts)
-    if n < 3:
-        return ""
-    path = f"M {pts[0][0]:.1f},{pts[0][1]:.1f}"
-    for i in range(n):
-        p0 = pts[(i - 1) % n]
-        p1 = pts[i]
-        p2 = pts[(i + 1) % n]
-        p3 = pts[(i + 2) % n]
-        # Control points
-        cp1x = p1[0] + (p2[0] - p0[0]) * tension / 3
-        cp1y = p1[1] + (p2[1] - p0[1]) * tension / 3
-        cp2x = p2[0] - (p3[0] - p1[0]) * tension / 3
-        cp2y = p2[1] - (p3[1] - p1[1]) * tension / 3
-        path += f" C {cp1x:.1f},{cp1y:.1f} {cp2x:.1f},{cp2y:.1f} {p2[0]:.1f},{p2[1]:.1f}"
-    path += " Z"
-    return path
-
-def smooth_contour_path(cnt, n_pts=120, tension=0.5):
-    """Resample contour to n_pts equidistant points then apply Catmull-Rom."""
+# ── Smooth contour coordinates with Gaussian sliding window ────────────────
+def smooth_contour(cnt, sigma=4):
+    """Apply Gaussian smoothing to contour point coordinates (cyclic)."""
     pts = cnt.reshape(-1, 2).astype(float)
-    # Compute arc-length parameterization (open chain, wrap manually)
-    diffs = np.diff(pts, axis=0)
-    dists = np.sqrt((diffs**2).sum(axis=1))
-    cumsum = np.concatenate([[0], np.cumsum(dists)])  # length n
-    total = cumsum[-1]
-    t = np.linspace(0, total, n_pts, endpoint=False)
-    # Interpolate x and y
-    xs = np.interp(t, cumsum, pts[:,0])
-    ys = np.interp(t, cumsum, pts[:,1])
-    resampled = list(zip(xs, ys))
-    return catmull_rom_to_bezier(resampled, tension)
+    n = len(pts)
+    # Build Gaussian kernel
+    ksize = int(6 * sigma) | 1   # odd, ~3*sigma each side
+    half = ksize // 2
+    x = np.arange(-half, half + 1)
+    kernel = np.exp(-x**2 / (2 * sigma**2))
+    kernel /= kernel.sum()
+    # Cyclic convolution
+    xs = np.pad(pts[:,0], half, mode='wrap')
+    ys = np.pad(pts[:,1], half, mode='wrap')
+    xs_smooth = np.convolve(xs, kernel, mode='valid')
+    ys_smooth = np.convolve(ys, kernel, mode='valid')
+    return np.stack([xs_smooth, ys_smooth], axis=1)
 
-# Number of points: more for outer (longer), fewer for holes
-outer_d = smooth_contour_path(track_outer[1], n_pts=160, tension=0.4)
-holes_d = []
-for _, cnt, area in track_holes:
-    n = max(40, min(100, int(len(cnt) * 0.6)))
-    holes_d.append(smooth_contour_path(cnt, n_pts=n, tension=0.4))
+def pts_to_path(pts):
+    d = f"M {pts[0][0]:.1f},{pts[0][1]:.1f}"
+    for pt in pts[1:]:
+        d += f" L {pt[0]:.1f},{pt[1]:.1f}"
+    d += " Z"
+    return d
+
+def contour_to_path(cnt, epsilon=0.002, sigma=4):
+    """Smooth coordinates then simplify with approxPolyDP."""
+    smoothed = smooth_contour(cnt, sigma=sigma)
+    # Wrap back to OpenCV format for approxPolyDP
+    pts_cv = smoothed.reshape(-1,1,2).astype(np.float32)
+    peri = cv2.arcLength(pts_cv, True)
+    eps = max(1.0, epsilon * peri)
+    approx = cv2.approxPolyDP(pts_cv, eps, True)
+    return pts_to_path(approx.reshape(-1, 2))
+
+# sigma=4 → smooths ~12px ripples, preserves overall shape
+outer_d  = contour_to_path(track_outer[1], epsilon=0.0008, sigma=4)
+holes_d  = [contour_to_path(cnt, epsilon=0.001, sigma=3) for _, cnt, _ in track_holes]
 
 combined_d = outer_d + " " + " ".join(holes_d)
 
@@ -95,7 +85,8 @@ def make_svg(vx, vy, vw, vh, out_w=None, out_h=None):
     ow = out_w or vw
     oh = out_h or vh
     hole_paths = "\n  ".join(
-        f'<path fill="none" stroke="#CC0000" stroke-width="3" stroke-linejoin="round" d="{d}"/>'
+        f'<path fill="none" stroke="#CC0000" stroke-width="3"'
+        f' stroke-linejoin="round" stroke-linecap="round" d="{d}"/>'
         for d in holes_d if d
     )
     return f'''<?xml version="1.0" encoding="UTF-8"?>
@@ -107,16 +98,15 @@ def make_svg(vx, vy, vw, vh, out_w=None, out_h=None):
   <path fill-rule="evenodd" fill="rgba(220,30,30,0.30)"
         d="{combined_d}"/>
 
-  <!-- Exterior contour (smooth) -->
+  <!-- Exterior contour -->
   <path fill="none" stroke="#FF0000" stroke-width="3.5"
         stroke-linejoin="round" stroke-linecap="round"
         d="{outer_d}"/>
 
-  <!-- Interior contours (smooth) -->
+  <!-- Interior contours -->
   {hole_paths}
 </svg>'''
 
-# Bounding box
 all_pts = np.vstack([track_outer[1].reshape(-1,2)] + [c.reshape(-1,2) for _,c,_ in track_holes])
 x0, y0 = int(all_pts[:,0].min()), int(all_pts[:,1].min())
 x1, y1 = int(all_pts[:,0].max()), int(all_pts[:,1].max())
@@ -134,12 +124,12 @@ with open(OUT_CROP, "w") as f:
     f.write(make_svg(x0, y0, cw, ch, int(cw*scale), int(ch*scale)))
 print(f"Crop SVG: {OUT_CROP}")
 
-# Debug image
+# Debug overlay
 debug = img.copy()
-# Re-extract from smooth mask for display
-contours2, hier2 = cv2.findContours(smooth_mask, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)
-cv2.drawContours(debug, [track_outer[1]], -1, (0,255,0), 3)
+smooth_outer = smooth_contour(track_outer[1], sigma=4).astype(np.int32).reshape(-1,1,2)
+cv2.polylines(debug, [smooth_outer], True, (0,255,0), 3)
 for _, cnt, _ in track_holes:
-    cv2.drawContours(debug, [cnt], -1, (0,128,255), 3)
+    sc = smooth_contour(cnt, sigma=3).astype(np.int32).reshape(-1,1,2)
+    cv2.polylines(debug, [sc], True, (0,128,255), 3)
 cv2.imwrite("/home/user/Spinfinity/debug_contours.jpg", debug)
-print("Debug image saved.")
+print("Debug saved.")
